@@ -1,2 +1,2 @@
 # GDGS
-GDGS (Gohil Dharmik Gams) 
+GDGS (Gohil Dharmik Games) 
