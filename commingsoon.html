@@ -10,33 +10,150 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="comming.js"></script>
     <link rel="stylesheet" href="loader.js">
-    <script src="loader.js"></script>
-</head>
-<body class="loader">
+   <script src="loader.js"></script>
     
-    <section>
-        <nav class="navmode">
-            <img src="a5.png" class="logomode">
-            <p class="logonamemode">GDGS<marquee class="marqueemode" scrollamount="10" >
-                <h3>Comming Soon <strong><i><b>Yunso Fight</b></i></strong></h3>
-            </marquee> 
-            <div class="menumode">
-            <a class="menubottonmode" href="index.html">HOME</a>
-            <a class="menubottonmode" href="about.html">ABOUT</a>
-            <a class="menubottonmode" href="downlord.html">DOWNLORD</a>
-            <a class="menubottonmode" href="commingsoon.html">COMMING</a>
-            <a class="menubottonmode" href="gamingsection.html">GAMES</a>
-            <button style="background-image: linear-gradient(rgb(0, 0, 90),rgb(38, 32, 0),black);">
-                <a class="menubottonmode1" style="border-radius: 0px; ">SIGNIN</a>
-            </button>
-            <button style="background-image: linear-gradient(rgb(0, 0, 90),rgb(38, 32, 0),black);">
-                <a class="menubottonmode1" style="border-radius: 0px; ">SIGNUP</a>
-            </button>
-            </div>
-         </p>
-            
-        </nav>
-    </section>
+        <style>
+         * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            position: relative;
+        }
+
+        /* Navigation Bar Styles */
+        nav {
+            background-color: #333;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* Logo, Company Name, and Marquee in Row */
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .logomode {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+        }
+
+        .company-info {
+            color: white;
+            margin-right: 15px;
+        }
+
+        .logonamemode {
+            font-size: 1.5rem;
+            color: gold;
+        }
+
+        .marqueemode {
+            color: yellow;
+        }
+
+        .marqueemode h3 {
+            font-size: 1rem;
+            display: inline;
+        }
+
+        /* Horizontal Button Menu */
+        .menumode {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menubottonmode, .menubottonmode1 {
+            text-decoration: none;
+            color: white;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .menubottonmode1 {
+            background-image: linear-gradient(rgb(0, 0, 90), rgb(38, 32, 0), black);
+            border-radius: 5px;
+        }
+
+        /* Search Bar outside Nav */
+        .search-bar {
+            margin: 2rem auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        #search-input {
+            width: 50%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #search-button {
+            padding: 10px;
+            margin-left: 10px;
+            background-color: #007BFF;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #search-button:hover {
+            background-color: #0056b3;
+        }
+        
+    </style>
+ 
+</head>
+<header>
+    <nav>
+        <section>
+            <!-- Navigation Bar -->
+            <nav class="navmode">
+                <!-- Left side: Logo, Company Name, and Marquee -->
+                <div class="nav-left">
+                    <!-- Logo -->
+                    <img src="a5.png" class="logomode" alt="Logo">
+                    
+                    <!-- Company name -->
+                    <div class="company-info">
+                        <span class="logonamemode">GDGS</span>
+                    </div>
+        
+                    <!-- Marqudee -->
+                    <marquee class="marqueemode" scrollamount="10">
+                        <h3>Coming Soon <strong><i><b>Yunso Fight</b></i></strong></h3>
+                    </marquee>
+                </div>
+        
+                <!-- Right side: Menu Buttons -->
+                <div class="menumode">
+                    <a class="menubottonmode" href="index.html">HOME</a>
+                    <a class="menubottonmode" href="about.html">ABOUT</a>
+                    <a class="menubottonmode" href="downlord.html">DOWNLOAD</a>
+                    <a class="menubottonmode" href="commingsoon.html">COMING</a>
+                    <a class="menubottonmode" href="gamingsection.html">GAMES</a>
+                </div>
+            </nav>
+        </section>
+    </nav>
+   </header> 
 
     <section class="coming-soon">
         <div class="overlay">
