@@ -113,18 +113,18 @@ function animatePageEntrance() {
   if (currentPage === 'home') {
     // Hero entrance
     gsap.from('.hero-copy', {
-      x: -40, opacity: 0, duration: 0.8, delay: 0.2, ease: 'power3.out',
+      x: -40, opacity: 0, duration: 0.8, delay: 0.2, ease: 'power3.out', clearProps: 'all',
     });
     gsap.from('.hero-art', {
-      x: 40, opacity: 0, duration: 0.8, delay: 0.3, ease: 'power3.out',
+      x: 40, opacity: 0, duration: 0.8, delay: 0.3, ease: 'power3.out', clearProps: 'all',
     });
     // Category pills stagger
     gsap.from('.cat-btn', {
-      y: 10, opacity: 0, duration: 0.4, stagger: 0.03, delay: 0.1, ease: 'power2.out',
+      y: 10, opacity: 0, duration: 0.4, stagger: 0.03, delay: 0.1, ease: 'power2.out', clearProps: 'all',
     });
     // Game cards stagger
     gsap.from('.game-card', {
-      y: 30, opacity: 0, duration: 0.5, stagger: 0.05, delay: 0.4, ease: 'power2.out',
+      y: 30, opacity: 0, duration: 0.5, stagger: 0.05, delay: 0.4, ease: 'power2.out', clearProps: 'transform,opacity',
       onComplete: () => {
         document.querySelectorAll('.game-card').forEach((c) => c.classList.add('animated'));
       },

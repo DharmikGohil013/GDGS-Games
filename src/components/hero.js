@@ -3,12 +3,25 @@ import { setState } from '../store.js';
 
 const featuredGames = [
   {
+    id: 'color-switch',
+    title: 'Color Switch',
+    headline: 'Match the colors.<br>Conquer the heights.',
+    sub: 'The original neon color-matching arcade game. Tap to jump, match obstacle colors, and beat your high score!',
+    eyebrow: 'Featured today',
+    bg: 'linear-gradient(155deg, #8B5CF6, #6A34E0)',
+    tag: 'Color Switch',
+    category: 'arcade',
+    isPlayable: true,
+    engine: 'phaser',
+    artSvg: `<svg viewBox="0 0 80 80" width="76" height="76" aria-hidden="true"><circle cx="40" cy="40" r="38" fill="rgba(255,255,255,0.16)"/><path d="M40 18 A22 22 0 0 1 62 40" stroke="#FF3366" stroke-width="7" fill="none"/><path d="M62 40 A22 22 0 0 1 40 62" stroke="#FFC93C" stroke-width="7" fill="none"/><path d="M40 62 A22 22 0 0 1 18 40" stroke="#3E6BFF" stroke-width="7" fill="none"/><path d="M18 40 A22 22 0 0 1 40 18" stroke="#8B5CF6" stroke-width="7" fill="none"/><circle cx="40" cy="40" r="7" fill="white"/></svg>`
+  },
+  {
     id: 'tower-stacker',
     title: 'Tower Stacker',
     headline: 'Insert coin.<br>Skip the download.',
     sub: '1,000+ browser games that load in under 2 seconds. No app store, no install, no storage eaten up.',
-    eyebrow: 'Featured today',
-    bg: 'linear-gradient(155deg, var(--coral), var(--coral-dark))',
+    eyebrow: 'Arcade Favorite',
+    bg: 'linear-gradient(155deg, #FF5F4D, #D6432F)',
     tag: 'Tower Stacker',
     category: 'arcade',
     isPlayable: true,
@@ -21,7 +34,7 @@ const featuredGames = [
     headline: 'Burn rubber.<br>Master every turn.',
     sub: 'Experience high-speed 3D car drifting directly in your web browser with zero loading lag.',
     eyebrow: '3D Racing Hot Pick',
-    bg: 'linear-gradient(155deg, var(--blue), var(--blue-dark))',
+    bg: 'linear-gradient(155deg, #3E6BFF, #2245C7)',
     tag: 'Turbo Drift',
     category: 'racing',
     isPlayable: true,
@@ -34,7 +47,7 @@ const featuredGames = [
     headline: 'Glow & grow.<br>Retro reinvented.',
     sub: 'The legendary classic snake game enhanced with glowing neon visuals and high score action!',
     eyebrow: 'Arcade Classic',
-    bg: 'linear-gradient(155deg, var(--green), var(--green-dark))',
+    bg: 'linear-gradient(155deg, #1FC98B, #0E8F62)',
     tag: 'Neon Snake',
     category: 'arcade',
     isPlayable: true,
@@ -47,7 +60,7 @@ const featuredGames = [
     headline: 'Run the skyline.<br>Dodge obstacles.',
     sub: 'An intense endless runner experience. Leap across rooftops and collect coins in real-time!',
     eyebrow: 'Popular Runner',
-    bg: 'linear-gradient(155deg, var(--purple), var(--purple-dark))',
+    bg: 'linear-gradient(155deg, #8B5CF6, #6A34E0)',
     tag: 'City Sprint',
     category: 'runner',
     isPlayable: true,
@@ -65,13 +78,13 @@ export function createHero() {
   let autoTimer = null;
 
   section.innerHTML = `
-    <div class="hero-copy hero-animate">
+    <div class="hero-copy" id="hero-copy-box">
       <span class="hero-eyebrow" id="hero-eyebrow">
         <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" style="vertical-align:-2px;margin-right:4px"><path d="M8 1C5.5 4 4 6.5 4 9a4 4 0 0 0 8 0c0-2.5-1.5-5-4-8Zm0 10.5A2.5 2.5 0 0 1 5.5 9c0-1.3.7-2.8 2.5-5 1.8 2.2 2.5 3.7 2.5 5A2.5 2.5 0 0 1 8 11.5Z"/></svg>
-        <span id="hero-eyebrow-text">Featured today</span>
+        <span id="hero-eyebrow-text">${featuredGames[0].eyebrow}</span>
       </span>
-      <h1 class="hero-title" id="hero-title">Insert coin.<br>Skip the download.</h1>
-      <p class="hero-sub" id="hero-sub">1,000+ browser games that load in under 2 seconds. No app store, no install, no storage eaten up.</p>
+      <h1 class="hero-title" id="hero-title">${featuredGames[0].headline}</h1>
+      <p class="hero-sub" id="hero-sub">${featuredGames[0].sub}</p>
       
       <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
         <button class="btn-primary" id="hero-play-btn">
@@ -97,13 +110,13 @@ export function createHero() {
       </div>
     </div>
 
-    <div class="hero-art" id="hero-art" style="cursor:pointer">
-      <span class="tag" id="hero-art-tag">Tower Stacker</span>
+    <div class="hero-art" id="hero-art" style="cursor:pointer; background: ${featuredGames[0].bg}">
+      <span class="tag" id="hero-art-tag">${featuredGames[0].tag}</span>
       <div id="hero-art-svg">${featuredGames[0].artSvg}</div>
     </div>
   `;
 
-  const copyEl = section.querySelector('.hero-copy');
+  const copyEl = section.querySelector('#hero-copy-box');
   const artEl = section.querySelector('#hero-art');
   const playBtn = section.querySelector('#hero-play-btn');
   const prevBtn = section.querySelector('#hero-prev');
@@ -120,9 +133,11 @@ export function createHero() {
     currentIndex = index;
     const currentGame = featuredGames[currentIndex];
 
-    // Trigger transition out
-    copyEl.classList.add('hero-sliding-out');
-    artEl.classList.add('hero-sliding-out');
+    // Smooth transition
+    copyEl.style.opacity = '0.3';
+    artEl.style.opacity = '0.3';
+    copyEl.style.transform = 'translateY(-6px)';
+    artEl.style.transform = 'translateY(-6px)';
 
     setTimeout(() => {
       // Update Content
@@ -138,10 +153,12 @@ export function createHero() {
         dot.classList.toggle('active', idx === currentIndex);
       });
 
-      // Transition in
-      copyEl.classList.remove('hero-sliding-out');
-      artEl.classList.remove('hero-sliding-out');
-    }, 200);
+      // Restore full opacity and position
+      copyEl.style.opacity = '1';
+      artEl.style.opacity = '1';
+      copyEl.style.transform = 'translateY(0)';
+      artEl.style.transform = 'translateY(0)';
+    }, 180);
   }
 
   function nextSlide() {
@@ -156,7 +173,7 @@ export function createHero() {
 
   function startAutoPlay() {
     stopAutoPlay();
-    autoTimer = setInterval(nextSlide, 4000);
+    autoTimer = setInterval(nextSlide, 5000);
   }
 
   function stopAutoPlay() {
@@ -205,11 +222,10 @@ export function createHero() {
     }
   });
 
-  // Pause autoplay on mouse enter, resume on leave
+  // Pause autoplay on mouse hover
   section.addEventListener('mouseenter', stopAutoPlay);
   section.addEventListener('mouseleave', startAutoPlay);
 
-  // Start initial timer
   startAutoPlay();
 
   return section;

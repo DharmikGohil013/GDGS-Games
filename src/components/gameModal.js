@@ -3,6 +3,7 @@ import { getState, setState, subscribe } from '../store.js';
 
 // Lazy-load game modules
 const gameModules = {
+  'color-switch': () => import('../games/color-switch.js'),
   'tower-stacker': () => import('../games/tower-stacker.js'),
   'neon-snake': () => import('../games/neon-snake.js'),
   'block-merge': () => import('../games/block-merge.js'),

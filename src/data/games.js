@@ -33,6 +33,7 @@ function generateGames() {
 
   // Playable games
   const playableGames = [
+    { id: 'color-switch', title: 'Color Switch', category: 'arcade', isPlayable: true, plays: '24.8M', rating: 4.9, color: 'purple', iconType: 'ball', engine: 'phaser' },
     { id: 'tower-stacker', title: 'Tower Stacker', category: 'arcade', isPlayable: true, plays: '12.5M', rating: 4.8, color: 'coral', iconType: 'stack', engine: 'phaser' },
     { id: 'neon-snake', title: 'Neon Snake', category: 'arcade', isPlayable: true, plays: '8.2M', rating: 4.7, color: 'green', iconType: 'snake', engine: 'canvas' },
     { id: 'block-merge', title: 'Block Merge', category: 'puzzle', isPlayable: true, plays: '15.1M', rating: 4.9, color: 'purple', iconType: 'puzzle', engine: 'html5' },
