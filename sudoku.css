@@ -1,0 +1,462 @@
+/* ===== RESET & BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0a0a2e 0%, #1a1a3e 50%, #0d0d2d 100%);
+    min-height: 100vh;
+    color: #ffffff;
+}
+
+/* ===== NAV STYLES (matching index.html) ===== */
+nav {
+    background-color: #333;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+}
+
+.logomode {
+    width: 50px;
+    height: 50px;
+    margin-right: 15px;
+}
+
+.company-info {
+    color: white;
+    margin-right: 15px;
+}
+
+.logonamemode {
+    font-size: 1.5rem;
+    color: gold;
+}
+
+.marqueemode {
+    color: yellow;
+}
+
+.marqueemode h3 {
+    font-size: 1rem;
+    display: inline;
+}
+
+.menumode {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.menubottonmode {
+    text-decoration: none;
+    color: white;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.menubottonmode:hover {
+    background-color: #0056b3;
+}
+
+/* ===== SUDOKU WRAPPER ===== */
+.sudoku-wrapper {
+    max-width: 560px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+/* ===== GAME HEADER ===== */
+.game-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.game-header h1 {
+    font-size: 2.5rem;
+    background: linear-gradient(90deg, #ffd700, #ff8c00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+}
+
+.game-header p {
+    color: #aaa;
+    font-size: 0.95rem;
+}
+
+/* ===== GAME CONTROLS ===== */
+.game-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.difficulty-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.difficulty-selector label {
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+.difficulty-selector select {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 2px solid #444;
+    background: #1a1a3e;
+    color: #ffd700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    outline: none;
+}
+
+.difficulty-selector select:focus {
+    border-color: #ffd700;
+}
+
+.game-stats {
+    display: flex;
+    gap: 20px;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #ccc;
+    font-size: 0.95rem;
+}
+
+.stat i {
+    color: #ffd700;
+}
+
+.control-btn {
+    padding: 8px 18px;
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.control-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+
+/* ===== SUDOKU BOARD ===== */
+.sudoku-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.sudoku-board {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(9, 1fr);
+    gap: 0;
+    width: 100%;
+    max-width: 450px;
+    aspect-ratio: 1;
+    background: #111133;
+    border: 3px solid #ffd700;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.sudoku-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #fff;
+    background: #1a1a4a;
+    cursor: pointer;
+    border: 1px solid #333366;
+    transition: background-color 0.2s;
+    position: relative;
+    user-select: none;
+}
+
+/* 3x3 box borders */
+.sudoku-cell.border-right {
+    border-right: 2px solid #ffd700;
+}
+
+.sudoku-cell.border-bottom {
+    border-bottom: 2px solid #ffd700;
+}
+
+/* Cell states */
+.sudoku-cell.given {
+    color: #aaaacc;
+    background: #15153a;
+    cursor: default;
+}
+
+.sudoku-cell.selected {
+    background: #2a2a7a !important;
+    box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.sudoku-cell.highlighted {
+    background: #222260;
+}
+
+.sudoku-cell.same-number {
+    background: #2d2d6a;
+    color: #ffd700;
+}
+
+.sudoku-cell.error {
+    color: #ff4444 !important;
+    animation: shake 0.3s;
+}
+
+.sudoku-cell.hint-cell {
+    color: #00ff88 !important;
+    animation: pulse-hint 0.5s;
+}
+
+/* Notes inside cells */
+.sudoku-cell .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: 100%;
+    height: 100%;
+    padding: 2px;
+}
+
+.sudoku-cell .notes-grid span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem;
+    color: #7788cc;
+    font-weight: normal;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+}
+
+@keyframes pulse-hint {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* ===== NUMBER PAD ===== */
+.number-pad {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.num-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    border: 2px solid #444;
+    background: #1a1a4a;
+    color: #ffd700;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.num-btn:hover {
+    background: #2a2a7a;
+    border-color: #ffd700;
+    transform: scale(1.1);
+}
+
+.num-btn.active {
+    background: #ffd700;
+    color: #000;
+    border-color: #ffd700;
+}
+
+.num-btn.completed {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.erase-btn {
+    background: #3a1a1a;
+    border-color: #663333;
+    color: #ff6666;
+}
+
+.erase-btn:hover {
+    background: #5a2a2a;
+    border-color: #ff6666;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.action-btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 2px solid #444;
+    background: #1a1a4a;
+    color: #ccc;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    border-color: #ffd700;
+    color: #ffd700;
+    background: #222260;
+}
+
+.action-btn.active {
+    background: #2a2a7a;
+    border-color: #ffd700;
+    color: #ffd700;
+}
+
+.action-btn i {
+    margin-right: 5px;
+}
+
+/* ===== MODALS ===== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #1a1a4a, #2a2a6a);
+    padding: 40px;
+    border-radius: 16px;
+    text-align: center;
+    border: 2px solid #ffd700;
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
+    max-width: 400px;
+    width: 90%;
+}
+
+.modal-content h2 {
+    font-size: 2rem;
+    color: #ffd700;
+    margin-bottom: 15px;
+}
+
+.modal-content p {
+    color: #ccc;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.modal-content .control-btn {
+    margin-top: 15px;
+    padding: 12px 30px;
+    font-size: 1rem;
+}
+
+.modal-content.gameover h2 {
+    color: #ff4444;
+}
+
+.modal-content.gameover {
+    border-color: #ff4444;
+    box-shadow: 0 0 40px rgba(255, 68, 68, 0.2);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+    .sudoku-wrapper {
+        padding: 10px;
+    }
+
+    .game-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .game-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .sudoku-cell {
+        font-size: 1rem;
+    }
+
+    .num-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+
+    .action-btn {
+        padding: 8px 14px;
+        font-size: 0.8rem;
+    }
+
+    .sudoku-cell .notes-grid span {
+        font-size: 0.4rem;
+    }
+}

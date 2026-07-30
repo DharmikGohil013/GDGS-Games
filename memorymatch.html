@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="GDGS.png">
+    <title>Memory Match - GDGS Edu Games</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a2e 0%, #1a1a3e 50%, #0d0d2d 100%);
+            min-height: 100vh; color: #fff;
+        }
+        /* NAV */
+        nav { background-color: #333; padding: 1rem; display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .nav-left { display: flex; align-items: center; }
+        .logomode { width: 50px; height: 50px; margin-right: 15px; }
+        .company-info { color: white; margin-right: 15px; }
+        .logonamemode { font-size: 1.5rem; color: gold; }
+        .marqueemode { color: yellow; }
+        .marqueemode h3 { font-size: 1rem; display: inline; }
+        .menumode { display: flex; align-items: center; gap: 10px; }
+        .menubottonmode { text-decoration: none; color: white; padding: 10px 20px; background-color: #007BFF; border-radius: 5px; cursor: pointer; text-align: center; }
+        .menubottonmode:hover { background-color: #0056b3; }
+
+        /* WRAPPER */
+        .game-wrapper { max-width: 700px; margin: 20px auto; padding: 20px; }
+        .game-header { text-align: center; margin-bottom: 20px; }
+        .game-header h1 { font-size: 2.5rem; background: linear-gradient(90deg, #ffd700, #ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px; }
+        .game-header p { color: #aaa; font-size: 0.95rem; }
+
+        /* CONTROLS */
+        .game-controls { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
+        .control-btn { padding: 10px 22px; background: linear-gradient(135deg, #ffd700, #ff8c00); color: #000; border: none; border-radius: 8px; font-weight: bold; font-size: 0.95rem; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .control-btn:hover { transform: scale(1.05); box-shadow: 0 4px 15px rgba(255,215,0,0.4); }
+        .stat { display: flex; align-items: center; gap: 6px; color: #ccc; font-size: 0.95rem; }
+        .stat i { color: #ffd700; }
+        select { padding: 6px 12px; border-radius: 8px; border: 2px solid #444; background: #1a1a3e; color: #ffd700; font-size: 0.9rem; cursor: pointer; outline: none; }
+        select:focus { border-color: #ffd700; }
+
+        /* SCORE DISPLAY */
+        .score-display { display: flex; justify-content: center; gap: 40px; margin-bottom: 20px; }
+        .score-box { text-align: center; }
+        .score-box .label { color: #888; font-size: 0.8rem; margin-bottom: 4px; }
+        .score-box .value { font-size: 1.6rem; font-weight: bold; color: #ffd700; }
+
+        /* CARD GRID */
+        .card-grid {
+            display: grid;
+            gap: 12px;
+            justify-content: center;
+            margin: 0 auto 25px;
+        }
+        .card-grid.grid-4x4 { grid-template-columns: repeat(4, 90px); }
+        .card-grid.grid-4x5 { grid-template-columns: repeat(5, 80px); }
+        .card-grid.grid-5x6 { grid-template-columns: repeat(6, 70px); }
+
+        /* CARD */
+        .memory-card {
+            aspect-ratio: 1;
+            perspective: 800px;
+            cursor: pointer;
+        }
+        .memory-card .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s;
+            transform-style: preserve-3d;
+        }
+        .memory-card.flipped .card-inner { transform: rotateY(180deg); }
+        .memory-card.matched .card-inner { transform: rotateY(180deg); }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card-front {
+            background: linear-gradient(145deg, #1a1a5a, #2a2a7a);
+            border: 2px solid #444488;
+            font-size: 2rem;
+            color: #ffd700;
+        }
+        .card-front:hover { border-color: #ffd700; }
+        .card-back {
+            background: linear-gradient(145deg, #222260, #333380);
+            border: 2px solid #555588;
+            transform: rotateY(180deg);
+            font-size: 2.5rem;
+        }
+        .memory-card.matched .card-back {
+            background: linear-gradient(145deg, #0a4a0a, #1a6a1a);
+            border-color: #00ff88;
+            animation: matchPulse 0.5s;
+        }
+        .memory-card.wrong .card-back {
+            border-color: #ff4444;
+            animation: cardShake 0.4s;
+        }
+
+        @keyframes matchPulse {
+            0% { transform: rotateY(180deg) scale(1); }
+            50% { transform: rotateY(180deg) scale(1.1); }
+            100% { transform: rotateY(180deg) scale(1); }
+        }
+        @keyframes cardShake {
+            0%,100% { transform: rotateY(180deg) translateX(0); }
+            25% { transform: rotateY(180deg) translateX(-5px); }
+            75% { transform: rotateY(180deg) translateX(5px); }
+        }
+
+        /* MODAL */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .modal.hidden { display: none; }
+        .modal-content { background: linear-gradient(135deg, #1a1a4a, #2a2a6a); padding: 40px; border-radius: 16px; text-align: center; border: 2px solid #ffd700; box-shadow: 0 0 40px rgba(255,215,0,0.2); max-width: 420px; width: 90%; }
+        .modal-content h2 { font-size: 2rem; color: #ffd700; margin-bottom: 15px; }
+        .modal-content p { color: #ccc; margin-bottom: 8px; font-size: 1.05rem; }
+        .modal-content .control-btn { margin-top: 15px; padding: 12px 30px; font-size: 1rem; }
+        .stars { font-size: 2.5rem; margin-bottom: 10px; }
+
+        @media(max-width:550px){
+            .card-grid.grid-4x4{grid-template-columns:repeat(4,72px);gap:8px;}
+            .card-grid.grid-4x5{grid-template-columns:repeat(5,60px);gap:6px;}
+            .card-grid.grid-5x6{grid-template-columns:repeat(6,50px);gap:5px;}
+            .card-back{font-size:1.8rem;}
+            .card-front{font-size:1.4rem;}
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <section><nav class="navmode">
+                <div class="nav-left">
+                    <img src="a5.png" class="logomode" alt="Logo">
+                    <div class="company-info"><span class="logonamemode">GDGS</span></div>
+                    <marquee class="marqueemode" scrollamount="10"><h3>Edu Games - Train Your Brain!</h3></marquee>
+                </div>
+                <div class="menumode">
+                    <a class="menubottonmode" href="index.html">HOME</a>
+                    <a class="menubottonmode" href="about.html">ABOUT</a>
+                    <a class="menubottonmode" href="downlord.html">DOWNLOAD</a>
+                    <a class="menubottonmode" href="commingsoon.html">COMING</a>
+                    <a class="menubottonmode" href="gamingsection.html">GAMES</a>
+                </div>
+            </nav></section>
+        </nav>
+    </header>
+
+    <div class="game-wrapper">
+        <div class="game-header">
+            <h1><i class="fas fa-brain"></i> Memory Match</h1>
+            <p>Flip cards and find all matching pairs — train your memory!</p>
+        </div>
+
+        <div class="game-controls">
+            <label style="color:#ccc">Grid Size:</label>
+            <select id="grid-size">
+                <option value="4x4">4×4 (8 pairs)</option>
+                <option value="4x5" selected>4×5 (10 pairs)</option>
+                <option value="5x6">5×6 (15 pairs)</option>
+            </select>
+            <label style="color:#ccc">Theme:</label>
+            <select id="theme">
+                <option value="emoji">Emoji</option>
+                <option value="animals">Animals</option>
+                <option value="flags">Flags</option>
+                <option value="food">Food</option>
+            </select>
+            <button class="control-btn" id="new-game-btn"><i class="fas fa-redo"></i> New Game</button>
+        </div>
+
+        <div class="score-display">
+            <div class="score-box"><div class="label">Moves</div><div class="value" id="moves">0</div></div>
+            <div class="score-box"><div class="label">Pairs</div><div class="value" id="pairs">0 / 0</div></div>
+            <div class="score-box"><div class="label"><i class="fas fa-clock"></i> Time</div><div class="value" id="timer">00:00</div></div>
+        </div>
+
+        <div class="card-grid grid-4x5" id="card-grid"></div>
+    </div>
+
+    <!-- Win Modal -->
+    <div id="win-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="stars" id="win-stars"></div>
+            <h2><i class="fas fa-trophy"></i> You Win!</h2>
+            <p id="win-moves"></p>
+            <p id="win-time"></p>
+            <p id="win-rating"></p>
+            <button class="control-btn" id="play-again-btn"><i class="fas fa-redo"></i> Play Again</button>
+        </div>
+    </div>
+
+    <script>
+    (function(){
+        "use strict";
+
+        const themes = {
+            emoji: ["🚀","🎯","💎","🔮","🎪","🎨","🎵","🎭","🌈","🦋","🌺","🍀","⚡","🔥","❄️","🌊","🎲","🏆","🎸","🎻"],
+            animals: ["🐶","🐱","🐼","🦊","🦁","🐸","🐧","🦄","🐬","🦜","🐢","🦋","🐝","🐙","🦈","🐘","🦒","🐴","🦩","🐨"],
+            flags: ["🇺🇸","🇬🇧","🇯🇵","🇫🇷","🇩🇪","🇮🇹","🇪🇸","🇧🇷","🇮🇳","🇨🇦","🇦🇺","🇲🇽","🇰🇷","🇷🇺","🇿🇦","🇹🇷","🇸🇪","🇳🇱","🇵🇹","🇦🇷"],
+            food: ["🍕","🍔","🍣","🌮","🍩","🍰","🍪","🍫","🍿","🧁","🥝","🍉","🍇","🥑","🌽","🍜","🥐","🍦","🧀","🥞"]
+        };
+
+        const gridConfigs = {
+            "4x4": { rows: 4, cols: 4, pairs: 8, gridClass: "grid-4x4" },
+            "4x5": { rows: 4, cols: 5, pairs: 10, gridClass: "grid-4x5" },
+            "5x6": { rows: 5, cols: 6, pairs: 15, gridClass: "grid-5x6" }
+        };
+
+        let cards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let totalPairs = 0;
+        let moves = 0;
+        let lockBoard = false;
+        let timerInterval = null;
+        let seconds = 0;
+        let gameStarted = false;
+
+        const gridEl = document.getElementById("card-grid");
+        const gridSizeEl = document.getElementById("grid-size");
+        const themeEl = document.getElementById("theme");
+        const movesEl = document.getElementById("moves");
+        const pairsEl = document.getElementById("pairs");
+        const timerEl = document.getElementById("timer");
+        const newGameBtn = document.getElementById("new-game-btn");
+        const winModal = document.getElementById("win-modal");
+        const winStars = document.getElementById("win-stars");
+        const winMoves = document.getElementById("win-moves");
+        const winTime = document.getElementById("win-time");
+        const winRating = document.getElementById("win-rating");
+        const playAgainBtn = document.getElementById("play-again-btn");
+
+        function shuffle(arr){
+            for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+            return arr;
+        }
+
+        function generateCards(){
+            const config = gridConfigs[gridSizeEl.value];
+            const theme = themes[themeEl.value];
+            totalPairs = config.pairs;
+
+            // Pick random symbols
+            const available = shuffle([...theme]).slice(0, totalPairs);
+            // Duplicate and shuffle
+            cards = shuffle([...available, ...available]);
+        }
+
+        function renderGrid(){
+            const config = gridConfigs[gridSizeEl.value];
+            gridEl.innerHTML = "";
+            gridEl.className = "card-grid " + config.gridClass;
+
+            cards.forEach((symbol, index) => {
+                const card = document.createElement("div");
+                card.classList.add("memory-card");
+                card.dataset.index = index;
+                card.dataset.symbol = symbol;
+                card.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-front"><i class="fas fa-question"></i></div>
+                        <div class="card-back">${symbol}</div>
+                    </div>
+                `;
+                card.addEventListener("click", () => flipCard(card));
+                gridEl.appendChild(card);
+            });
+        }
+
+        function flipCard(card){
+            if(lockBoard) return;
+            if(card.classList.contains("flipped") || card.classList.contains("matched")) return;
+
+            // Start timer on first flip
+            if(!gameStarted){ gameStarted = true; startTimer(); }
+
+            card.classList.add("flipped");
+            flippedCards.push(card);
+
+            if(flippedCards.length === 2){
+                moves++;
+                movesEl.textContent = moves;
+                checkMatch();
+            }
+        }
+
+        function checkMatch(){
+            lockBoard = true;
+            const [c1, c2] = flippedCards;
+            const match = c1.dataset.symbol === c2.dataset.symbol;
+
+            if(match){
+                c1.classList.add("matched");
+                c2.classList.add("matched");
+                matchedPairs++;
+                pairsEl.textContent = matchedPairs + " / " + totalPairs;
+                flippedCards = [];
+                lockBoard = false;
+                if(matchedPairs === totalPairs) winGame();
+            } else {
+                c1.classList.add("wrong");
+                c2.classList.add("wrong");
+                setTimeout(() => {
+                    c1.classList.remove("flipped","wrong");
+                    c2.classList.remove("flipped","wrong");
+                    flippedCards = [];
+                    lockBoard = false;
+                }, 800);
+            }
+        }
+
+        // --- Timer ---
+        function startTimer(){
+            stopTimer(); seconds = 0; updateTimer();
+            timerInterval = setInterval(()=>{ seconds++; updateTimer(); }, 1000);
+        }
+        function stopTimer(){ if(timerInterval){clearInterval(timerInterval); timerInterval=null;} }
+        function updateTimer(){
+            const m = String(Math.floor(seconds/60)).padStart(2,"0");
+            const s = String(seconds%60).padStart(2,"0");
+            timerEl.textContent = m + ":" + s;
+        }
+
+        // --- Win ---
+        function winGame(){
+            stopTimer();
+            const m=Math.floor(seconds/60), s=seconds%60;
+
+            // Rating based on moves vs pairs
+            const efficiency = moves / totalPairs;
+            let stars, rating;
+            if(efficiency <= 1.5){ stars="⭐⭐⭐"; rating="Perfect Memory!"; }
+            else if(efficiency <= 2.2){ stars="⭐⭐"; rating="Great Memory!"; }
+            else if(efficiency <= 3){ stars="⭐"; rating="Good Job!"; }
+            else{ stars="💪"; rating="Keep Practicing!"; }
+
+            winStars.textContent = stars;
+            winMoves.textContent = "Moves: " + moves;
+            winTime.textContent = "Time: " + (m>0?m+"m ":"") + s + "s";
+            winRating.textContent = rating;
+            winModal.classList.remove("hidden");
+        }
+
+        // --- New Game ---
+        function startNewGame(){
+            winModal.classList.add("hidden");
+            stopTimer();
+            matchedPairs = 0; moves = 0; flippedCards = []; lockBoard = false; gameStarted = false; seconds = 0;
+            movesEl.textContent = "0";
+            timerEl.textContent = "00:00";
+            generateCards();
+            pairsEl.textContent = "0 / " + totalPairs;
+            renderGrid();
+
+            // Brief preview: show all cards for 1.5s then flip back
+            const allCards = gridEl.querySelectorAll(".memory-card");
+            allCards.forEach(c => c.classList.add("flipped"));
+            lockBoard = true;
+            setTimeout(()=>{
+                allCards.forEach(c => c.classList.remove("flipped"));
+                lockBoard = false;
+            }, 1500);
+        }
+
+        newGameBtn.addEventListener("click", startNewGame);
+        playAgainBtn.addEventListener("click", startNewGame);
+        gridSizeEl.addEventListener("change", startNewGame);
+        themeEl.addEventListener("change", startNewGame);
+
+        startNewGame();
+    })();
+    </script>
+</body>
+</html>

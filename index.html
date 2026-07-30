@@ -116,6 +116,97 @@
         #search-button:hover {
             background-color: #0056b3;
         }
+
+        /* ===== EDU GAMES SECTION ===== */
+        .edu-games-section {
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #0a0a2e 0%, #1a1a3e 50%, #0d0d2d 100%);
+            text-align: center;
+        }
+
+        .edu-games-header h2 {
+            font-size: 2.5rem;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .edu-games-header p {
+            color: #aaa;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        .edu-games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .edu-game-card {
+            background: linear-gradient(145deg, #1a1a4a, #222260);
+            border: 2px solid #333366;
+            border-radius: 16px;
+            padding: 30px 20px;
+            text-decoration: none;
+            color: white;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .edu-game-card:hover {
+            transform: translateY(-6px);
+            border-color: #ffd700;
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.2);
+        }
+
+        .edu-game-card.coming-soon-card {
+            opacity: 0.55;
+            cursor: default;
+        }
+
+        .edu-game-card.coming-soon-card:hover {
+            transform: none;
+            border-color: #333366;
+            box-shadow: none;
+        }
+
+        .edu-game-icon {
+            font-size: 3.5rem;
+            margin-bottom: 5px;
+        }
+
+        .edu-game-card h3 {
+            font-size: 1.4rem;
+            color: #ffd700;
+        }
+
+        .edu-game-card p {
+            color: #aaa;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .edu-game-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #000;
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin-top: auto;
+        }
+
+        .edu-game-badge.soon-badge {
+            background: linear-gradient(135deg, #444, #555);
+            color: #aaa;
+        }
         
     </style>
     
@@ -206,6 +297,41 @@
             <img src="t3.jpg" alt="Game Screenshot 3">
         </div>
     </section>
+    
+    <!-- ===== EDU GAMES SECTION ===== -->
+    <section class="edu-games-section">
+        <div class="edu-games-header">
+            <h2>🎓 Edu Games</h2>
+            <p>Train your brain with fun educational games</p>
+        </div>
+        <div class="edu-games-grid">
+            <a href="sudoku.html" class="edu-game-card">
+                <div class="edu-game-icon">🧩</div>
+                <h3>Sudoku</h3>
+                <p>Classic number puzzle — fill the 9×9 grid using logic!</p>
+                <span class="edu-game-badge">Play Now</span>
+            </a>
+            <a href="wordsearch.html" class="edu-game-card">
+                <div class="edu-game-icon">🔤</div>
+                <h3>Word Search</h3>
+                <p>Find hidden words in a grid of letters</p>
+                <span class="edu-game-badge">Play Now</span>
+            </a>
+            <a href="mathquiz.html" class="edu-game-card">
+                <div class="edu-game-icon">🧮</div>
+                <h3>Math Quiz</h3>
+                <p>Test your arithmetic skills against the clock</p>
+                <span class="edu-game-badge">Play Now</span>
+            </a>
+            <a href="memorymatch.html" class="edu-game-card">
+                <div class="edu-game-icon">🧠</div>
+                <h3>Memory Match</h3>
+                <p>Flip cards and find matching pairs</p>
+                <span class="edu-game-badge">Play Now</span>
+            </a>
+        </div>
+    </section>
+
     <section id="game" class="platform-section">
         <h2>Explore Our Platforms</h2>
         <div class="platform-buttons">
