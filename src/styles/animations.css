@@ -1,0 +1,36 @@
+/* ─── Playzy Animations ─── */
+
+/* Skeleton loading shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* CTA pulse glow */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255,95,77,0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(255,95,77,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,95,77,0); }
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

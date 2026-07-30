@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Bungee&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Colors */
+  --ink: #16171D;
+  --ink-soft: #55566A;
+  --paper: #F4F7FB;
+  --card: #FFFFFF;
+  --coral: #FF5F4D;
+  --coral-dark: #D6432F;
+  --gold: #FFC93C;
+  --gold-dark: #A8790A;
+  --blue: #3E6BFF;
+  --blue-dark: #2245C7;
+  --green: #1FC98B;
+  --green-dark: #0E8F62;
+  --purple: #8B5CF6;
+  --purple-dark: #6A34E0;
+
+  /* Radii */
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 8px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(22, 23, 29, 0.04);
+  --shadow-md: 0 8px 24px rgba(22, 23, 29, 0.08);
+  --shadow-lg: 0 16px 40px rgba(22, 23, 29, 0.12);
+  --shadow-hover: 0 20px 48px rgba(22, 23, 29, 0.16);
+
+  /* Transitions */
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Z-Index */
+  --z-base: 1;
+  --z-nav: 100;
+  --z-modal-backdrop: 1000;
+  --z-modal: 1010;
+  --z-toast: 1100;
+}
