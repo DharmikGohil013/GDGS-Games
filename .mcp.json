@@ -1,0 +1,109 @@
+{
+  "name": "playzy-game-portal",
+  "version": "1.0.0",
+  "description": "Playzy — 1,000+ Instant Browser Games Portal with Phaser 3, PixiJS, Three.js and Vanilla JS architecture.",
+  "mcpVersion": "1.0.0",
+  "mcpServers": {
+    "phaser-editor": {
+      "command": "npx",
+      "args": ["@phaserjs/editor-mcp-server"]
+    }
+  },
+  "techStack": {
+    "framework": "Vite",
+    "language": "JavaScript (ES Modules)",
+    "styling": "Vanilla CSS (Design Tokens & Responsive Media Queries)",
+    "animations": "GSAP 3.12",
+    "gameEngines": [
+      "Phaser 3.80 (2D Physics & Arcade Games)",
+      "PixiJS 7.4 (2D Canvas Rendering)",
+      "Three.js 0.170 (3D Graphics & Racing)"
+    ],
+    "stateManagement": "Zustand Pattern (Vanilla JS Store)",
+    "audio": "Web Audio API Synthesizer & Howler.js"
+  },
+  "routes": [
+    {
+      "path": "#/",
+      "name": "Home Page",
+      "description": "Hero carousel, categories bar, 1,000+ game cards grid, stats counter bar"
+    },
+    {
+      "path": "#/play/:gameId",
+      "name": "Dedicated Full Page Game Viewport",
+      "description": "Full viewport game canvas player, top header navigation, controls guide, related games"
+    },
+    {
+      "path": "#about",
+      "name": "About Page",
+      "description": "Company mission, tech stack, creator credit (dharmikgohil.art)"
+    },
+    {
+      "path": "#terms",
+      "name": "Terms of Service Page",
+      "description": "13 legal terms sections"
+    },
+    {
+      "path": "#privacy",
+      "name": "Privacy Policy Page",
+      "description": "13 privacy policy sections"
+    },
+    {
+      "path": "#contact",
+      "name": "Contact Us Page",
+      "description": "Location (Mumbai, India), email (dharmikgohil.work@gmail.com), interactive form"
+    }
+  ],
+  "games": [
+    {
+      "id": "color-switch",
+      "name": "Color Switch",
+      "engine": "Phaser 3",
+      "file": "src/games/color-switch.js",
+      "description": "Classic color matching jump game with gravity physics, 5 obstacle types, star collectibles, and Web Audio synthesizer"
+    },
+    {
+      "id": "tower-stacker",
+      "name": "Tower Stacker",
+      "engine": "Phaser 3",
+      "file": "src/games/tower-stacker.js"
+    },
+    {
+      "id": "turbo-drift",
+      "name": "Turbo Drift",
+      "engine": "Three.js",
+      "file": "src/games/turbo-drift.js"
+    },
+    {
+      "id": "neon-snake",
+      "name": "Neon Snake",
+      "engine": "PixiJS",
+      "file": "src/games/neon-snake.js"
+    },
+    {
+      "id": "city-sprint",
+      "name": "City Sprint",
+      "engine": "PixiJS",
+      "file": "src/games/city-sprint.js"
+    },
+    {
+      "id": "ball-drop",
+      "name": "Ball Drop",
+      "engine": "Phaser 3",
+      "file": "src/games/ball-drop.js"
+    },
+    {
+      "id": "block-merge",
+      "name": "Block Merge",
+      "engine": "Phaser 3",
+      "file": "src/games/block-merge.js"
+    }
+  ],
+  "developerNotes": {
+    "commandDev": "npm run dev",
+    "commandBuild": "npm run build",
+    "creator": "dharmikgohil.art",
+    "contactEmail": "dharmikgohil.work@gmail.com",
+    "location": "Mumbai, India"
+  }
+}

@@ -14,7 +14,6 @@ import { createNavbar } from './components/navbar.js';
 import { createCategories } from './components/categories.js';
 import { createHero } from './components/hero.js';
 import { createGameGrid } from './components/gameGrid.js';
-import { createGameModal } from './components/gameModal.js';
 import { createStatsBar } from './components/statsBar.js';
 import { createFooter } from './components/footer.js';
 
@@ -23,6 +22,7 @@ import { createAboutPage } from './components/aboutPage.js';
 import { createTermsPage } from './components/termsPage.js';
 import { createPrivacyPage } from './components/privacyPage.js';
 import { createContactPage } from './components/contactPage.js';
+import { createPlayPage, destroyActiveGame } from './components/playPage.js';
 
 // Make GSAP available globally for components
 window.gsap = gsap;
@@ -34,9 +34,6 @@ function initApp() {
   app = document.getElementById('app');
   if (!app) return;
 
-  // Game Modal (appended to body for proper z-index)
-  document.body.appendChild(createGameModal());
-
   // Listen for hash changes
   window.addEventListener('hashchange', renderPage);
   renderPage();
@@ -45,10 +42,20 @@ function initApp() {
 function renderPage() {
   const hash = (window.location.hash || '#/').replace('#', '');
 
+  // Cleanup active game engine instance when changing routes
+  destroyActiveGame();
+
   // Clear app content
   app.innerHTML = '';
 
-  // Always add navbar
+  // Dedicated Play Page route (e.g. #/play/color-switch)
+  if (hash.startsWith('/play/') || hash.startsWith('play/')) {
+    const gameId = hash.replace(/^\/?play\//, '');
+    renderPlayPage(gameId);
+    return;
+  }
+
+  // Always add navbar for standard pages
   app.appendChild(createNavbar());
 
   // Route to the correct page
@@ -64,7 +71,7 @@ function renderPage() {
     renderHomePage();
   }
 
-  // Always add footer
+  // Always add footer for standard pages
   app.appendChild(createFooter());
 
   // Scroll to top
@@ -72,6 +79,15 @@ function renderPage() {
 
   // Animate page entrance
   animatePageEntrance();
+}
+
+function renderPlayPage(gameId) {
+  document.title = `Play ${gameId.replace(/-/g, ' ').toUpperCase()} — Playzy Games`;
+  currentPage = 'play';
+
+  // Render Full Screen Dedicated Play Page View
+  app.appendChild(createPlayPage(gameId));
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 function renderHomePage() {
@@ -145,7 +161,7 @@ function animatePageEntrance() {
       );
       observer.observe(statsOuter);
     }
-  } else {
+  } else if (currentPage === 'sub') {
     // Sub-page entrance
     gsap.from('.page-hero', {
       y: 30, opacity: 0, duration: 0.6, delay: 0.1, ease: 'power3.out',

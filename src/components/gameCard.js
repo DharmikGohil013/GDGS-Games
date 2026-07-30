@@ -25,7 +25,7 @@ const tagColorMap = {
 export function createGameCard(game) {
   const card = document.createElement('a');
   card.className = 'game-card';
-  card.href = '#';
+  card.href = `#/play/${game.id}`;
   card.setAttribute('data-game-id', game.id);
   card.setAttribute('aria-label', `Play ${game.title} - ${game.category} game, rated ${game.rating} stars`);
 
@@ -50,12 +50,10 @@ export function createGameCard(game) {
     </div>
   `;
 
-  // Click to open game
+  // Click to open game page
   card.addEventListener('click', (e) => {
     e.preventDefault();
-    setState({
-      gameModal: { open: true, game },
-    });
+    window.location.hash = `#/play/${game.id}`;
   });
 
   return card;

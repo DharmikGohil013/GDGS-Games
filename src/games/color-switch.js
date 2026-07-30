@@ -3,7 +3,7 @@ import Phaser from 'phaser';
 
 let gameInstance = null;
 
-// Game Color Palette
+// Game Color Palette (4 Neon Arcade Colors)
 const COLORS = [
   { name: 'Blue', hex: 0x3E6BFF, str: '#3E6BFF' },
   { name: 'Yellow', hex: 0xFFC93C, str: '#FFC93C' },
@@ -11,7 +11,14 @@ const COLORS = [
   { name: 'Purple', hex: 0x8B5CF6, str: '#8B5CF6' }
 ];
 
-// Audio Synthesizer (Web Audio API - no external assets required)
+// Helper to get segment index at target angle (in radians)
+function getSegmentIndexAtAngle(rotation, targetAngleRad) {
+  let rel = (targetAngleRad - rotation + Math.PI / 4) % (Math.PI * 2);
+  if (rel < 0) rel += Math.PI * 2;
+  return Math.floor(rel / (Math.PI / 2)) % 4;
+}
+
+// Audio Synthesizer (Web Audio API)
 class SoundFX {
   constructor() {
     this.ctx = null;
@@ -36,8 +43,8 @@ class SoundFX {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(250, this.ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(600, this.ctx.currentTime + 0.12);
+      osc.frequency.setValueAtTime(260, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(620, this.ctx.currentTime + 0.12);
       gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.12);
       osc.connect(gain);
@@ -76,7 +83,7 @@ class SoundFX {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(300, this.ctx.currentTime);
+      osc.frequency.setValueAtTime(320, this.ctx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(60, this.ctx.currentTime + 0.4);
       gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
@@ -108,34 +115,32 @@ export function initGame(container) {
 
       // Camera setup
       this.cameras.main.setBackgroundColor('#0b0c10');
-      this.minCameraY = 0;
 
-      // Particle emitter container
+      // Particles array
       this.particles = [];
 
-      // Create Stars Background
+      // Starfield background
       this.createStarfield();
 
-      // World Group for obstacles & collectibles
+      // World Group for obstacles & color changers
       this.obstacles = [];
       this.colorChangers = [];
 
       // Spawn Initial Player Ball
-      this.ballRadius = 14;
-      this.ballColorIndex = 0;
-      this.ballY = this.height - 180;
+      this.ballRadius = 9;
+      this.ballColorIndex = 0; // Starts Blue
+      this.startFloorY = this.height - 160;
+      this.ballY = this.startFloorY;
       this.ballVy = 0;
-      this.gravity = 950;
-      this.jumpImpulse = -380;
+      this.gravity = 900;
+      this.jumpImpulse = -370;
+      this.hasClimbed = false;
 
       this.ballGraphics = this.add.graphics();
       this.drawBall();
 
-      // Ball Trail
-      this.trailHistory = [];
-
       // Spawn initial level obstacles
-      this.nextObstacleY = this.height - 450;
+      this.nextObstacleY = this.height - 440;
       this.spawnInitialObstacles();
 
       // UI Containers
@@ -143,37 +148,42 @@ export function initGame(container) {
 
       // Controls
       this.input.on('pointerdown', () => this.handleJump());
-      this.input.keyboard.on('keydown-SPACE', () => this.handleJump());
+      this.input.keyboard.on('keydown-SPACE', (event) => {
+        if (event && typeof event.preventDefault === 'function') event.preventDefault();
+        if (event && event.originalEvent && typeof event.originalEvent.preventDefault === 'function') {
+          event.originalEvent.preventDefault();
+        }
+        this.handleJump();
+      });
     }
 
     createStarfield() {
-      this.bgParticles = [];
-      for (let i = 0; i < 40; i++) {
+      for (let i = 0; i < 45; i++) {
         const x = Phaser.Math.Between(0, this.width);
-        const y = Phaser.Math.Between(-2000, this.height);
+        const y = Phaser.Math.Between(-3000, this.height);
         const radius = Phaser.Math.FloatBetween(1, 2.5);
-        const alpha = Phaser.Math.FloatBetween(0.2, 0.7);
+        const alpha = Phaser.Math.FloatBetween(0.25, 0.75);
         const star = this.add.circle(x, y, radius, 0xffffff, alpha);
-        star.setScrollFactor(0.2); // parallax effect
-        this.bgParticles.push(star);
+        star.setScrollFactor(0.2);
       }
     }
 
     drawBall() {
       this.ballGraphics.clear();
+      this.ballGraphics.setDepth(40);
       const color = COLORS[this.ballColorIndex].hex;
 
       // Outer Glow
-      this.ballGraphics.fillStyle(color, 0.3);
-      this.ballGraphics.fillCircle(this.width / 2, this.ballY, this.ballRadius + 6);
+      this.ballGraphics.fillStyle(color, 0.35);
+      this.ballGraphics.fillCircle(this.width / 2, this.ballY, this.ballRadius + 4);
 
       // Core Ball
       this.ballGraphics.fillStyle(color, 1);
       this.ballGraphics.fillCircle(this.width / 2, this.ballY, this.ballRadius);
 
       // Center Highlight
-      this.ballGraphics.fillStyle(0xffffff, 0.6);
-      this.ballGraphics.fillCircle(this.width / 2 - 3, this.ballY - 3, 4);
+      this.ballGraphics.fillStyle(0xffffff, 0.75);
+      this.ballGraphics.fillCircle(this.width / 2 - 2, this.ballY - 2, 2.5);
     }
 
     spawnInitialObstacles() {
@@ -183,10 +193,11 @@ export function initGame(container) {
     }
 
     spawnObstacle() {
-      const types = ['circle', 'cross', 'square', 'doubleCircle', 'diamond'];
+      const types = ['circle', 'square', 'cross', 'doubleCircle', 'diamond'];
       const type = types[Math.floor(Math.random() * types.length)];
       const y = this.nextObstacleY;
-      const rotationSpeed = (0.015 + Math.min(this.score * 0.001, 0.025)) * (Math.random() > 0.5 ? 1 : -1);
+      const speedMult = 1 + Math.min(this.score * 0.03, 0.8);
+      const rotationSpeed = (0.018 * speedMult) * (Math.random() > 0.5 ? 1 : -1);
 
       const obstacle = {
         type,
@@ -195,12 +206,13 @@ export function initGame(container) {
         rotationSpeed,
         radius: 95,
         graphics: this.add.graphics(),
-        cleared: false
+        hitBottom: false,
+        hitTop: false
       };
 
       this.obstacles.push(obstacle);
 
-      // Spawn Color Changer above obstacle
+      // Spawn Color Changer item between obstacles
       const changerY = y - 180;
       this.colorChangers.push({
         y: changerY,
@@ -213,10 +225,10 @@ export function initGame(container) {
     }
 
     createUI() {
-      // In-Game Score HUD
+      // Live Score HUD
       this.scoreText = this.add.text(24, 24, '0', {
         fontFamily: "'Space Grotesk', sans-serif",
-        fontSize: '36px',
+        fontSize: '38px',
         fontStyle: 'bold',
         color: '#FFFFFF'
       }).setScrollFactor(0).setDepth(100);
@@ -230,7 +242,7 @@ export function initGame(container) {
       // Start Screen Overlay
       this.startContainer = this.add.container(0, 0).setScrollFactor(0).setDepth(200);
 
-      const titleBg = this.add.rectangle(this.width / 2, this.height / 2, this.width, this.height, 0x000000, 0.5);
+      const titleBg = this.add.rectangle(this.width / 2, this.height / 2, this.width, this.height, 0x000000, 0.45);
 
       const logoText = this.add.text(this.width / 2, this.height / 2 - 80, 'COLOR SWITCH', {
         fontFamily: "'Bungee', sans-serif",
@@ -245,7 +257,6 @@ export function initGame(container) {
         color: '#FFFFFF'
       }).setOrigin(0.5);
 
-      // Pulsing tap text animation
       this.tweens.add({
         targets: tapText,
         alpha: 0.3,
@@ -256,10 +267,12 @@ export function initGame(container) {
 
       this.startContainer.add([titleBg, logoText, tapText]);
 
-      // Game Over Overlay (Hidden initially)
+      // Game Over Overlay
       this.gameOverContainer = this.add.container(0, 0).setScrollFactor(0).setDepth(300).setVisible(false);
 
       const goBg = this.add.rectangle(this.width / 2, this.height / 2, this.width, this.height, 0x0b0c10, 0.85);
+      goBg.setInteractive({ useHandCursor: true });
+      goBg.on('pointerdown', () => this.restartGame());
 
       const goCard = this.add.rectangle(this.width / 2, this.height / 2, Math.min(this.width - 40, 360), 320, 0x16171D, 1);
       goCard.setStrokeStyle(2, 0xff5f4d);
@@ -283,23 +296,37 @@ export function initGame(container) {
         color: '#FFC93C'
       }).setOrigin(0.5);
 
-      const replayBtn = this.add.rectangle(this.width / 2, this.height / 2 + 75, 200, 48, 0xff5f4d, 1);
+      const replayBtn = this.add.rectangle(this.width / 2, this.height / 2 + 75, 220, 52, 0xff5f4d, 1);
       replayBtn.setInteractive({ useHandCursor: true });
 
       const replayText = this.add.text(this.width / 2, this.height / 2 + 75, 'PLAY AGAIN', {
         fontFamily: "'Space Grotesk', sans-serif",
-        fontSize: '16px',
+        fontSize: '18px',
         fontStyle: 'bold',
         color: '#FFFFFF'
-      }).setOrigin(0.5);
+      }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
-      replayBtn.on('pointerdown', () => this.restartGame());
+      const doRestart = (pointer, localX, localY, event) => {
+        if (event) event.stopPropagation();
+        this.restartGame();
+      };
+
+      replayBtn.on('pointerdown', doRestart);
+      replayText.on('pointerdown', doRestart);
+
+      replayBtn.on('pointerover', () => replayBtn.setFillStyle(0xd6432f));
+      replayBtn.on('pointerout', () => replayBtn.setFillStyle(0xff5f4d));
+      replayText.on('pointerover', () => replayBtn.setFillStyle(0xd6432f));
+      replayText.on('pointerout', () => replayBtn.setFillStyle(0xff5f4d));
 
       this.gameOverContainer.add([goBg, goCard, goTitle, this.finalScoreText, this.bestScoreText, replayBtn, replayText]);
     }
 
     handleJump() {
-      if (this.gameState === 'GAMEOVER') return;
+      if (this.gameState === 'GAMEOVER') {
+        this.restartGame();
+        return;
+      }
 
       if (this.gameState === 'START') {
         this.gameState = 'PLAYING';
@@ -308,20 +335,18 @@ export function initGame(container) {
 
       this.ballVy = this.jumpImpulse;
       sfx.playJump();
-
-      // Particle jump burst
       this.spawnJumpParticles();
     }
 
     spawnJumpParticles() {
       const color = COLORS[this.ballColorIndex].hex;
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < 5; i++) {
         this.particles.push({
-          x: this.width / 2 + Phaser.Math.Between(-8, 8),
-          y: this.ballY + 10,
-          vx: Phaser.Math.FloatBetween(-30, 30),
-          vy: Phaser.Math.FloatBetween(40, 100),
-          radius: Phaser.Math.FloatBetween(2, 4),
+          x: this.width / 2 + Phaser.Math.Between(-6, 6),
+          y: this.ballY + 8,
+          vx: Phaser.Math.FloatBetween(-25, 25),
+          vy: Phaser.Math.FloatBetween(40, 90),
+          radius: Phaser.Math.FloatBetween(2, 3.5),
           alpha: 1,
           color
         });
@@ -337,7 +362,7 @@ export function initGame(container) {
           y,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
-          radius: Phaser.Math.FloatBetween(3, 6),
+          radius: Phaser.Math.FloatBetween(3, 5),
           alpha: 1,
           color: colorHex || COLORS[Math.floor(Math.random() * 4)].hex
         });
@@ -350,42 +375,72 @@ export function initGame(container) {
       // Update Particles
       this.updateParticles(dt);
 
+      // Rotate & Render Obstacles
+      this.obstacles.forEach((obs) => {
+        obs.rotation += obs.rotationSpeed;
+        this.drawObstacle(obs);
+      });
+
+      // Render Color Changers
+      this.colorChangers.forEach((changer) => {
+        changer.rotation += 0.025;
+        this.drawColorChanger(changer);
+      });
+
+      // Render Ball
+      this.drawBall();
+
+      // Idle Bounce Animation at Start Screen
+      if (this.gameState === 'START') {
+        this.startBounceTime = (this.startBounceTime || 0) + dt * 4.5;
+        this.ballY = this.startFloorY + Math.sin(this.startBounceTime) * 12;
+        return;
+      }
+
       if (this.gameState !== 'PLAYING') return;
 
       // Ball Physics
       this.ballVy += this.gravity * dt;
       this.ballY += this.ballVy * dt;
 
-      // Camera Follows Ball Upward
-      const targetCamY = this.ballY - this.height * 0.65;
-      if (targetCamY < this.cameras.main.scrollY) {
-        this.cameras.main.scrollY += (targetCamY - this.cameras.main.scrollY) * 0.1;
+      // Starting Floor Safety: Floor is 100% active until player climbs into the level
+      if (!this.hasClimbed) {
+        if (this.ballY >= this.startFloorY) {
+          this.ballY = this.startFloorY;
+          this.ballVy = 0;
+        }
+
+        // Unlock camera tracking only after climbing into first obstacle
+        if (this.ballY < this.height - 340) {
+          this.hasClimbed = true;
+        }
       }
 
-      // Check Bottom Screen Death
-      if (this.ballY > this.cameras.main.scrollY + this.height + 50) {
-        this.triggerGameOver();
-        return;
+      // Smooth Camera Tracking (only active after climbing)
+      if (this.hasClimbed) {
+        const targetCamY = this.ballY - this.height * 0.6;
+        if (targetCamY < this.cameras.main.scrollY) {
+          this.cameras.main.scrollY += (targetCamY - this.cameras.main.scrollY) * 0.14;
+        }
+
+        // Check Bottom Screen Fall Death (only active after climbing)
+        if (this.ballY > this.cameras.main.scrollY + this.height + 60) {
+          this.triggerGameOver();
+          return;
+        }
       }
 
-      // Draw Ball
-      this.drawBall();
-
-      // Render & Check Obstacles
+      // Check Obstacle Collisions
       this.obstacles.forEach((obs) => {
-        obs.rotation += obs.rotationSpeed;
-        this.drawObstacle(obs);
         this.checkObstacleCollision(obs);
       });
 
-      // Render & Check Color Changers
+      // Check Color Changer Collisions
       this.colorChangers.forEach((changer) => {
-        changer.rotation += 0.02;
-        this.drawColorChanger(changer);
         this.checkColorChangerCollision(changer);
       });
 
-      // Spawn more obstacles if needed
+      // Infinite Obstacle Spawner
       if (this.nextObstacleY > this.cameras.main.scrollY - 600) {
         this.spawnObstacle();
       }
@@ -400,7 +455,7 @@ export function initGame(container) {
         const p = this.particles[i];
         p.x += p.vx * dt;
         p.y += p.vy * dt;
-        p.alpha -= 1.5 * dt;
+        p.alpha -= 1.6 * dt;
 
         if (p.alpha <= 0) {
           this.particles.splice(i, 1);
@@ -423,7 +478,7 @@ export function initGame(container) {
 
       if (obs.type === 'circle') {
         for (let i = 0; i < 4; i++) {
-          const startAngle = obs.rotation + (i * Math.PI) / 2;
+          const startAngle = obs.rotation + (i * Math.PI) / 2 - Math.PI / 4;
           const endAngle = startAngle + Math.PI / 2;
 
           g.lineStyle(thickness, COLORS[i].hex, 1);
@@ -444,7 +499,6 @@ export function initGame(container) {
           const p1 = corners[i];
           const p2 = corners[(i + 1) % 4];
 
-          // Rotate corner points
           const rx1 = cx + p1.x * Math.cos(obs.rotation) - p1.y * Math.sin(obs.rotation);
           const ry1 = cy + p1.x * Math.sin(obs.rotation) + p1.y * Math.cos(obs.rotation);
 
@@ -455,9 +509,9 @@ export function initGame(container) {
           g.lineBetween(rx1, ry1, rx2, ry2);
         }
       } else if (obs.type === 'cross') {
-        const armLength = r * 0.9;
+        const armLength = r * 0.95;
         for (let i = 0; i < 4; i++) {
-          const angle = obs.rotation + (i * Math.PI) / 2;
+          const angle = obs.rotation + (i * Math.PI) / 2 - Math.PI / 4;
           const ex = cx + Math.cos(angle) * armLength;
           const ey = cy + Math.sin(angle) * armLength;
 
@@ -467,16 +521,16 @@ export function initGame(container) {
       } else if (obs.type === 'doubleCircle') {
         // Outer Ring
         for (let i = 0; i < 4; i++) {
-          const startAngle = obs.rotation + (i * Math.PI) / 2;
+          const startAngle = obs.rotation + (i * Math.PI) / 2 - Math.PI / 4;
           const endAngle = startAngle + Math.PI / 2;
           g.lineStyle(12, COLORS[i].hex, 1);
           g.beginPath();
           g.arc(cx, cy, r, startAngle, endAngle);
           g.strokePath();
         }
-        // Inner Ring (rotates opposite)
+        // Inner Ring (rotates opposite direction)
         for (let i = 0; i < 4; i++) {
-          const startAngle = -obs.rotation * 1.2 + (i * Math.PI) / 2;
+          const startAngle = -obs.rotation * 1.25 + (i * Math.PI) / 2 - Math.PI / 4;
           const endAngle = startAngle + Math.PI / 2;
           g.lineStyle(10, COLORS[(i + 2) % 4].hex, 1);
           g.beginPath();
@@ -484,12 +538,12 @@ export function initGame(container) {
           g.strokePath();
         }
       } else if (obs.type === 'diamond') {
-        const size = r * 0.9;
+        const size = r * 0.95;
         const corners = [
           { x: 0, y: -size },
-          { x: size * 0.8, y: 0 },
+          { x: size * 0.85, y: 0 },
           { x: 0, y: size },
-          { x: -size * 0.8, y: 0 }
+          { x: -size * 0.85, y: 0 }
         ];
 
         for (let i = 0; i < 4; i++) {
@@ -519,7 +573,6 @@ export function initGame(container) {
       const cy = changer.y;
       const radius = 16;
 
-      // Draw 4 colored quarters star
       for (let i = 0; i < 4; i++) {
         const startAngle = changer.rotation + (i * Math.PI) / 2;
         const endAngle = startAngle + Math.PI / 2;
@@ -532,33 +585,67 @@ export function initGame(container) {
         g.fillPath();
       }
 
-      g.lineStyle(2, 0xffffff, 0.8);
+      g.lineStyle(2, 0xffffff, 0.9);
       g.strokeCircle(cx, cy, radius);
     }
 
     checkObstacleCollision(obs) {
-      const cx = this.width / 2;
       const cy = obs.y;
       const ballY = this.ballY;
       const r = obs.radius;
       const thickness = 14;
+      const tolerance = thickness / 2 + this.ballRadius - 5;
 
-      // Distance from ball to obstacle center
-      const dist = Math.abs(ballY - cy);
+      // Check if color matches at angle with small safety margin
+      const checkMatch = (rot, targetAngle) => {
+        const segMain = getSegmentIndexAtAngle(rot, targetAngle);
+        if (segMain === this.ballColorIndex) return true;
+        const segPlus = getSegmentIndexAtAngle(rot, targetAngle + 0.18);
+        if (segPlus === this.ballColorIndex) return true;
+        const segMinus = getSegmentIndexAtAngle(rot, targetAngle - 0.18);
+        if (segMinus === this.ballColorIndex) return true;
+        return false;
+      };
 
-      if (dist < r + thickness / 2 && dist > r - thickness / 2) {
-        // Calculate angle of ball relative to obstacle center
-        let angle = Math.atan2(ballY - cy, 0); // vertical collision
-        if (angle < 0) angle += Math.PI * 2;
-
-        // Determine segment color at this collision angle
-        let relativeAngle = (angle - obs.rotation) % (Math.PI * 2);
-        if (relativeAngle < 0) relativeAngle += Math.PI * 2;
-
-        const segmentIndex = Math.floor(relativeAngle / (Math.PI / 2)) % 4;
-
-        if (segmentIndex !== this.ballColorIndex) {
+      // Bottom Arc Collision (6 o'clock = Math.PI / 2)
+      const distBottom = Math.abs(ballY - (cy + r));
+      if (distBottom < tolerance) {
+        if (!checkMatch(obs.rotation, Math.PI / 2)) {
           this.triggerGameOver();
+          return;
+        }
+      }
+
+      // Top Arc Collision (12 o'clock = 3 * Math.PI / 2)
+      const distTop = Math.abs(ballY - (cy - r));
+      if (distTop < tolerance) {
+        if (!checkMatch(obs.rotation, (3 * Math.PI) / 2)) {
+          this.triggerGameOver();
+          return;
+        }
+      }
+
+      // Inner Ring Collision for Double Circle
+      if (obs.type === 'doubleCircle') {
+        const innerR = r * 0.65;
+        const innerRot = -obs.rotation * 1.25;
+
+        const innerDistBottom = Math.abs(ballY - (cy + innerR));
+        if (innerDistBottom < tolerance) {
+          const segIdx = (getSegmentIndexAtAngle(innerRot, Math.PI / 2) + 2) % 4;
+          if (segIdx !== this.ballColorIndex) {
+            this.triggerGameOver();
+            return;
+          }
+        }
+
+        const innerDistTop = Math.abs(ballY - (cy - innerR));
+        if (innerDistTop < tolerance) {
+          const segIdx = (getSegmentIndexAtAngle(innerRot, (3 * Math.PI) / 2) + 2) % 4;
+          if (segIdx !== this.ballColorIndex) {
+            this.triggerGameOver();
+            return;
+          }
         }
       }
     }
@@ -567,7 +654,7 @@ export function initGame(container) {
       if (changer.collected) return;
 
       const dist = Math.abs(this.ballY - changer.y);
-      if (dist < 24) {
+      if (dist < 26) {
         changer.collected = true;
         changer.graphics.clear();
 
@@ -585,9 +672,9 @@ export function initGame(container) {
         let newColorIdx = (this.ballColorIndex + Phaser.Math.Between(1, 3)) % 4;
         this.ballColorIndex = newColorIdx;
 
-        // Effects
+        // Sound + Particle + Shake Effects
         sfx.playSwitch();
-        this.cameras.main.shake(120, 0.01);
+        this.cameras.main.shake(120, 0.012);
         this.spawnBurst(this.width / 2, changer.y, COLORS[newColorIdx].hex, 25);
       }
     }

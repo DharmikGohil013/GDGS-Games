@@ -10,17 +10,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.7.9",
     "gsap": "^3.12.5",
     "howler": "^2.2.4",
     "lucide": "^0.460.0",
     "phaser": "^3.80.1",
     "pixi.js": "^7.4.2",
+    "socket.io-client": "^4.8.1",
     "three": "^0.170.0",
-    "zustand": "^5.0.2",
-    "axios": "^1.7.9",
-    "socket.io-client": "^4.8.1"
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
+    "@phaserjs/editor-mcp-server": "^1.0.6",
     "vite": "^6.0.7"
   }
 }

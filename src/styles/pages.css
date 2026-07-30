@@ -1,5 +1,229 @@
 /* ─── Playzy Pages CSS ─── */
 
+/* ========== Dedicated Game Player View ========== */
+.play-page-container {
+  width: 100%;
+  min-height: 100vh;
+  background: #0b0c10;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.play-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  background: #16171D;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: var(--z-nav);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.play-header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.play-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.08);
+  padding: 8px 16px;
+  border-radius: 999px;
+  transition: all var(--transition-fast);
+}
+
+.play-back-btn:hover {
+  background: var(--coral);
+  color: #fff;
+}
+
+.play-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.play-game-title {
+  font-family: 'Bungee', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: #fff;
+  margin: 0;
+}
+
+.play-game-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(255,95,77,0.2);
+  color: var(--coral);
+  letter-spacing: 0.5px;
+}
+
+.play-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.play-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.85);
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  border: 1px solid rgba(255,255,255,0.12);
+  cursor: pointer;
+}
+
+.play-action-btn:hover {
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+}
+
+/* Dedicated Viewport Canvas Container */
+.play-viewport {
+  width: 100%;
+  height: calc(88vh - 56px);
+  min-height: 580px;
+  background: #0b0c10;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.play-viewport canvas {
+  max-width: 100%;
+  max-height: 100%;
+  box-shadow: 0 0 40px rgba(0,0,0,0.6);
+}
+
+.play-loading-spinner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #0b0c10;
+  color: rgba(255,255,255,0.7);
+  font-size: 15px;
+  gap: 16px;
+}
+
+.play-coming-soon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #0b0c10;
+  color: #fff;
+  text-align: center;
+  padding: 32px;
+  gap: 14px;
+}
+
+.play-coming-soon h3 {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.play-coming-soon p {
+  color: rgba(255,255,255,0.6);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Info Section Below Game Viewport */
+.play-info-section {
+  padding-top: 36px;
+  padding-bottom: 60px;
+}
+
+.play-info-card {
+  background: #16171D;
+  border-radius: var(--radius-md);
+  padding: 28px 32px;
+  border: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 40px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+  color: #fff;
+}
+
+.play-info-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.play-info-meta h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.play-info-meta p {
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+}
+
+.play-meta-stats {
+  display: flex;
+  gap: 20px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+}
+
+.play-meta-stats .rating {
+  color: var(--gold);
+}
+
+.play-controls-guide h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.play-controls-guide p {
+  font-size: 14.5px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.65;
+}
+
+.play-related-section h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 24px;
+}
+
 /* ========== Page Layout ========== */
 .page-content {
   max-width: 860px;

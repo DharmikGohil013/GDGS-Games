@@ -185,18 +185,7 @@ export function createHero() {
 
   const playGame = () => {
     const game = featuredGames[currentIndex];
-    setState({
-      gameModal: {
-        open: true,
-        game: {
-          id: game.id,
-          title: game.title,
-          category: game.category,
-          isPlayable: game.isPlayable,
-          engine: game.engine,
-        },
-      },
-    });
+    window.location.hash = `#/play/${game.id}`;
   };
 
   // Event Listeners
