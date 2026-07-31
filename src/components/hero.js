@@ -13,6 +13,7 @@ const featuredGames = [
     category: 'arcade',
     isPlayable: true,
     engine: 'phaser',
+    image: '/images/color-switch.jpg',
     artSvg: `<svg viewBox="0 0 80 80" width="76" height="76" aria-hidden="true"><circle cx="40" cy="40" r="38" fill="rgba(255,255,255,0.16)"/><path d="M40 18 A22 22 0 0 1 62 40" stroke="#FF3366" stroke-width="7" fill="none"/><path d="M62 40 A22 22 0 0 1 40 62" stroke="#FFC93C" stroke-width="7" fill="none"/><path d="M40 62 A22 22 0 0 1 18 40" stroke="#3E6BFF" stroke-width="7" fill="none"/><path d="M18 40 A22 22 0 0 1 40 18" stroke="#8B5CF6" stroke-width="7" fill="none"/><circle cx="40" cy="40" r="7" fill="white"/></svg>`
   },
   {
@@ -112,7 +113,9 @@ export function createHero() {
 
     <div class="hero-art" id="hero-art" style="cursor:pointer; background: ${featuredGames[0].bg}">
       <span class="tag" id="hero-art-tag">${featuredGames[0].tag}</span>
-      <div id="hero-art-svg">${featuredGames[0].artSvg}</div>
+      <div id="hero-art-svg" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+        ${featuredGames[0].image ? `<img src="${featuredGames[0].image}" alt="${featuredGames[0].title}" class="hero-art-img" />` : featuredGames[0].artSvg}
+      </div>
     </div>
   `;
 
@@ -145,7 +148,9 @@ export function createHero() {
       titleEl.innerHTML = currentGame.headline;
       subEl.textContent = currentGame.sub;
       tagEl.textContent = currentGame.tag;
-      svgEl.innerHTML = currentGame.artSvg;
+      svgEl.innerHTML = currentGame.image
+        ? `<img src="${currentGame.image}" alt="${currentGame.title}" class="hero-art-img" />`
+        : currentGame.artSvg;
       artEl.style.background = currentGame.bg;
 
       // Update active dot

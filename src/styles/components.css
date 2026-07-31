@@ -363,6 +363,25 @@
   transition: transform 0.18s ease;
 }
 
+.card-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.25s ease;
+}
+
+.hero-art-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 28px;
+  transition: transform 0.3s ease;
+}
+
+.game-card:hover .card-thumb-img {
+  transform: scale(1.08);
+}
+
 .game-card:hover .card-art svg {
   transform: scale(1.15);
 }

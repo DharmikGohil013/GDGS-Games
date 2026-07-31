@@ -36,9 +36,13 @@ export function createGameCard(game) {
   // Capitalize category
   const categoryLabel = game.category.charAt(0).toUpperCase() + game.category.slice(1);
 
+  const artContent = game.image
+    ? `<img src="${game.image}" alt="${game.title}" class="card-thumb-img" />`
+    : icon;
+
   card.innerHTML = `
     <div class="card-art" style="background:${bgColor}">
-      ${icon}
+      ${artContent}
     </div>
     <div class="card-body">
       <span class="card-tag" style="background:${tag.bg};color:${tag.text}">${categoryLabel}</span>

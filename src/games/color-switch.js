@@ -1,9 +1,9 @@
-// ─── Color Switch — Premium Phaser 3 Game (Flawless Engine) ───
+// ─── Color Switch — Deluxe Arcade Engine ───
 import Phaser from 'phaser';
 
 let gameInstance = null;
 
-// Game Color Palette (4 Neon Arcade Colors)
+// Game Color Palette (4 Vibrant Neon Arcade Colors)
 const COLORS = [
   { name: 'Blue', hex: 0x3E6BFF, str: '#3E6BFF' },   // Index 0 (Right, ~0 rad)
   { name: 'Yellow', hex: 0xFFC93C, str: '#FFC93C' }, // Index 1 (Bottom, ~PI/2 rad)
@@ -31,7 +31,7 @@ function getSegmentIndexAtAngle(rotation, targetAngleRad) {
   return Math.floor(rel / (Math.PI / 2)) % 4;
 }
 
-// Audio Synthesizer (Web Audio API)
+// Advanced Web Audio Synthesizer
 class SoundFX {
   constructor() {
     this.ctx = null;
@@ -56,14 +56,14 @@ class SoundFX {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(280, this.ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(640, this.ctx.currentTime + 0.12);
-      gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.12);
+      osc.frequency.setValueAtTime(260, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(620, this.ctx.currentTime + 0.11);
+      gain.gain.setValueAtTime(0.18, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.11);
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       osc.start();
-      osc.stop(this.ctx.currentTime + 0.12);
+      osc.stop(this.ctx.currentTime + 0.11);
     } catch (e) {}
   }
 
@@ -72,18 +72,19 @@ class SoundFX {
     this.init();
     if (!this.ctx) return;
     try {
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
-      osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.08);
-      osc.frequency.setValueAtTime(783.99, this.ctx.currentTime + 0.16);
-      gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start();
-      osc.stop(this.ctx.currentTime + 0.25);
+      const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+      notes.forEach((f, i) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, this.ctx.currentTime + i * 0.06);
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime + i * 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + i * 0.06 + 0.15);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(this.ctx.currentTime + i * 0.06);
+        osc.stop(this.ctx.currentTime + i * 0.06 + 0.15);
+      });
     } catch (e) {}
   }
 
@@ -92,19 +93,59 @@ class SoundFX {
     this.init();
     if (!this.ctx) return;
     try {
-      const freqs = [400, 600, 800, 1000];
+      const freqs = [400, 600, 800, 1050];
       freqs.forEach((f, i) => {
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-        osc.type = 'triangle';
+        osc.type = 'sine';
         osc.frequency.setValueAtTime(f, this.ctx.currentTime + i * 0.035);
-        gain.gain.setValueAtTime(0.18, this.ctx.currentTime + i * 0.035);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + i * 0.035 + 0.09);
+        gain.gain.setValueAtTime(0.16, this.ctx.currentTime + i * 0.035);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + i * 0.035 + 0.08);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(this.ctx.currentTime + i * 0.035);
-        osc.stop(this.ctx.currentTime + i * 0.035 + 0.09);
+        osc.stop(this.ctx.currentTime + i * 0.035 + 0.08);
       });
+    } catch (e) {}
+  }
+
+  playPowerup() {
+    if (!this.enabled) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const freqs = [350, 450, 600, 750, 900];
+      freqs.forEach((f, i) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, this.ctx.currentTime + i * 0.04);
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime + i * 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + i * 0.04 + 0.12);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(this.ctx.currentTime + i * 0.04);
+        osc.stop(this.ctx.currentTime + i * 0.04 + 0.12);
+      });
+    } catch (e) {}
+  }
+
+  playShieldBreak() {
+    if (!this.enabled) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(150, this.ctx.currentTime + 0.25);
+      gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.25);
     } catch (e) {}
   }
 
@@ -117,13 +158,13 @@ class SoundFX {
       const gain = this.ctx.createGain();
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(320, this.ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(50, this.ctx.currentTime + 0.4);
+      osc.frequency.exponentialRampToValueAtTime(50, this.ctx.currentTime + 0.45);
       gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
+      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.45);
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       osc.start();
-      osc.stop(this.ctx.currentTime + 0.4);
+      osc.stop(this.ctx.currentTime + 0.45);
     } catch (e) {}
   }
 }
@@ -142,57 +183,111 @@ export function initGame(container) {
       this.width = this.sys.game.config.width;
       this.height = this.sys.game.config.height;
 
-      this.gameState = 'START'; // 'START', 'PLAYING', 'GAMEOVER'
+      this.gameState = 'START'; // 'START', 'PLAYING', 'PAUSED', 'GAMEOVER'
+      this.mode = localStorage.getItem('color_switch_mode') || 'CASUAL'; // 'CASUAL', 'NORMAL', 'PRO'
       this.score = 0;
-      this.highScore = parseInt(localStorage.getItem('color_switch_highscore') || '0', 10);
+      this.highScore = parseInt(localStorage.getItem(`color_switch_highscore_${this.mode}`) || '0', 10);
+      this.comboCount = 0;
+
+      // Mode configuration settings
+      this.modeConfigs = {
+        CASUAL: {
+          rotSpeedBase: 0.007,
+          rotSpeedMax: 0.016,
+          spacing: 420,
+          gravity: 820,
+          jump: -355,
+          tolerance: 0.32,
+          initialShield: true,
+          multiplier: 1
+        },
+        NORMAL: {
+          rotSpeedBase: 0.012,
+          rotSpeedMax: 0.024,
+          spacing: 380,
+          gravity: 880,
+          jump: -365,
+          tolerance: 0.26,
+          initialShield: false,
+          multiplier: 1
+        },
+        PRO: {
+          rotSpeedBase: 0.018,
+          rotSpeedMax: 0.035,
+          spacing: 350,
+          gravity: 920,
+          jump: -375,
+          tolerance: 0.20,
+          initialShield: false,
+          multiplier: 2
+        }
+      };
+
+      const cfg = this.modeConfigs[this.mode];
 
       // Camera setup
       this.cameras.main.setBackgroundColor('#0b0c10');
 
       // Particles array
       this.particles = [];
+      this.floatingTexts = [];
 
       // Starfield background
       this.createStarfield();
 
-      // World Groups for obstacles, stars & color changers
-      this.obstacles = [];
-      this.stars = [];
-      this.colorChangers = [];
+      // Power-up States
+      this.shieldActive = cfg.initialShield;
+      this.slowMoActive = false;
+      this.slowMoTimer = 0;
+      this.rainbowActive = false;
+      this.rainbowTimer = 0;
 
-      // Spawn Initial Player Ball
-      this.ballRadius = 9;
+      // World Groups
+      this.obstacles = [];
+      this.items = []; // stars, changers, shields, slow-mos, rainbows
+
+      // Player Ball
+      this.ballRadius = 9.5;
       this.ballColorIndex = 0; // Starts Blue
       this.startFloorY = this.height - 160;
       this.ballY = this.startFloorY;
       this.ballVy = 0;
-      this.gravity = 920;
-      this.jumpImpulse = -375;
       this.hasClimbed = false;
 
       this.ballGraphics = this.add.graphics();
       this.drawBall();
 
       // Spawn Initial Level Obstacles
-      this.nextObstacleY = this.height - 420;
+      this.nextObstacleY = this.height - 400;
       this.spawnInitialObstacles();
 
       // UI Containers
       this.createUI();
 
-      // Controls
-      this.input.on('pointerdown', () => this.handleJump());
-      this.input.keyboard.on('keydown-SPACE', (event) => {
-        if (event && typeof event.preventDefault === 'function') event.preventDefault();
-        if (event && event.originalEvent && typeof event.originalEvent.preventDefault === 'function') {
-          event.originalEvent.preventDefault();
-        }
+      // Controls & Listeners
+      this.input.on('pointerdown', (pointer) => {
+        // Prevent pointer click on UI buttons from triggering jump
+        if (pointer.y < 90 && this.gameState === 'START') return;
         this.handleJump();
+      });
+
+      this.input.keyboard.on('keydown-SPACE', (event) => {
+        if (event) event.preventDefault();
+        this.handleJump();
+      });
+
+      this.input.keyboard.on('keydown-UP', (event) => {
+        if (event) event.preventDefault();
+        this.handleJump();
+      });
+
+      this.input.keyboard.on('keydown-R', () => {
+        this.restartGame();
       });
     }
 
     createStarfield() {
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 55; i++) {
         const x = Phaser.Math.Between(0, this.width);
         const y = Phaser.Math.Between(-4000, this.height);
         const radius = Phaser.Math.FloatBetween(1, 2.5);
@@ -205,19 +300,41 @@ export function initGame(container) {
     drawBall() {
       this.ballGraphics.clear();
       this.ballGraphics.setDepth(40);
+
+      const cx = this.width / 2;
+      const cy = this.ballY;
+
+      // Rainbow Wild Mode
+      if (this.rainbowActive) {
+        const rainbowHex = COLORS[Math.floor(Date.now() / 80) % 4].hex;
+        this.ballGraphics.fillStyle(rainbowHex, 0.5);
+        this.ballGraphics.fillCircle(cx, cy, this.ballRadius + 7);
+        this.ballGraphics.fillStyle(0xffffff, 1);
+        this.ballGraphics.fillCircle(cx, cy, this.ballRadius);
+        return;
+      }
+
       const color = COLORS[this.ballColorIndex].hex;
+
+      // Shield Aura
+      if (this.shieldActive) {
+        this.ballGraphics.lineStyle(3, 0x00E5FF, 0.9);
+        this.ballGraphics.strokeCircle(cx, cy, this.ballRadius + 7);
+        this.ballGraphics.fillStyle(0x00E5FF, 0.2);
+        this.ballGraphics.fillCircle(cx, cy, this.ballRadius + 7);
+      }
 
       // Outer Glow
       this.ballGraphics.fillStyle(color, 0.35);
-      this.ballGraphics.fillCircle(this.width / 2, this.ballY, this.ballRadius + 5);
+      this.ballGraphics.fillCircle(cx, cy, this.ballRadius + 5);
 
       // Core Ball
       this.ballGraphics.fillStyle(color, 1);
-      this.ballGraphics.fillCircle(this.width / 2, this.ballY, this.ballRadius);
+      this.ballGraphics.fillCircle(cx, cy, this.ballRadius);
 
       // Center Highlight
-      this.ballGraphics.fillStyle(0xffffff, 0.8);
-      this.ballGraphics.fillCircle(this.width / 2 - 2.5, this.ballY - 2.5, 2.5);
+      this.ballGraphics.fillStyle(0xffffff, 0.85);
+      this.ballGraphics.fillCircle(cx - 2.5, cy - 2.5, 2.5);
     }
 
     spawnInitialObstacles() {
@@ -227,11 +344,14 @@ export function initGame(container) {
     }
 
     spawnObstacle() {
+      const cfg = this.modeConfigs[this.mode];
       const types = ['circle', 'square', 'cross', 'doubleCircle', 'diamond'];
       const type = types[Math.floor(Math.random() * types.length)];
       const y = this.nextObstacleY;
-      const speedMult = 1 + Math.min(this.score * 0.025, 0.75);
-      const rotationSpeed = (0.016 * speedMult) * (Math.random() > 0.5 ? 1 : -1);
+
+      const progress = Math.min(this.score / 25, 1);
+      const curSpeed = cfg.rotSpeedBase + (cfg.rotSpeedMax - cfg.rotSpeedBase) * progress;
+      const rotationSpeed = curSpeed * (Math.random() > 0.5 ? 1 : -1);
 
       const obstacle = {
         type,
@@ -249,31 +369,40 @@ export function initGame(container) {
 
       this.obstacles.push(obstacle);
 
-      // Spawn Star at center of obstacle
-      this.stars.push({
+      // 1. Star inside center of obstacle
+      this.items.push({
+        type: 'STAR',
         y,
-        collected: false,
-        rotation: 0,
-        graphics: this.add.graphics()
-      });
-
-      // Spawn Color Changer between obstacles
-      const changerY = y - 190;
-      this.colorChangers.push({
-        y: changerY,
         rotation: 0,
         collected: false,
         graphics: this.add.graphics()
       });
 
-      this.nextObstacleY -= 380;
+      // 2. Item between obstacles (Changer OR Power-up)
+      const itemY = y - (cfg.spacing / 2);
+      const randVal = Math.random();
+
+      let itemType = 'CHANGER';
+      if (randVal < 0.18) itemType = 'SHIELD';
+      else if (randVal < 0.32) itemType = 'SLOWMO';
+      else if (randVal < 0.44) itemType = 'RAINBOW';
+
+      this.items.push({
+        type: itemType,
+        y: itemY,
+        rotation: 0,
+        collected: false,
+        graphics: this.add.graphics()
+      });
+
+      this.nextObstacleY -= cfg.spacing;
     }
 
     createUI() {
       // Live Score HUD
       this.scoreText = this.add.text(24, 24, '0', {
         fontFamily: "'Space Grotesk', sans-serif",
-        fontSize: '42px',
+        fontSize: '44px',
         fontStyle: 'bold',
         color: '#FFFFFF'
       }).setScrollFactor(0).setDepth(100);
@@ -281,21 +410,79 @@ export function initGame(container) {
       this.highScoreText = this.add.text(this.width - 24, 24, `BEST: ${this.highScore}`, {
         fontFamily: "'Space Grotesk', sans-serif",
         fontSize: '16px',
-        color: 'rgba(255,255,255,0.65)'
+        color: 'rgba(255,255,255,0.7)'
       }).setOrigin(1, 0).setScrollFactor(0).setDepth(100);
+
+      // Active Power-up Status Bar
+      this.statusText = this.add.text(this.width / 2, 32, '', {
+        fontFamily: "'Space Grotesk', sans-serif",
+        fontSize: '15px',
+        fontStyle: 'bold',
+        color: '#00E5FF'
+      }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(100);
 
       // Start Screen Overlay
       this.startContainer = this.add.container(0, 0).setScrollFactor(0).setDepth(200);
 
       const titleBg = this.add.rectangle(this.width / 2, this.height / 2, this.width, this.height, 0x000000, 0.45);
 
-      const logoText = this.add.text(this.width / 2, this.height / 2 - 80, 'COLOR SWITCH', {
+      const logoText = this.add.text(this.width / 2, this.height / 2 - 120, 'COLOR SWITCH', {
         fontFamily: "'Bungee', sans-serif",
         fontSize: '36px',
         color: '#FF5F4D'
       }).setOrigin(0.5);
 
-      const tapText = this.add.text(this.width / 2, this.height / 2 + 20, 'TAP OR PRESS SPACE TO JUMP', {
+      // Mode Selector Pills
+      const modeLabel = this.add.text(this.width / 2, this.height / 2 - 40, 'SELECT DIFFICULTY', {
+        fontFamily: "'Space Grotesk', sans-serif",
+        fontSize: '13px',
+        fontWeight: 'bold',
+        color: 'rgba(255,255,255,0.6)'
+      }).setOrigin(0.5);
+
+      const modes = ['CASUAL', 'NORMAL', 'PRO'];
+      const modeBtns = [];
+
+      modes.forEach((m, idx) => {
+        const x = this.width / 2 + (idx - 1) * 105;
+        const y = this.height / 2;
+
+        const isSelected = this.mode === m;
+        const btnBg = this.add.rectangle(x, y, 95, 36, isSelected ? 0xFF5F4D : 0x16171D, 1);
+        btnBg.setStrokeStyle(1.5, isSelected ? 0xFF5F4D : 0x444444);
+        btnBg.setInteractive({ useHandCursor: true });
+
+        const btnTxt = this.add.text(x, y, m, {
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontSize: '13px',
+          fontWeight: 'bold',
+          color: isSelected ? '#FFFFFF' : '#888888'
+        }).setOrigin(0.5);
+
+        btnBg.on('pointerdown', (pointer, localX, localY, event) => {
+          if (event) event.stopPropagation();
+          this.mode = m;
+          localStorage.setItem('color_switch_mode', m);
+          this.highScore = parseInt(localStorage.getItem(`color_switch_highscore_${this.mode}`) || '0', 10);
+          this.highScoreText.setText(`BEST: ${this.highScore}`);
+
+          // Update Button UI
+          modeBtns.forEach(({ bg, txt, modeKey }) => {
+            const sel = modeKey === m;
+            bg.setFillStyle(sel ? 0xFF5F4D : 0x16171D);
+            bg.setStrokeStyle(1.5, sel ? 0xFF5F4D : 0x444444);
+            txt.setColor(sel ? '#FFFFFF' : '#888888');
+          });
+
+          // Update initial shield state
+          this.shieldActive = this.modeConfigs[this.mode].initialShield;
+          this.drawBall();
+        });
+
+        modeBtns.push({ bg: btnBg, txt: btnTxt, modeKey: m });
+      });
+
+      const tapText = this.add.text(this.width / 2, this.height / 2 + 75, 'TAP OR PRESS SPACE TO START', {
         fontFamily: "'Space Grotesk', sans-serif",
         fontSize: '16px',
         fontWeight: 'bold',
@@ -310,7 +497,7 @@ export function initGame(container) {
         repeat: -1
       });
 
-      this.startContainer.add([titleBg, logoText, tapText]);
+      this.startContainer.add([titleBg, logoText, modeLabel, ...modeBtns.flatMap(b => [b.bg, b.txt]), tapText]);
 
       // Game Over Overlay
       this.gameOverContainer = this.add.container(0, 0).setScrollFactor(0).setDepth(300).setVisible(false);
@@ -344,7 +531,7 @@ export function initGame(container) {
       const replayBtn = this.add.rectangle(this.width / 2, this.height / 2 + 75, 220, 52, 0xff5f4d, 1);
       replayBtn.setInteractive({ useHandCursor: true });
 
-      const replayText = this.add.text(this.width / 2, this.height / 2 + 75, 'PLAY AGAIN', {
+      const replayText = this.add.text(this.width / 2, this.height / 2 + 75, 'PLAY AGAIN (R)', {
         fontFamily: "'Space Grotesk', sans-serif",
         fontSize: '18px',
         fontStyle: 'bold',
@@ -358,11 +545,6 @@ export function initGame(container) {
 
       replayBtn.on('pointerdown', doRestart);
       replayText.on('pointerdown', doRestart);
-
-      replayBtn.on('pointerover', () => replayBtn.setFillStyle(0xd6432f));
-      replayBtn.on('pointerout', () => replayBtn.setFillStyle(0xff5f4d));
-      replayText.on('pointerover', () => replayBtn.setFillStyle(0xd6432f));
-      replayText.on('pointerout', () => replayBtn.setFillStyle(0xff5f4d));
 
       this.gameOverContainer.add([goBg, goCard, goTitle, this.finalScoreText, this.bestScoreText, replayBtn, replayText]);
     }
@@ -378,7 +560,8 @@ export function initGame(container) {
         this.startContainer.setVisible(false);
       }
 
-      this.ballVy = this.jumpImpulse;
+      const cfg = this.modeConfigs[this.mode];
+      this.ballVy = cfg.jump;
       sfx.playJump();
       this.spawnJumpParticles();
     }
@@ -414,28 +597,43 @@ export function initGame(container) {
       }
     }
 
+    spawnFloatingText(x, y, text, color = '#FFC93C') {
+      const textEl = this.add.text(x, y, text, {
+        fontFamily: "'Space Grotesk', sans-serif",
+        fontSize: '22px',
+        fontStyle: 'bold',
+        color: color
+      }).setOrigin(0.5).setDepth(150);
+
+      this.tweens.add({
+        targets: textEl,
+        y: y - 50,
+        alpha: 0,
+        duration: 900,
+        onComplete: () => textEl.destroy()
+      });
+    }
+
     update(time, delta) {
       const dt = Math.min(delta / 1000, 0.05);
+
+      // Update Timers & Powerup Status
+      this.updatePowerupTimers(dt);
 
       // Update Particles
       this.updateParticles(dt);
 
       // Rotate & Render Obstacles
+      const rotSpeedFactor = this.slowMoActive ? 0.35 : 1.0;
       this.obstacles.forEach((obs) => {
-        obs.rotation += obs.rotationSpeed;
+        obs.rotation += obs.rotationSpeed * rotSpeedFactor;
         this.drawObstacle(obs);
       });
 
-      // Render Stars
-      this.stars.forEach((star) => {
-        star.rotation += 0.03;
-        this.drawStar(star);
-      });
-
-      // Render Color Changers
-      this.colorChangers.forEach((changer) => {
-        changer.rotation += 0.025;
-        this.drawColorChanger(changer);
+      // Render Items
+      this.items.forEach((item) => {
+        item.rotation += 0.03;
+        this.drawItem(item);
       });
 
       // Render Ball
@@ -450,8 +648,10 @@ export function initGame(container) {
 
       if (this.gameState !== 'PLAYING') return;
 
+      const cfg = this.modeConfigs[this.mode];
+
       // Ball Physics
-      this.ballVy += this.gravity * dt;
+      this.ballVy += cfg.gravity * dt;
       this.ballY += this.ballVy * dt;
 
       // Starting Floor Safety: Floor is 100% active until player climbs into level
@@ -461,7 +661,7 @@ export function initGame(container) {
           this.ballVy = 0;
         }
 
-        if (this.ballY < this.height - 340) {
+        if (this.ballY < this.height - 320) {
           this.hasClimbed = true;
         }
       }
@@ -485,20 +685,43 @@ export function initGame(container) {
         this.checkObstacleCollision(obs);
       });
 
-      // Check Star Collisions
-      this.stars.forEach((star) => {
-        this.checkStarCollision(star);
-      });
-
-      // Check Color Changer Collisions
-      this.colorChangers.forEach((changer) => {
-        this.checkColorChangerCollision(changer);
+      // Check Item Collisions
+      this.items.forEach((item) => {
+        this.checkItemCollision(item);
       });
 
       // Infinite Obstacle Spawner
-      if (this.nextObstacleY > this.cameras.main.scrollY - 600) {
+      if (this.nextObstacleY > this.cameras.main.scrollY - 650) {
         this.spawnObstacle();
       }
+    }
+
+    updatePowerupTimers(dt) {
+      let statusStr = '';
+
+      if (this.slowMoActive) {
+        this.slowMoTimer -= dt;
+        if (this.slowMoTimer <= 0) {
+          this.slowMoActive = false;
+        } else {
+          statusStr += `⏱️ SLOW-MO: ${Math.ceil(this.slowMoTimer)}s  `;
+        }
+      }
+
+      if (this.rainbowActive) {
+        this.rainbowTimer -= dt;
+        if (this.rainbowTimer <= 0) {
+          this.rainbowActive = false;
+        } else {
+          statusStr += `🌈 RAINBOW: ${Math.ceil(this.rainbowTimer)}s  `;
+        }
+      }
+
+      if (this.shieldActive && !statusStr) {
+        statusStr = '🛡️ SHIELD ACTIVE';
+      }
+
+      this.statusText.setText(statusStr);
     }
 
     updateParticles(dt) {
@@ -543,12 +766,11 @@ export function initGame(container) {
         }
       } else if (obs.type === 'square') {
         const half = r * 0.85;
-        // Standard Side ordering: 0: Right, 1: Bottom, 2: Left, 3: Top
         const unrotatedCorners = [
-          { x: half, y: -half }, // Corner 0 (Top-Right)
-          { x: half, y: half },  // Corner 1 (Bottom-Right)
-          { x: -half, y: half }, // Corner 2 (Bottom-Left)
-          { x: -half, y: -half } // Corner 3 (Top-Left)
+          { x: half, y: -half }, // Corner 0
+          { x: half, y: half },  // Corner 1
+          { x: -half, y: half }, // Corner 2
+          { x: -half, y: -half } // Corner 3
         ];
 
         const corners = unrotatedCorners.map(p => ({
@@ -556,10 +778,6 @@ export function initGame(container) {
           y: cy + p.x * Math.sin(obs.rotation) + p.y * Math.cos(obs.rotation)
         }));
 
-        // Side 0 (Right): Corner 0 -> 1 using COLORS[0]
-        // Side 1 (Bottom): Corner 1 -> 2 using COLORS[1]
-        // Side 2 (Left): Corner 2 -> 3 using COLORS[2]
-        // Side 3 (Top): Corner 3 -> 0 using COLORS[3]
         for (let i = 0; i < 4; i++) {
           const p1 = corners[i];
           const p2 = corners[(i + 1) % 4];
@@ -587,7 +805,7 @@ export function initGame(container) {
           g.arc(cx, cy, r, startAngle, endAngle);
           g.strokePath();
         }
-        // Inner Ring (rotates opposite direction, uses consistent COLORS[i])
+        // Inner Ring
         const innerRot = -obs.rotation * 1.1;
         for (let i = 0; i < 4; i++) {
           const startAngle = innerRot + (i * Math.PI) / 2 - Math.PI / 4;
@@ -599,12 +817,11 @@ export function initGame(container) {
         }
       } else if (obs.type === 'diamond') {
         const size = r * 0.85;
-        // Vertices at Top-Right, Bottom-Right, Bottom-Left, Top-Left
         const unrotatedVertices = [
-          { x: size, y: 0 },   // Vertex 0 (Right)
-          { x: 0, y: size },   // Vertex 1 (Bottom)
-          { x: -size, y: 0 },  // Vertex 2 (Left)
-          { x: 0, y: -size }   // Vertex 3 (Top)
+          { x: size, y: 0 },
+          { x: 0, y: size },
+          { x: -size, y: 0 },
+          { x: 0, y: -size }
         ];
 
         const vertices = unrotatedVertices.map(p => ({
@@ -612,10 +829,6 @@ export function initGame(container) {
           y: cy + p.x * Math.sin(obs.rotation) + p.y * Math.cos(obs.rotation)
         }));
 
-        // Edge 0 (Bottom-Right): 0 -> 1 using COLORS[0]
-        // Edge 1 (Bottom-Left): 1 -> 2 using COLORS[1]
-        // Edge 2 (Top-Left): 2 -> 3 using COLORS[2]
-        // Edge 3 (Top-Right): 3 -> 0 using COLORS[3]
         for (let i = 0; i < 4; i++) {
           const p1 = vertices[i];
           const p2 = vertices[(i + 1) % 4];
@@ -626,64 +839,84 @@ export function initGame(container) {
       }
     }
 
-    drawStar(star) {
-      if (star.collected) return;
+    drawItem(item) {
+      if (item.collected) return;
 
-      const g = star.graphics;
+      const g = item.graphics;
       g.clear();
       g.setDepth(15);
 
       const cx = this.width / 2;
-      const cy = star.y;
-      const points = 5;
-      const outerR = 14;
-      const innerR = 6;
+      const cy = item.y;
 
-      g.fillStyle(0xFFC93C, 1);
-      g.lineStyle(1.5, 0xffffff, 0.9);
-      g.beginPath();
+      if (item.type === 'STAR') {
+        const points = 5;
+        const outerR = 14;
+        const innerR = 6;
 
-      for (let i = 0; i < points * 2; i++) {
-        const r = i % 2 === 0 ? outerR : innerR;
-        const angle = star.rotation + (i * Math.PI) / points - Math.PI / 2;
-        const x = cx + Math.cos(angle) * r;
-        const y = cy + Math.sin(angle) * r;
-        if (i === 0) g.moveTo(x, y);
-        else g.lineTo(x, y);
-      }
-      g.closePath();
-      g.fillPath();
-      g.strokePath();
-    }
-
-    drawColorChanger(changer) {
-      if (changer.collected) return;
-
-      const g = changer.graphics;
-      g.clear();
-      g.setDepth(15);
-
-      const cx = this.width / 2;
-      const cy = changer.y;
-      const radius = 16;
-
-      for (let i = 0; i < 4; i++) {
-        const startAngle = changer.rotation + (i * Math.PI) / 2;
-        const endAngle = startAngle + Math.PI / 2;
-
-        g.fillStyle(COLORS[i].hex, 1);
+        g.fillStyle(0xFFC93C, 1);
+        g.lineStyle(1.5, 0xffffff, 0.9);
         g.beginPath();
-        g.moveTo(cx, cy);
-        g.arc(cx, cy, radius, startAngle, endAngle);
+
+        for (let i = 0; i < points * 2; i++) {
+          const r = i % 2 === 0 ? outerR : innerR;
+          const angle = item.rotation + (i * Math.PI) / points - Math.PI / 2;
+          const x = cx + Math.cos(angle) * r;
+          const y = cy + Math.sin(angle) * r;
+          if (i === 0) g.moveTo(x, y);
+          else g.lineTo(x, y);
+        }
         g.closePath();
         g.fillPath();
-      }
+        g.strokePath();
+      } else if (item.type === 'CHANGER') {
+        const radius = 16;
+        for (let i = 0; i < 4; i++) {
+          const startAngle = item.rotation + (i * Math.PI) / 2;
+          const endAngle = startAngle + Math.PI / 2;
 
-      g.lineStyle(2, 0xffffff, 0.9);
-      g.strokeCircle(cx, cy, radius);
+          g.fillStyle(COLORS[i].hex, 1);
+          g.beginPath();
+          g.moveTo(cx, cy);
+          g.arc(cx, cy, radius, startAngle, endAngle);
+          g.closePath();
+          g.fillPath();
+        }
+        g.lineStyle(2, 0xffffff, 0.9);
+        g.strokeCircle(cx, cy, radius);
+      } else if (item.type === 'SHIELD') {
+        g.fillStyle(0x00E5FF, 0.85);
+        g.fillCircle(cx, cy, 14);
+        g.lineStyle(2, 0xffffff, 1);
+        g.strokeCircle(cx, cy, 14);
+
+        // Inner Shield Cross Icon
+        g.lineStyle(2.5, 0xffffff, 1);
+        g.lineBetween(cx - 5, cy, cx + 5, cy);
+        g.lineBetween(cx, cy - 5, cx, cy + 5);
+      } else if (item.type === 'SLOWMO') {
+        g.fillStyle(0x8B5CF6, 0.85);
+        g.fillCircle(cx, cy, 14);
+        g.lineStyle(2, 0xffffff, 1);
+        g.strokeCircle(cx, cy, 14);
+
+        // Clock Hands
+        g.lineStyle(2, 0xffffff, 1);
+        g.lineBetween(cx, cy, cx, cy - 6);
+        g.lineBetween(cx, cy, cx + 5, cy);
+      } else if (item.type === 'RAINBOW') {
+        const radius = 14;
+        const color = COLORS[Math.floor(Date.now() / 120) % 4].hex;
+        g.fillStyle(color, 0.9);
+        g.fillCircle(cx, cy, radius);
+        g.lineStyle(2.5, 0xffffff, 1);
+        g.strokeCircle(cx, cy, radius);
+      }
     }
 
     checkObstacleCollision(obs) {
+      if (this.rainbowActive) return; // Rainbow Wild Mode passes all obstacles!
+
       const cx = this.width / 2;
       const cy = obs.y;
       const ballY = this.ballY;
@@ -692,15 +925,33 @@ export function initGame(container) {
       const thickness = 14;
       const hitRadius = thickness / 2 + ballR - 2.5; // ~12px
 
-      // Helper to check angular match with safety tolerance margin
+      const cfg = this.modeConfigs[this.mode];
+      const tol = cfg.tolerance; // Mode angular tolerance
+
+      // Helper to check angular match with safety margin
       const checkMatchAngle = (rot, targetAngle) => {
         const segCenter = getSegmentIndexAtAngle(rot, targetAngle);
         if (segCenter === this.ballColorIndex) return true;
-        const segPlus = getSegmentIndexAtAngle(rot, targetAngle + 0.22);
+        const segPlus = getSegmentIndexAtAngle(rot, targetAngle + tol);
         if (segPlus === this.ballColorIndex) return true;
-        const segMinus = getSegmentIndexAtAngle(rot, targetAngle - 0.22);
+        const segMinus = getSegmentIndexAtAngle(rot, targetAngle - tol);
         if (segMinus === this.ballColorIndex) return true;
         return false;
+      };
+
+      const handleHitMismatch = () => {
+        if (this.shieldActive) {
+          // Shield saves the player!
+          this.shieldActive = false;
+          sfx.playShieldBreak();
+          this.cameras.main.shake(140, 0.015);
+          this.spawnBurst(cx, ballY, 0x00E5FF, 30);
+          this.spawnFloatingText(cx, ballY - 20, 'SHIELD POPPED!', '#00E5FF');
+          return true; // Saved
+        } else {
+          this.triggerGameOver();
+          return false;
+        }
       };
 
       if (obs.type === 'circle' || obs.type === 'doubleCircle') {
@@ -711,7 +962,7 @@ export function initGame(container) {
             if (checkMatchAngle(obs.rotation, Math.PI / 2)) {
               obs.passedBottom = true;
             } else {
-              this.triggerGameOver();
+              if (handleHitMismatch()) obs.passedBottom = true;
               return;
             }
           }
@@ -724,7 +975,7 @@ export function initGame(container) {
             if (checkMatchAngle(obs.rotation, (3 * Math.PI) / 2)) {
               obs.passedTop = true;
             } else {
-              this.triggerGameOver();
+              if (handleHitMismatch()) obs.passedTop = true;
               return;
             }
           }
@@ -741,7 +992,7 @@ export function initGame(container) {
               if (checkMatchAngle(innerRot, Math.PI / 2)) {
                 obs.passedInnerBottom = true;
               } else {
-                this.triggerGameOver();
+                if (handleHitMismatch()) obs.passedInnerBottom = true;
                 return;
               }
             }
@@ -753,7 +1004,7 @@ export function initGame(container) {
               if (checkMatchAngle(innerRot, (3 * Math.PI) / 2)) {
                 obs.passedInnerTop = true;
               } else {
-                this.triggerGameOver();
+                if (handleHitMismatch()) obs.passedInnerTop = true;
                 return;
               }
             }
@@ -782,7 +1033,7 @@ export function initGame(container) {
             if (i === this.ballColorIndex) {
               obs.passedSegments[i] = true;
             } else if (!obs.passedSegments[i]) {
-              this.triggerGameOver();
+              if (handleHitMismatch()) obs.passedSegments[i] = true;
               return;
             }
           }
@@ -810,7 +1061,7 @@ export function initGame(container) {
             if (i === this.ballColorIndex) {
               obs.passedSegments[i] = true;
             } else if (!obs.passedSegments[i]) {
-              this.triggerGameOver();
+              if (handleHitMismatch()) obs.passedSegments[i] = true;
               return;
             }
           }
@@ -827,7 +1078,7 @@ export function initGame(container) {
             if (i === this.ballColorIndex) {
               obs.passedSegments[i] = true;
             } else if (!obs.passedSegments[i]) {
-              this.triggerGameOver();
+              if (handleHitMismatch()) obs.passedSegments[i] = true;
               return;
             }
           }
@@ -835,44 +1086,62 @@ export function initGame(container) {
       }
     }
 
-    checkStarCollision(star) {
-      if (star.collected) return;
+    checkItemCollision(item) {
+      if (item.collected) return;
 
-      const dist = Math.abs(this.ballY - star.y);
+      const dist = Math.abs(this.ballY - item.y);
       if (dist < 28) {
-        star.collected = true;
-        star.graphics.clear();
+        item.collected = true;
+        item.graphics.clear();
 
-        // Increment Score
-        this.score++;
-        this.scoreText.setText(`${this.score}`);
+        const cfg = this.modeConfigs[this.mode];
 
-        if (this.score > this.highScore) {
-          this.highScore = this.score;
-          this.highScoreText.setText(`BEST: ${this.highScore}`);
-          localStorage.setItem('color_switch_highscore', this.highScore.toString());
+        if (item.type === 'STAR') {
+          this.comboCount++;
+          const mult = cfg.multiplier;
+          const addedScore = 1 * mult;
+          this.score += addedScore;
+          this.scoreText.setText(`${this.score}`);
+
+          if (this.score > this.highScore) {
+            this.highScore = this.score;
+            this.highScoreText.setText(`BEST: ${this.highScore}`);
+            localStorage.setItem(`color_switch_highscore_${this.mode}`, this.highScore.toString());
+          }
+
+          sfx.playStar();
+          this.spawnBurst(this.width / 2, item.y, 0xFFC93C, 20);
+
+          if (this.comboCount >= 3) {
+            this.spawnFloatingText(this.width / 2, item.y - 15, `${this.comboCount}X COMBO! 🔥`, '#FF5F4D');
+          } else {
+            this.spawnFloatingText(this.width / 2, item.y - 15, `+${addedScore}`, '#FFC93C');
+          }
+        } else if (item.type === 'CHANGER') {
+          let newColorIdx = (this.ballColorIndex + Phaser.Math.Between(1, 3)) % 4;
+          this.ballColorIndex = newColorIdx;
+
+          sfx.playSwitch();
+          this.cameras.main.shake(100, 0.01);
+          this.spawnBurst(this.width / 2, item.y, COLORS[newColorIdx].hex, 25);
+        } else if (item.type === 'SHIELD') {
+          this.shieldActive = true;
+          sfx.playPowerup();
+          this.spawnBurst(this.width / 2, item.y, 0x00E5FF, 25);
+          this.spawnFloatingText(this.width / 2, item.y - 15, 'SHIELD UP! 🛡️', '#00E5FF');
+        } else if (item.type === 'SLOWMO') {
+          this.slowMoActive = true;
+          this.slowMoTimer = 6.0;
+          sfx.playPowerup();
+          this.spawnBurst(this.width / 2, item.y, 0x8B5CF6, 25);
+          this.spawnFloatingText(this.width / 2, item.y - 15, 'SLOW-MO! ⏱️', '#8B5CF6');
+        } else if (item.type === 'RAINBOW') {
+          this.rainbowActive = true;
+          this.rainbowTimer = 5.0;
+          sfx.playPowerup();
+          this.spawnBurst(this.width / 2, item.y, 0xFF3366, 30);
+          this.spawnFloatingText(this.width / 2, item.y - 15, 'RAINBOW WILD! 🌈', '#FF3366');
         }
-
-        sfx.playStar();
-        this.spawnBurst(this.width / 2, star.y, 0xFFC93C, 20);
-      }
-    }
-
-    checkColorChangerCollision(changer) {
-      if (changer.collected) return;
-
-      const dist = Math.abs(this.ballY - changer.y);
-      if (dist < 26) {
-        changer.collected = true;
-        changer.graphics.clear();
-
-        // Pick a NEW random color (different from current color)
-        let newColorIdx = (this.ballColorIndex + Phaser.Math.Between(1, 3)) % 4;
-        this.ballColorIndex = newColorIdx;
-
-        sfx.playSwitch();
-        this.cameras.main.shake(120, 0.012);
-        this.spawnBurst(this.width / 2, changer.y, COLORS[newColorIdx].hex, 25);
       }
     }
 
@@ -880,6 +1149,7 @@ export function initGame(container) {
       if (this.gameState === 'GAMEOVER') return;
 
       this.gameState = 'GAMEOVER';
+      this.comboCount = 0;
       sfx.playGameOver();
 
       this.cameras.main.shake(250, 0.025);
