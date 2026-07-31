@@ -1,17 +1,30 @@
-// ─── Color Switch — Premium Phaser 3 Game ───
+// ─── Color Switch — Premium Phaser 3 Game (Flawless Engine) ───
 import Phaser from 'phaser';
 
 let gameInstance = null;
 
 // Game Color Palette (4 Neon Arcade Colors)
 const COLORS = [
-  { name: 'Blue', hex: 0x3E6BFF, str: '#3E6BFF' },
-  { name: 'Yellow', hex: 0xFFC93C, str: '#FFC93C' },
-  { name: 'Pink', hex: 0xFF3366, str: '#FF3366' },
-  { name: 'Purple', hex: 0x8B5CF6, str: '#8B5CF6' }
+  { name: 'Blue', hex: 0x3E6BFF, str: '#3E6BFF' },   // Index 0 (Right, ~0 rad)
+  { name: 'Yellow', hex: 0xFFC93C, str: '#FFC93C' }, // Index 1 (Bottom, ~PI/2 rad)
+  { name: 'Pink', hex: 0xFF3366, str: '#FF3366' },   // Index 2 (Left, ~PI rad)
+  { name: 'Purple', hex: 0x8B5CF6, str: '#8B5CF6' }  // Index 3 (Top, ~3PI/2 rad)
 ];
 
-// Helper to get segment index at target angle (in radians)
+// Distance from point (px, py) to line segment (x1, y1)->(x2, y2)
+function distToSegment(px, py, x1, y1, x2, y2) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const l2 = dx * dx + dy * dy;
+  if (l2 === 0) return Math.hypot(px - x1, py - y1);
+  let t = ((px - x1) * dx + (py - y1) * dy) / l2;
+  t = Math.max(0, Math.min(1, t));
+  const projX = x1 + t * dx;
+  const projY = y1 + t * dy;
+  return Math.hypot(px - projX, py - projY);
+}
+
+// Helper to get segment color index at world angle (in radians)
 function getSegmentIndexAtAngle(rotation, targetAngleRad) {
   let rel = (targetAngleRad - rotation + Math.PI / 4) % (Math.PI * 2);
   if (rel < 0) rel += Math.PI * 2;
@@ -43,14 +56,34 @@ class SoundFX {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(260, this.ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(620, this.ctx.currentTime + 0.12);
+      osc.frequency.setValueAtTime(280, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(640, this.ctx.currentTime + 0.12);
       gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.12);
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       osc.start();
       osc.stop(this.ctx.currentTime + 0.12);
+    } catch (e) {}
+  }
+
+  playStar() {
+    if (!this.enabled) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
+      osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.08);
+      osc.frequency.setValueAtTime(783.99, this.ctx.currentTime + 0.16);
+      gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.25);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.25);
     } catch (e) {}
   }
 
@@ -64,13 +97,13 @@ class SoundFX {
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(f, this.ctx.currentTime + i * 0.04);
-        gain.gain.setValueAtTime(0.15, this.ctx.currentTime + i * 0.04);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + i * 0.04 + 0.1);
+        osc.frequency.setValueAtTime(f, this.ctx.currentTime + i * 0.035);
+        gain.gain.setValueAtTime(0.18, this.ctx.currentTime + i * 0.035);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + i * 0.035 + 0.09);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
-        osc.start(this.ctx.currentTime + i * 0.04);
-        osc.stop(this.ctx.currentTime + i * 0.04 + 0.1);
+        osc.start(this.ctx.currentTime + i * 0.035);
+        osc.stop(this.ctx.currentTime + i * 0.035 + 0.09);
       });
     } catch (e) {}
   }
@@ -84,7 +117,7 @@ class SoundFX {
       const gain = this.ctx.createGain();
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(320, this.ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(60, this.ctx.currentTime + 0.4);
+      osc.frequency.exponentialRampToValueAtTime(50, this.ctx.currentTime + 0.4);
       gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.4);
       osc.connect(gain);
@@ -122,8 +155,9 @@ export function initGame(container) {
       // Starfield background
       this.createStarfield();
 
-      // World Group for obstacles & color changers
+      // World Groups for obstacles, stars & color changers
       this.obstacles = [];
+      this.stars = [];
       this.colorChangers = [];
 
       // Spawn Initial Player Ball
@@ -132,15 +166,15 @@ export function initGame(container) {
       this.startFloorY = this.height - 160;
       this.ballY = this.startFloorY;
       this.ballVy = 0;
-      this.gravity = 900;
-      this.jumpImpulse = -370;
+      this.gravity = 920;
+      this.jumpImpulse = -375;
       this.hasClimbed = false;
 
       this.ballGraphics = this.add.graphics();
       this.drawBall();
 
-      // Spawn initial level obstacles
-      this.nextObstacleY = this.height - 440;
+      // Spawn Initial Level Obstacles
+      this.nextObstacleY = this.height - 420;
       this.spawnInitialObstacles();
 
       // UI Containers
@@ -158,9 +192,9 @@ export function initGame(container) {
     }
 
     createStarfield() {
-      for (let i = 0; i < 45; i++) {
+      for (let i = 0; i < 50; i++) {
         const x = Phaser.Math.Between(0, this.width);
-        const y = Phaser.Math.Between(-3000, this.height);
+        const y = Phaser.Math.Between(-4000, this.height);
         const radius = Phaser.Math.FloatBetween(1, 2.5);
         const alpha = Phaser.Math.FloatBetween(0.25, 0.75);
         const star = this.add.circle(x, y, radius, 0xffffff, alpha);
@@ -175,15 +209,15 @@ export function initGame(container) {
 
       // Outer Glow
       this.ballGraphics.fillStyle(color, 0.35);
-      this.ballGraphics.fillCircle(this.width / 2, this.ballY, this.ballRadius + 4);
+      this.ballGraphics.fillCircle(this.width / 2, this.ballY, this.ballRadius + 5);
 
       // Core Ball
       this.ballGraphics.fillStyle(color, 1);
       this.ballGraphics.fillCircle(this.width / 2, this.ballY, this.ballRadius);
 
       // Center Highlight
-      this.ballGraphics.fillStyle(0xffffff, 0.75);
-      this.ballGraphics.fillCircle(this.width / 2 - 2, this.ballY - 2, 2.5);
+      this.ballGraphics.fillStyle(0xffffff, 0.8);
+      this.ballGraphics.fillCircle(this.width / 2 - 2.5, this.ballY - 2.5, 2.5);
     }
 
     spawnInitialObstacles() {
@@ -196,8 +230,8 @@ export function initGame(container) {
       const types = ['circle', 'square', 'cross', 'doubleCircle', 'diamond'];
       const type = types[Math.floor(Math.random() * types.length)];
       const y = this.nextObstacleY;
-      const speedMult = 1 + Math.min(this.score * 0.03, 0.8);
-      const rotationSpeed = (0.018 * speedMult) * (Math.random() > 0.5 ? 1 : -1);
+      const speedMult = 1 + Math.min(this.score * 0.025, 0.75);
+      const rotationSpeed = (0.016 * speedMult) * (Math.random() > 0.5 ? 1 : -1);
 
       const obstacle = {
         type,
@@ -206,14 +240,25 @@ export function initGame(container) {
         rotationSpeed,
         radius: 95,
         graphics: this.add.graphics(),
-        hitBottom: false,
-        hitTop: false
+        passedSegments: {},
+        passedBottom: false,
+        passedTop: false,
+        passedInnerBottom: false,
+        passedInnerTop: false
       };
 
       this.obstacles.push(obstacle);
 
-      // Spawn Color Changer item between obstacles
-      const changerY = y - 180;
+      // Spawn Star at center of obstacle
+      this.stars.push({
+        y,
+        collected: false,
+        rotation: 0,
+        graphics: this.add.graphics()
+      });
+
+      // Spawn Color Changer between obstacles
+      const changerY = y - 190;
       this.colorChangers.push({
         y: changerY,
         rotation: 0,
@@ -221,14 +266,14 @@ export function initGame(container) {
         graphics: this.add.graphics()
       });
 
-      this.nextObstacleY -= 360;
+      this.nextObstacleY -= 380;
     }
 
     createUI() {
       // Live Score HUD
       this.scoreText = this.add.text(24, 24, '0', {
         fontFamily: "'Space Grotesk', sans-serif",
-        fontSize: '38px',
+        fontSize: '42px',
         fontStyle: 'bold',
         color: '#FFFFFF'
       }).setScrollFactor(0).setDepth(100);
@@ -236,7 +281,7 @@ export function initGame(container) {
       this.highScoreText = this.add.text(this.width - 24, 24, `BEST: ${this.highScore}`, {
         fontFamily: "'Space Grotesk', sans-serif",
         fontSize: '16px',
-        color: 'rgba(255,255,255,0.6)'
+        color: 'rgba(255,255,255,0.65)'
       }).setOrigin(1, 0).setScrollFactor(0).setDepth(100);
 
       // Start Screen Overlay
@@ -370,7 +415,7 @@ export function initGame(container) {
     }
 
     update(time, delta) {
-      const dt = delta / 1000;
+      const dt = Math.min(delta / 1000, 0.05);
 
       // Update Particles
       this.updateParticles(dt);
@@ -379,6 +424,12 @@ export function initGame(container) {
       this.obstacles.forEach((obs) => {
         obs.rotation += obs.rotationSpeed;
         this.drawObstacle(obs);
+      });
+
+      // Render Stars
+      this.stars.forEach((star) => {
+        star.rotation += 0.03;
+        this.drawStar(star);
       });
 
       // Render Color Changers
@@ -403,14 +454,13 @@ export function initGame(container) {
       this.ballVy += this.gravity * dt;
       this.ballY += this.ballVy * dt;
 
-      // Starting Floor Safety: Floor is 100% active until player climbs into the level
+      // Starting Floor Safety: Floor is 100% active until player climbs into level
       if (!this.hasClimbed) {
         if (this.ballY >= this.startFloorY) {
           this.ballY = this.startFloorY;
           this.ballVy = 0;
         }
 
-        // Unlock camera tracking only after climbing into first obstacle
         if (this.ballY < this.height - 340) {
           this.hasClimbed = true;
         }
@@ -420,10 +470,10 @@ export function initGame(container) {
       if (this.hasClimbed) {
         const targetCamY = this.ballY - this.height * 0.6;
         if (targetCamY < this.cameras.main.scrollY) {
-          this.cameras.main.scrollY += (targetCamY - this.cameras.main.scrollY) * 0.14;
+          this.cameras.main.scrollY += (targetCamY - this.cameras.main.scrollY) * 0.15;
         }
 
-        // Check Bottom Screen Fall Death (only active after climbing)
+        // Check Bottom Screen Fall Death
         if (this.ballY > this.cameras.main.scrollY + this.height + 60) {
           this.triggerGameOver();
           return;
@@ -433,6 +483,11 @@ export function initGame(container) {
       // Check Obstacle Collisions
       this.obstacles.forEach((obs) => {
         this.checkObstacleCollision(obs);
+      });
+
+      // Check Star Collisions
+      this.stars.forEach((star) => {
+        this.checkStarCollision(star);
       });
 
       // Check Color Changer Collisions
@@ -488,30 +543,34 @@ export function initGame(container) {
         }
       } else if (obs.type === 'square') {
         const half = r * 0.85;
-        const corners = [
-          { x: -half, y: -half },
-          { x: half, y: -half },
-          { x: half, y: half },
-          { x: -half, y: half }
+        // Standard Side ordering: 0: Right, 1: Bottom, 2: Left, 3: Top
+        const unrotatedCorners = [
+          { x: half, y: -half }, // Corner 0 (Top-Right)
+          { x: half, y: half },  // Corner 1 (Bottom-Right)
+          { x: -half, y: half }, // Corner 2 (Bottom-Left)
+          { x: -half, y: -half } // Corner 3 (Top-Left)
         ];
 
+        const corners = unrotatedCorners.map(p => ({
+          x: cx + p.x * Math.cos(obs.rotation) - p.y * Math.sin(obs.rotation),
+          y: cy + p.x * Math.sin(obs.rotation) + p.y * Math.cos(obs.rotation)
+        }));
+
+        // Side 0 (Right): Corner 0 -> 1 using COLORS[0]
+        // Side 1 (Bottom): Corner 1 -> 2 using COLORS[1]
+        // Side 2 (Left): Corner 2 -> 3 using COLORS[2]
+        // Side 3 (Top): Corner 3 -> 0 using COLORS[3]
         for (let i = 0; i < 4; i++) {
           const p1 = corners[i];
           const p2 = corners[(i + 1) % 4];
 
-          const rx1 = cx + p1.x * Math.cos(obs.rotation) - p1.y * Math.sin(obs.rotation);
-          const ry1 = cy + p1.x * Math.sin(obs.rotation) + p1.y * Math.cos(obs.rotation);
-
-          const rx2 = cx + p2.x * Math.cos(obs.rotation) - p2.y * Math.sin(obs.rotation);
-          const ry2 = cy + p2.x * Math.sin(obs.rotation) + p2.y * Math.cos(obs.rotation);
-
           g.lineStyle(thickness, COLORS[i].hex, 1);
-          g.lineBetween(rx1, ry1, rx2, ry2);
+          g.lineBetween(p1.x, p1.y, p2.x, p2.y);
         }
       } else if (obs.type === 'cross') {
         const armLength = r * 0.95;
         for (let i = 0; i < 4; i++) {
-          const angle = obs.rotation + (i * Math.PI) / 2 - Math.PI / 4;
+          const angle = obs.rotation + (i * Math.PI) / 2;
           const ex = cx + Math.cos(angle) * armLength;
           const ey = cy + Math.sin(angle) * armLength;
 
@@ -528,38 +587,73 @@ export function initGame(container) {
           g.arc(cx, cy, r, startAngle, endAngle);
           g.strokePath();
         }
-        // Inner Ring (rotates opposite direction)
+        // Inner Ring (rotates opposite direction, uses consistent COLORS[i])
+        const innerRot = -obs.rotation * 1.1;
         for (let i = 0; i < 4; i++) {
-          const startAngle = -obs.rotation * 1.25 + (i * Math.PI) / 2 - Math.PI / 4;
+          const startAngle = innerRot + (i * Math.PI) / 2 - Math.PI / 4;
           const endAngle = startAngle + Math.PI / 2;
-          g.lineStyle(10, COLORS[(i + 2) % 4].hex, 1);
+          g.lineStyle(10, COLORS[i].hex, 1);
           g.beginPath();
           g.arc(cx, cy, r * 0.65, startAngle, endAngle);
           g.strokePath();
         }
       } else if (obs.type === 'diamond') {
-        const size = r * 0.95;
-        const corners = [
-          { x: 0, y: -size },
-          { x: size * 0.85, y: 0 },
-          { x: 0, y: size },
-          { x: -size * 0.85, y: 0 }
+        const size = r * 0.85;
+        // Vertices at Top-Right, Bottom-Right, Bottom-Left, Top-Left
+        const unrotatedVertices = [
+          { x: size, y: 0 },   // Vertex 0 (Right)
+          { x: 0, y: size },   // Vertex 1 (Bottom)
+          { x: -size, y: 0 },  // Vertex 2 (Left)
+          { x: 0, y: -size }   // Vertex 3 (Top)
         ];
 
+        const vertices = unrotatedVertices.map(p => ({
+          x: cx + p.x * Math.cos(obs.rotation) - p.y * Math.sin(obs.rotation),
+          y: cy + p.x * Math.sin(obs.rotation) + p.y * Math.cos(obs.rotation)
+        }));
+
+        // Edge 0 (Bottom-Right): 0 -> 1 using COLORS[0]
+        // Edge 1 (Bottom-Left): 1 -> 2 using COLORS[1]
+        // Edge 2 (Top-Left): 2 -> 3 using COLORS[2]
+        // Edge 3 (Top-Right): 3 -> 0 using COLORS[3]
         for (let i = 0; i < 4; i++) {
-          const p1 = corners[i];
-          const p2 = corners[(i + 1) % 4];
-
-          const rx1 = cx + p1.x * Math.cos(obs.rotation) - p1.y * Math.sin(obs.rotation);
-          const ry1 = cy + p1.x * Math.sin(obs.rotation) + p1.y * Math.cos(obs.rotation);
-
-          const rx2 = cx + p2.x * Math.cos(obs.rotation) - p2.y * Math.sin(obs.rotation);
-          const ry2 = cy + p2.x * Math.sin(obs.rotation) + p2.y * Math.cos(obs.rotation);
+          const p1 = vertices[i];
+          const p2 = vertices[(i + 1) % 4];
 
           g.lineStyle(thickness, COLORS[i].hex, 1);
-          g.lineBetween(rx1, ry1, rx2, ry2);
+          g.lineBetween(p1.x, p1.y, p2.x, p2.y);
         }
       }
+    }
+
+    drawStar(star) {
+      if (star.collected) return;
+
+      const g = star.graphics;
+      g.clear();
+      g.setDepth(15);
+
+      const cx = this.width / 2;
+      const cy = star.y;
+      const points = 5;
+      const outerR = 14;
+      const innerR = 6;
+
+      g.fillStyle(0xFFC93C, 1);
+      g.lineStyle(1.5, 0xffffff, 0.9);
+      g.beginPath();
+
+      for (let i = 0; i < points * 2; i++) {
+        const r = i % 2 === 0 ? outerR : innerR;
+        const angle = star.rotation + (i * Math.PI) / points - Math.PI / 2;
+        const x = cx + Math.cos(angle) * r;
+        const y = cy + Math.sin(angle) * r;
+        if (i === 0) g.moveTo(x, y);
+        else g.lineTo(x, y);
+      }
+      g.closePath();
+      g.fillPath();
+      g.strokePath();
     }
 
     drawColorChanger(changer) {
@@ -590,73 +684,164 @@ export function initGame(container) {
     }
 
     checkObstacleCollision(obs) {
+      const cx = this.width / 2;
       const cy = obs.y;
       const ballY = this.ballY;
+      const ballR = this.ballRadius;
       const r = obs.radius;
       const thickness = 14;
-      const tolerance = thickness / 2 + this.ballRadius - 5;
+      const hitRadius = thickness / 2 + ballR - 2.5; // ~12px
 
-      // Check if color matches at angle with small safety margin
-      const checkMatch = (rot, targetAngle) => {
-        const segMain = getSegmentIndexAtAngle(rot, targetAngle);
-        if (segMain === this.ballColorIndex) return true;
-        const segPlus = getSegmentIndexAtAngle(rot, targetAngle + 0.18);
+      // Helper to check angular match with safety tolerance margin
+      const checkMatchAngle = (rot, targetAngle) => {
+        const segCenter = getSegmentIndexAtAngle(rot, targetAngle);
+        if (segCenter === this.ballColorIndex) return true;
+        const segPlus = getSegmentIndexAtAngle(rot, targetAngle + 0.22);
         if (segPlus === this.ballColorIndex) return true;
-        const segMinus = getSegmentIndexAtAngle(rot, targetAngle - 0.18);
+        const segMinus = getSegmentIndexAtAngle(rot, targetAngle - 0.22);
         if (segMinus === this.ballColorIndex) return true;
         return false;
       };
 
-      // Bottom Arc Collision (6 o'clock = Math.PI / 2)
-      const distBottom = Math.abs(ballY - (cy + r));
-      if (distBottom < tolerance) {
-        if (!checkMatch(obs.rotation, Math.PI / 2)) {
-          this.triggerGameOver();
-          return;
-        }
-      }
-
-      // Top Arc Collision (12 o'clock = 3 * Math.PI / 2)
-      const distTop = Math.abs(ballY - (cy - r));
-      if (distTop < tolerance) {
-        if (!checkMatch(obs.rotation, (3 * Math.PI) / 2)) {
-          this.triggerGameOver();
-          return;
-        }
-      }
-
-      // Inner Ring Collision for Double Circle
-      if (obs.type === 'doubleCircle') {
-        const innerR = r * 0.65;
-        const innerRot = -obs.rotation * 1.25;
-
-        const innerDistBottom = Math.abs(ballY - (cy + innerR));
-        if (innerDistBottom < tolerance) {
-          const segIdx = (getSegmentIndexAtAngle(innerRot, Math.PI / 2) + 2) % 4;
-          if (segIdx !== this.ballColorIndex) {
-            this.triggerGameOver();
-            return;
+      if (obs.type === 'circle' || obs.type === 'doubleCircle') {
+        // Bottom Arc Collision (6 o'clock = Math.PI / 2)
+        const distBottom = Math.abs(ballY - (cy + r));
+        if (distBottom < hitRadius) {
+          if (!obs.passedBottom) {
+            if (checkMatchAngle(obs.rotation, Math.PI / 2)) {
+              obs.passedBottom = true;
+            } else {
+              this.triggerGameOver();
+              return;
+            }
           }
         }
 
-        const innerDistTop = Math.abs(ballY - (cy - innerR));
-        if (innerDistTop < tolerance) {
-          const segIdx = (getSegmentIndexAtAngle(innerRot, (3 * Math.PI) / 2) + 2) % 4;
-          if (segIdx !== this.ballColorIndex) {
-            this.triggerGameOver();
-            return;
+        // Top Arc Collision (12 o'clock = 3 * Math.PI / 2)
+        const distTop = Math.abs(ballY - (cy - r));
+        if (distTop < hitRadius) {
+          if (!obs.passedTop) {
+            if (checkMatchAngle(obs.rotation, (3 * Math.PI) / 2)) {
+              obs.passedTop = true;
+            } else {
+              this.triggerGameOver();
+              return;
+            }
+          }
+        }
+
+        // Inner Ring Collision for Double Circle
+        if (obs.type === 'doubleCircle') {
+          const innerR = r * 0.65;
+          const innerRot = -obs.rotation * 1.1;
+
+          const innerDistBottom = Math.abs(ballY - (cy + innerR));
+          if (innerDistBottom < hitRadius) {
+            if (!obs.passedInnerBottom) {
+              if (checkMatchAngle(innerRot, Math.PI / 2)) {
+                obs.passedInnerBottom = true;
+              } else {
+                this.triggerGameOver();
+                return;
+              }
+            }
+          }
+
+          const innerDistTop = Math.abs(ballY - (cy - innerR));
+          if (innerDistTop < hitRadius) {
+            if (!obs.passedInnerTop) {
+              if (checkMatchAngle(innerRot, (3 * Math.PI) / 2)) {
+                obs.passedInnerTop = true;
+              } else {
+                this.triggerGameOver();
+                return;
+              }
+            }
+          }
+        }
+      } else if (obs.type === 'square') {
+        const half = r * 0.85;
+        const unrotatedCorners = [
+          { x: half, y: -half },
+          { x: half, y: half },
+          { x: -half, y: half },
+          { x: -half, y: -half }
+        ];
+
+        const corners = unrotatedCorners.map(p => ({
+          x: cx + p.x * Math.cos(obs.rotation) - p.y * Math.sin(obs.rotation),
+          y: cy + p.x * Math.sin(obs.rotation) + p.y * Math.cos(obs.rotation)
+        }));
+
+        for (let i = 0; i < 4; i++) {
+          const p1 = corners[i];
+          const p2 = corners[(i + 1) % 4];
+          const d = distToSegment(cx, ballY, p1.x, p1.y, p2.x, p2.y);
+
+          if (d < hitRadius) {
+            if (i === this.ballColorIndex) {
+              obs.passedSegments[i] = true;
+            } else if (!obs.passedSegments[i]) {
+              this.triggerGameOver();
+              return;
+            }
+          }
+        }
+      } else if (obs.type === 'diamond') {
+        const size = r * 0.85;
+        const unrotatedVertices = [
+          { x: size, y: 0 },
+          { x: 0, y: size },
+          { x: -size, y: 0 },
+          { x: 0, y: -size }
+        ];
+
+        const vertices = unrotatedVertices.map(p => ({
+          x: cx + p.x * Math.cos(obs.rotation) - p.y * Math.sin(obs.rotation),
+          y: cy + p.x * Math.sin(obs.rotation) + p.y * Math.cos(obs.rotation)
+        }));
+
+        for (let i = 0; i < 4; i++) {
+          const p1 = vertices[i];
+          const p2 = vertices[(i + 1) % 4];
+          const d = distToSegment(cx, ballY, p1.x, p1.y, p2.x, p2.y);
+
+          if (d < hitRadius) {
+            if (i === this.ballColorIndex) {
+              obs.passedSegments[i] = true;
+            } else if (!obs.passedSegments[i]) {
+              this.triggerGameOver();
+              return;
+            }
+          }
+        }
+      } else if (obs.type === 'cross') {
+        const armLength = r * 0.95;
+        for (let i = 0; i < 4; i++) {
+          const angle = obs.rotation + (i * Math.PI) / 2;
+          const ex = cx + Math.cos(angle) * armLength;
+          const ey = cy + Math.sin(angle) * armLength;
+          const d = distToSegment(cx, ballY, cx, cy, ex, ey);
+
+          if (d < hitRadius) {
+            if (i === this.ballColorIndex) {
+              obs.passedSegments[i] = true;
+            } else if (!obs.passedSegments[i]) {
+              this.triggerGameOver();
+              return;
+            }
           }
         }
       }
     }
 
-    checkColorChangerCollision(changer) {
-      if (changer.collected) return;
+    checkStarCollision(star) {
+      if (star.collected) return;
 
-      const dist = Math.abs(this.ballY - changer.y);
-      if (dist < 26) {
-        changer.collected = true;
-        changer.graphics.clear();
+      const dist = Math.abs(this.ballY - star.y);
+      if (dist < 28) {
+        star.collected = true;
+        star.graphics.clear();
 
         // Increment Score
         this.score++;
@@ -668,11 +853,23 @@ export function initGame(container) {
           localStorage.setItem('color_switch_highscore', this.highScore.toString());
         }
 
-        // Change Ball Color to a new random color
+        sfx.playStar();
+        this.spawnBurst(this.width / 2, star.y, 0xFFC93C, 20);
+      }
+    }
+
+    checkColorChangerCollision(changer) {
+      if (changer.collected) return;
+
+      const dist = Math.abs(this.ballY - changer.y);
+      if (dist < 26) {
+        changer.collected = true;
+        changer.graphics.clear();
+
+        // Pick a NEW random color (different from current color)
         let newColorIdx = (this.ballColorIndex + Phaser.Math.Between(1, 3)) % 4;
         this.ballColorIndex = newColorIdx;
 
-        // Sound + Particle + Shake Effects
         sfx.playSwitch();
         this.cameras.main.shake(120, 0.012);
         this.spawnBurst(this.width / 2, changer.y, COLORS[newColorIdx].hex, 25);
