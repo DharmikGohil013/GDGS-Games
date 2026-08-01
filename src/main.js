@@ -66,13 +66,17 @@ function renderPage() {
 
   // Route to the correct page
   if (hash === 'about') {
-    renderSubPage(createAboutPage(), 'About — Playzy');
+    updateSEO(PAGE_SEO.about);
+    renderSubPage(createAboutPage(), PAGE_SEO.about.title);
   } else if (hash === 'terms') {
-    renderSubPage(createTermsPage(), 'Terms of Service — Playzy');
+    updateSEO(PAGE_SEO.terms);
+    renderSubPage(createTermsPage(), PAGE_SEO.terms.title);
   } else if (hash === 'privacy') {
-    renderSubPage(createPrivacyPage(), 'Privacy Policy — Playzy');
+    updateSEO(PAGE_SEO.privacy);
+    renderSubPage(createPrivacyPage(), PAGE_SEO.privacy.title);
   } else if (hash === 'contact') {
-    renderSubPage(createContactPage(), 'Contact Us — Playzy');
+    updateSEO(PAGE_SEO.contact);
+    renderSubPage(createContactPage(), PAGE_SEO.contact.title);
   } else {
     renderHomePage();
   }
@@ -88,7 +92,10 @@ function renderPage() {
 }
 
 function renderPlayPage(gameId) {
-  document.title = `Play ${gameId.replace(/-/g, ' ').toUpperCase()} — Playzy Games`;
+  // Find the game data for SEO
+  const game = games.find((g) => g.id === gameId) || { id: gameId, title: gameId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), category: 'arcade', plays: '1M+', rating: 4.8 };
+  const gameSEO = buildGameSEO(game);
+  updateSEO(gameSEO);
   currentPage = 'play';
 
   // Render Full Screen Dedicated Play Page View
@@ -97,7 +104,7 @@ function renderPlayPage(gameId) {
 }
 
 function renderHomePage() {
-  document.title = 'Playzy — 1,000+ Instant Browser Games | Play Free Online';
+  updateSEO(PAGE_SEO.home);
   currentPage = 'home';
 
   const wrap = document.createElement('div');
@@ -112,7 +119,8 @@ function renderHomePage() {
 }
 
 function renderSubPage(pageContent, title) {
-  document.title = title;
+  // Title already updated by SEO utility above, but keep for safety
+  if (document.title !== title) document.title = title;
   currentPage = 'sub';
 
   // Add back-to-home link

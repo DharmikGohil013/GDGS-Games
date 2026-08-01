@@ -50,6 +50,8 @@ input:focus-visible {
 img {
   max-width: 100%;
   display: block;
+  /* Default lazy loading for performance (Core Web Vitals — affects SEO) */
+  content-visibility: auto;
 }
 
 .wrap {
@@ -57,3 +59,35 @@ img {
   margin: 0 auto;
   padding: 0 32px;
 }
+
+/* ─── Skip link (accessibility + SEO signal) ─── */
+.skip-link {
+  position: absolute;
+  top: -60px;
+  left: 16px;
+  background: var(--coral);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 0 0 8px 8px;
+  font-weight: 600;
+  font-size: 14px;
+  z-index: 9999;
+  transition: top 0.2s ease;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+/* ─── Footer inner flex ─── */
+footer .footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+

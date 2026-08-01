@@ -87,7 +87,11 @@ const featuredGames = [
 export function createHero() {
   const section = document.createElement('section');
   section.className = 'hero';
+  section.id = 'main-content'; // Skip link target for accessibility / SEO
   section.setAttribute('aria-label', 'Featured games slider');
+  section.setAttribute('aria-labelledby', 'hero-title');
+  section.setAttribute('itemscope', '');
+  section.setAttribute('itemtype', 'https://schema.org/WPHeader');
 
   let currentIndex = 0;
   let autoTimer = null;
