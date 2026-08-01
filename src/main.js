@@ -9,6 +9,12 @@ import './styles/pages.css';
 // Import GSAP
 import gsap from 'gsap';
 
+// Import SEO utility
+import { updateSEO, PAGE_SEO, buildGameSEO } from './utils/seo.js';
+
+// Import data (needed for per-game SEO)
+import { games } from './data/games.js';
+
 // Import components
 import { createNavbar } from './components/navbar.js';
 import { createCategories } from './components/categories.js';
