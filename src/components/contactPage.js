@@ -3,12 +3,15 @@
 export function createContactPage() {
   const page = document.createElement('div');
   page.className = 'page-content';
+  // Schema.org ContactPage microdata
+  page.setAttribute('itemscope', '');
+  page.setAttribute('itemtype', 'https://schema.org/ContactPage');
 
   page.innerHTML = `
-    <div class="page-hero">
-      <span class="page-badge">Get in Touch</span>
-      <h1 class="page-title">Contact Us</h1>
-      <p class="page-subtitle">Have a question, suggestion, or just want to say hello? We'd love to hear from you.</p>
+    <div class="page-hero" role="banner">
+      <span class="page-badge" aria-label="Section: Contact">Get in Touch</span>
+      <h1 class="page-title" itemprop="headline">Contact Us</h1>
+      <p class="page-subtitle" itemprop="description">Have a question, suggestion, or just want to say hello? We'd love to hear from you.</p>
     </div>
 
     <div class="page-section">

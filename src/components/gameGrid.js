@@ -36,12 +36,13 @@ export function createGameGrid() {
     // ── Main section ──
     const section = document.createElement('section');
     section.className = 'section';
+    section.setAttribute('aria-labelledby', 'game-grid-heading');
 
     const head = document.createElement('div');
     head.className = 'section-head';
     head.innerHTML = `
-      <h2>${sectionTitle}</h2>
-      <span class="game-count">${totalCount.toLocaleString()} games</span>
+      <h2 id="game-grid-heading">${sectionTitle}</h2>
+      <span class="game-count" aria-label="${totalCount.toLocaleString()} games available">${totalCount.toLocaleString()} games</span>
     `;
     section.appendChild(head);
 
@@ -80,12 +81,13 @@ export function createGameGrid() {
     if (!searchQuery && activeCategory === 'trending') {
       const newSection = document.createElement('section');
       newSection.className = 'section';
+      newSection.setAttribute('aria-labelledby', 'new-this-week-heading');
 
       const newHead = document.createElement('div');
       newHead.className = 'section-head';
       newHead.innerHTML = `
-        <h2>New this week</h2>
-        <a href="#" class="see-all-link">See all →</a>
+        <h2 id="new-this-week-heading">New this week</h2>
+        <a href="#" class="see-all-link" aria-label="See all new browser games this week">See all →</a>
       `;
       newSection.appendChild(newHead);
 
@@ -104,12 +106,13 @@ export function createGameGrid() {
       // ── "Top Rated" section ──
       const topSection = document.createElement('section');
       topSection.className = 'section';
+      topSection.setAttribute('aria-labelledby', 'top-rated-heading');
 
       const topHead = document.createElement('div');
       topHead.className = 'section-head';
       topHead.innerHTML = `
-        <h2>Top Rated</h2>
-        <a href="#" class="see-all-link">See all →</a>
+        <h2 id="top-rated-heading">Top Rated</h2>
+        <a href="#" class="see-all-link" aria-label="See all top rated free browser games">See all →</a>
       `;
       topSection.appendChild(topHead);
 
@@ -127,12 +130,13 @@ export function createGameGrid() {
       // ── "Popular in Puzzle" section ──
       const puzzleSection = document.createElement('section');
       puzzleSection.className = 'section';
+      puzzleSection.setAttribute('aria-labelledby', 'popular-puzzle-heading');
 
       const puzzleHead = document.createElement('div');
       puzzleHead.className = 'section-head';
       puzzleHead.innerHTML = `
-        <h2>Popular in Puzzle</h2>
-        <a href="#" class="see-all-link">See all →</a>
+        <h2 id="popular-puzzle-heading">Popular in Puzzle</h2>
+        <a href="#" class="see-all-link" aria-label="See all popular puzzle browser games">See all →</a>
       `;
       puzzleSection.appendChild(puzzleHead);
 
@@ -150,12 +154,13 @@ export function createGameGrid() {
       // ── "Racing Favorites" section ──
       const racingSection = document.createElement('section');
       racingSection.className = 'section';
+      racingSection.setAttribute('aria-labelledby', 'racing-favorites-heading');
 
       const racingHead = document.createElement('div');
       racingHead.className = 'section-head';
       racingHead.innerHTML = `
-        <h2>Racing Favorites</h2>
-        <a href="#" class="see-all-link">See all →</a>
+        <h2 id="racing-favorites-heading">Racing Favorites</h2>
+        <a href="#" class="see-all-link" aria-label="See all racing browser games">See all →</a>
       `;
       racingSection.appendChild(racingHead);
 

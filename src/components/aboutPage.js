@@ -3,12 +3,15 @@
 export function createAboutPage() {
   const page = document.createElement('div');
   page.className = 'page-content';
+  // Schema.org AboutPage microdata
+  page.setAttribute('itemscope', '');
+  page.setAttribute('itemtype', 'https://schema.org/AboutPage');
 
   page.innerHTML = `
-    <div class="page-hero">
-      <span class="page-badge">About Us</span>
-      <h1 class="page-title">We build games people love.</h1>
-      <p class="page-subtitle">Playzy is a free browser-based gaming platform that brings instant entertainment to millions of players worldwide — no downloads, no installs, no hassle.</p>
+    <div class="page-hero" role="banner">
+      <span class="page-badge" aria-label="Section: About Us">About Us</span>
+      <h1 class="page-title" itemprop="headline">We build games people love.</h1>
+      <p class="page-subtitle" itemprop="description">Playzy is a free browser-based gaming platform that brings instant entertainment to millions of players worldwide — no downloads, no installs, no hassle.</p>
     </div>
 
     <div class="page-section">
