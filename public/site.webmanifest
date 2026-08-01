@@ -1,0 +1,64 @@
+{
+  "name": "Playzy — Free Browser Games",
+  "short_name": "Playzy",
+  "description": "Play 1,000+ free instant browser games. No download, no install. Arcade, Puzzle, Racing, 3D & more.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#16171D",
+  "theme_color": "#16171D",
+  "orientation": "any",
+  "lang": "en-US",
+  "categories": ["games", "entertainment"],
+  "keywords": ["browser games", "free games", "online games", "arcade", "puzzle", "racing"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "apple touch icon"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/og-cover.jpg",
+      "sizes": "1200x630",
+      "type": "image/jpeg",
+      "label": "Playzy — Home Screen"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Play Color Switch",
+      "short_name": "Color Switch",
+      "description": "Jump into Color Switch instantly",
+      "url": "/#/play/color-switch",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Play Turbo Drift",
+      "short_name": "Turbo Drift",
+      "description": "Play Turbo Drift 3D racing game",
+      "url": "/#/play/turbo-drift",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

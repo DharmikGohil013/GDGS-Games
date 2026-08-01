@@ -67,6 +67,20 @@ const featuredGames = [
     isPlayable: true,
     engine: 'pixi',
     artSvg: `<svg viewBox="0 0 80 80" width="76" height="76" aria-hidden="true"><circle cx="40" cy="40" r="38" fill="rgba(255,255,255,0.16)"/><circle cx="44" cy="18" r="7" fill="white"/><path d="M44 28 L34 48 L20 56 M44 28 L54 44 L66 40 M34 48 L42 60 L36 72" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`
+  },
+  {
+    id: 'infinite-runner',
+    title: 'Infinite Runner',
+    headline: 'Run forever.<br>Beat the odds.',
+    sub: 'Hyper-casual pixel art endless runner with procedural worlds, power-ups, and 5 unique biomes. How far can you go?',
+    eyebrow: '🔥 New Game',
+    bg: 'linear-gradient(155deg, #0D47A1, #1A237E)',
+    tag: 'Infinite Runner',
+    category: 'runner',
+    isPlayable: true,
+    engine: 'phaser',
+    image: '/images/infinite-runner.jpg',
+    artSvg: `<svg viewBox="0 0 80 80" width="76" height="76" aria-hidden="true"><circle cx="40" cy="40" r="38" fill="rgba(255,255,255,0.16)"/><path d="M20 50 L30 30 L40 45 L50 20 L60 35 L70 25" stroke="#00E5FF" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="30" cy="30" r="4" fill="#FFC93C"/><circle cx="50" cy="20" r="4" fill="#FFC93C"/><circle cx="70" cy="25" r="4" fill="#FFC93C"/><rect x="18" y="52" width="44" height="6" rx="3" fill="rgba(255,255,255,0.3)"/></svg>`
   }
 ];
 

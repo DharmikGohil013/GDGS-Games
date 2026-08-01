@@ -10,6 +10,7 @@ const gameModules = {
   'turbo-drift': () => import('../games/turbo-drift.js'),
   'ball-drop': () => import('../games/ball-drop.js'),
   'city-sprint': () => import('../games/city-sprint.js'),
+  'infinite-runner': () => import('../games/infinite-runner.js'),
 };
 
 let currentGameModule = null;

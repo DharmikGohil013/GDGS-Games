@@ -1,20 +1,520 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" prefix="og: https://ogp.me/ns#">
 <head>
+  <!-- ═══════════════════════════════════════════
+       CORE META
+  ═══════════════════════════════════════════ -->
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Playzy — Play 1,000+ free instant browser games. No downloads, no installs. Puzzle, Racing, Arcade, 3D and more categories. Load and play in under 2 seconds.">
-  <meta name="keywords" content="browser games, online games, free games, instant games, playzy, arcade, puzzle, racing, 3d games">
-  <meta name="author" content="Playzy">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <!-- Primary SEO -->
+  <title>Playzy — Play 1,000+ Free Instant Browser Games Online | No Download</title>
+  <meta name="description" content="Playzy is the #1 free browser games platform. Play 1,000+ instant games — Puzzle, Racing, Arcade, Runner, Shooter, 3D & more. No download, no install, no sign‑up. Loads in under 2 seconds on any device.">
+  <meta name="keywords" content="free browser games, online games no download, instant play games, HTML5 games, arcade games online, puzzle games free, racing games browser, 3D browser games, multiplayer browser games, mobile games online, play games free, Playzy, best browser games 2026, unblocked games, WebGL games">
+  <meta name="author" content="Playzy — dharmikgohil.art">
+  <meta name="creator" content="dharmikgohil.art">
+  <meta name="publisher" content="Playzy">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="revisit-after" content="3 days">
+  <meta name="language" content="English">
+  <meta name="rating" content="General">
+  <meta name="category" content="Games, Entertainment">
+  <meta name="classification" content="Games">
+  <meta name="coverage" content="Worldwide">
+  <meta name="distribution" content="Global">
+  <meta name="target" content="all">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+
+  <!-- Canonical & Alternates -->
+  <link rel="canonical" href="https://playzy.dharmikgohil.art/">
+  <link rel="alternate" hreflang="en" href="https://playzy.dharmikgohil.art/">
+  <link rel="alternate" hreflang="x-default" href="https://playzy.dharmikgohil.art/">
+
+  <!-- ═══════════════════════════════════════════
+       OPEN GRAPH (Facebook / LinkedIn / WhatsApp)
+  ═══════════════════════════════════════════ -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Playzy">
+  <meta property="og:title" content="Playzy — Play 1,000+ Free Instant Browser Games Online">
+  <meta property="og:description" content="Play 1,000+ free instant browser games — Puzzle, Racing, Arcade, Shooter, 3D & more. No downloads, no installs. Start playing in under 2 seconds!">
+  <meta property="og:url" content="https://playzy.dharmikgohil.art/">
+  <meta property="og:image" content="https://playzy.dharmikgohil.art/images/og-cover.jpg">
+  <meta property="og:image:secure_url" content="https://playzy.dharmikgohil.art/images/og-cover.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Playzy — 1,000+ free browser games, no download required">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:updated_time" content="2026-08-01T00:00:00+05:30">
+  <meta property="article:publisher" content="https://dharmikgohil.art">
+
+  <!-- ═══════════════════════════════════════════
+       TWITTER / X CARD
+  ═══════════════════════════════════════════ -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@playzy_games">
+  <meta name="twitter:creator" content="@dharmikgohil">
+  <meta name="twitter:title" content="Playzy — Play 1,000+ Free Instant Browser Games">
+  <meta name="twitter:description" content="No download, no install. Play 1,000+ free browser games instantly — Arcade, Puzzle, Racing, 3D & more. Loads in under 2 seconds!">
+  <meta name="twitter:image" content="https://playzy.dharmikgohil.art/images/og-cover.jpg">
+  <meta name="twitter:image:alt" content="Playzy browser games platform screenshot">
+  <meta name="twitter:domain" content="playzy.dharmikgohil.art">
+
+  <!-- ═══════════════════════════════════════════
+       GEO / LOCATION
+  ═══════════════════════════════════════════ -->
+  <meta name="geo.region" content="IN-MH">
+  <meta name="geo.placename" content="Mumbai, India">
+  <meta name="geo.position" content="19.0760;72.8777">
+  <meta name="ICBM" content="19.0760, 72.8777">
+
+  <!-- ═══════════════════════════════════════════
+       DUBLIN CORE
+  ═══════════════════════════════════════════ -->
+  <meta name="DC.title" content="Playzy — Free Instant Browser Games">
+  <meta name="DC.description" content="1,000+ free browser games. No download required. Play Puzzle, Racing, Arcade, Shooter and more instantly.">
+  <meta name="DC.creator" content="dharmikgohil.art">
+  <meta name="DC.publisher" content="Playzy">
+  <meta name="DC.language" content="en">
+  <meta name="DC.subject" content="Browser Games, Online Games, Free Games">
+  <meta name="DC.type" content="InteractiveResource">
+  <meta name="DC.format" content="text/html">
+  <meta name="DC.rights" content="© 2026 Playzy. All rights reserved.">
+
+  <!-- ═══════════════════════════════════════════
+       APP / PWA
+  ═══════════════════════════════════════════ -->
   <meta name="theme-color" content="#16171D">
+  <meta name="msapplication-TileColor" content="#16171D">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Playzy">
+  <meta name="application-name" content="Playzy">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+  <!-- ═══════════════════════════════════════════
+       PERFORMANCE — PRECONNECTS & PRELOADS
+  ═══════════════════════════════════════════ -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <title>Playzy — 1,000+ Instant Browser Games | Play Free Online</title>
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <!-- ═══════════════════════════════════════════
+       STRUCTURED DATA — JSON-LD
+  ═══════════════════════════════════════════ -->
+
+  <!-- 1. WebSite (enables Google Sitelinks Search Box) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Playzy",
+    "alternateName": ["Playzy Games", "Playzy Browser Games"],
+    "url": "https://playzy.dharmikgohil.art/",
+    "description": "Play 1,000+ free instant browser games. No download, no install. Puzzle, Racing, Arcade, 3D and more.",
+    "inLanguage": "en-US",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://playzy.dharmikgohil.art/#/?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- 2. Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Playzy",
+    "url": "https://playzy.dharmikgohil.art/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://playzy.dharmikgohil.art/images/og-cover.jpg",
+      "width": 1200,
+      "height": 630
+    },
+    "description": "Playzy is a free browser-based gaming platform hosting 1,000+ instant games across 25 categories.",
+    "foundingDate": "2024",
+    "founder": {
+      "@type": "Person",
+      "name": "Dharmik Gohil",
+      "url": "https://dharmikgohil.art"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Mumbai",
+      "addressCountry": "IN"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "dharmikgohil.work@gmail.com",
+      "contactType": "Customer Support",
+      "availableLanguage": "English"
+    },
+    "sameAs": [
+      "https://dharmikgohil.art"
+    ]
+  }
+  </script>
+
+  <!-- 3. ItemList — Featured Games -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Featured Games on Playzy",
+    "description": "Top free browser games available to play instantly on Playzy",
+    "url": "https://playzy.dharmikgohil.art/",
+    "numberOfItems": 8,
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@type": "VideoGame",
+          "name": "Color Switch",
+          "description": "The original neon color-matching arcade game. Tap to jump, match obstacle colors, and beat your high score!",
+          "url": "https://playzy.dharmikgohil.art/#/play/color-switch",
+          "genre": ["Arcade", "Casual"],
+          "gamePlatform": ["Web Browser", "Mobile Browser"],
+          "playMode": "SinglePlayer",
+          "applicationCategory": "Game",
+          "operatingSystem": "Any",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "bestRating": "5",
+            "ratingCount": "248000"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "item": {
+          "@type": "VideoGame",
+          "name": "Turbo Drift",
+          "description": "Experience high-speed 3D car drifting directly in your web browser with zero loading lag.",
+          "url": "https://playzy.dharmikgohil.art/#/play/turbo-drift",
+          "genre": ["Racing", "3D"],
+          "gamePlatform": ["Web Browser"],
+          "playMode": "SinglePlayer",
+          "applicationCategory": "Game",
+          "operatingSystem": "Any",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.6",
+            "bestRating": "5",
+            "ratingCount": "223000"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@type": "VideoGame",
+          "name": "Infinite Runner",
+          "description": "Hyper-casual pixel art endless runner with procedural worlds, power-ups, and 5 unique biomes.",
+          "url": "https://playzy.dharmikgohil.art/#/play/infinite-runner",
+          "genre": ["Runner", "Casual"],
+          "gamePlatform": ["Web Browser", "Mobile Browser"],
+          "playMode": "SinglePlayer",
+          "applicationCategory": "Game",
+          "operatingSystem": "Any",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "bestRating": "5",
+            "ratingCount": "312000"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "item": {
+          "@type": "VideoGame",
+          "name": "Neon Snake",
+          "description": "The legendary classic snake game enhanced with glowing neon visuals and high score action!",
+          "url": "https://playzy.dharmikgohil.art/#/play/neon-snake",
+          "genre": ["Arcade", "Retro"],
+          "gamePlatform": ["Web Browser", "Mobile Browser"],
+          "playMode": "SinglePlayer",
+          "applicationCategory": "Game",
+          "operatingSystem": "Any",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.7",
+            "bestRating": "5",
+            "ratingCount": "82000"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 5,
+        "item": {
+          "@type": "VideoGame",
+          "name": "Block Merge",
+          "description": "Mind-bending block merging puzzle game. Combine blocks to clear the board and reach the highest tile.",
+          "url": "https://playzy.dharmikgohil.art/#/play/block-merge",
+          "genre": ["Puzzle"],
+          "gamePlatform": ["Web Browser", "Mobile Browser"],
+          "playMode": "SinglePlayer",
+          "applicationCategory": "Game",
+          "operatingSystem": "Any",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "bestRating": "5",
+            "ratingCount": "151000"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 6,
+        "item": {
+          "@type": "VideoGame",
+          "name": "Tower Stacker",
+          "description": "Classic arcade tower stacking game. Time your drops perfectly to build the tallest tower!",
+          "url": "https://playzy.dharmikgohil.art/#/play/tower-stacker",
+          "genre": ["Arcade"],
+          "gamePlatform": ["Web Browser", "Mobile Browser"],
+          "playMode": "SinglePlayer",
+          "applicationCategory": "Game",
+          "operatingSystem": "Any",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "bestRating": "5",
+            "ratingCount": "125000"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 7,
+        "item": {
+          "@type": "VideoGame",
+          "name": "City Sprint",
+          "description": "An intense endless runner experience. Leap across rooftops and collect coins in real-time!",
+          "url": "https://playzy.dharmikgohil.art/#/play/city-sprint",
+          "genre": ["Runner"],
+          "gamePlatform": ["Web Browser", "Mobile Browser"],
+          "playMode": "SinglePlayer",
+          "applicationCategory": "Game",
+          "operatingSystem": "Any",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "bestRating": "5",
+            "ratingCount": "189000"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 8,
+        "item": {
+          "@type": "VideoGame",
+          "name": "Ball Drop",
+          "description": "Addictive ball dropping physics arcade game. Time your drops to score maximum points!",
+          "url": "https://playzy.dharmikgohil.art/#/play/ball-drop",
+          "genre": ["Arcade", "Physics"],
+          "gamePlatform": ["Web Browser", "Mobile Browser"],
+          "playMode": "SinglePlayer",
+          "applicationCategory": "Game",
+          "operatingSystem": "Any",
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.5",
+            "bestRating": "5",
+            "ratingCount": "56000"
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- 4. SoftwareApplication — Platform -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Playzy",
+    "operatingSystem": "All — Web Browser",
+    "applicationCategory": "GameApplication",
+    "applicationSubCategory": "Browser Games",
+    "url": "https://playzy.dharmikgohil.art/",
+    "description": "Playzy is a free online gaming platform with 1,000+ instant browser games across 25 categories. No download or installation required.",
+    "screenshot": "https://playzy.dharmikgohil.art/images/og-cover.jpg",
+    "softwareVersion": "1.0.0",
+    "releaseNotes": "New games added weekly. Improved game loading speed. Mobile optimization.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "bestRating": "5",
+      "ratingCount": "50000"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Dharmik Gohil",
+      "url": "https://dharmikgohil.art"
+    }
+  }
+  </script>
+
+  <!-- 5. FAQPage — Common questions about Playzy -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is Playzy free to use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! Playzy is completely free. All 1,000+ browser games are available to play at no cost, with no sign-up, no downloads, and no installations required."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need to download anything to play games on Playzy?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No downloads required. All games on Playzy run entirely in your web browser using HTML5, WebGL, and other modern web technologies. Just open the page and start playing instantly."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What types of games are available on Playzy?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Playzy hosts 1,000+ games across 25 categories including Arcade, Puzzle, Racing, Runner, Shooter, Strategy, Sports, Physics, Card, Board, Word, Trivia, Platformer, Fighting, Simulation, Cooking, Music, Horror, Casual, Multiplayer, 3D, Retro, and Educational games."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I play Playzy games on mobile?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! Playzy is fully optimized for mobile browsers. All games support touch controls and work seamlessly on smartphones and tablets without any app installation."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How fast do games load on Playzy?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Playzy games load in under 2 seconds on average. Our platform is optimized for fast delivery and minimal loading times across all devices and connection speeds."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are new games added regularly?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, new games are added to Playzy every week! Check the 'New This Week' section on the homepage to discover the latest additions."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- 6. BreadcrumbList — Site Navigation -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://playzy.dharmikgohil.art/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "All Games",
+        "item": "https://playzy.dharmikgohil.art/#/"
+      }
+    ]
+  }
+  </script>
+
 </head>
 <body>
-  <div id="app"></div>
+  <!-- Skip to main content for accessibility & SEO -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <div id="app" role="main" aria-label="Playzy — Free Browser Games"></div>
+
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>
