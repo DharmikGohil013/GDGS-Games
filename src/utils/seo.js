@@ -61,6 +61,14 @@ export function updateSEO({ title, description, url = '/', image, type = 'websit
     script.textContent = JSON.stringify(jsonLd, null, 2);
     document.head.appendChild(script);
   }
+
+  // Google Analytics SPA Pageview Tracking
+  if (typeof window.gtag === 'function') {
+    window.gtag('config', 'G-TEKBBJ6WTP', {
+      page_path: url,
+      page_title: title
+    });
+  }
 }
 
 // ── Page SEO Presets ─────────────────────────────────────────
