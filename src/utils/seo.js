@@ -197,48 +197,110 @@ export const PAGE_SEO = {
   }
 };
 
-/**
- * Build per-game SEO metadata dynamically.
- */
 export function buildGameSEO(game) {
   const gameName = game.title || game.id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   const category = (game.category || 'arcade').charAt(0).toUpperCase() + (game.category || 'arcade').slice(1);
   const plays = game.plays || '1M+';
   const rating = game.rating || 4.8;
+  const gameUrl = `https://playzy.dharmikgohil.art/#/play/${game.id}`;
 
   return {
     title: `Play ${gameName} Free Online — ${category} Browser Game | Playzy`,
-    description: `Play ${gameName} free online instantly — no download, no install. ${category} browser game with ${plays} plays and a ${rating}/5 rating. Available on all devices at Playzy.`,
+    description: `Play ${gameName} free online instantly — no download, no install. ${category} browser game with ${plays} plays and a ${rating}/5 rating. Available on mobile and desktop at Playzy.`,
     url: `/#/play/${game.id}`,
     image: game.image || null,
     type: 'website',
     jsonLd: {
       '@context': 'https://schema.org',
-      '@type': 'VideoGame',
-      name: gameName,
-      description: `Play ${gameName} free online. A ${category} browser game with ${plays} plays. No download required.`,
-      url: `https://playzy.dharmikgohil.art/#/play/${game.id}`,
-      gamePlatform: ['Web Browser', 'Mobile Browser', 'Desktop Browser'],
-      playMode: 'SinglePlayer',
-      applicationCategory: 'Game',
-      operatingSystem: 'Any — No installation required',
-      genre: [category],
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', availability: 'https://schema.org/InStock' },
-      aggregateRating: {
-        '@type': 'AggregateRating',
-        ratingValue: String(rating),
-        bestRating: '5',
-        ratingCount: String(Math.floor(Math.random() * 200000 + 10000))
-      },
-      publisher: { '@type': 'Organization', name: 'Playzy', url: 'https://playzy.dharmikgohil.art/' },
-      breadcrumb: {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://playzy.dharmikgohil.art/' },
-          { '@type': 'ListItem', position: 2, name: 'Games', item: 'https://playzy.dharmikgohil.art/' },
-          { '@type': 'ListItem', position: 3, name: gameName, item: `https://playzy.dharmikgohil.art/#/play/${game.id}` }
-        ]
-      }
+      '@graph': [
+        {
+          '@type': 'VideoGame',
+          '@id': `${gameUrl}#game`,
+          name: gameName,
+          alternateName: [`${gameName} Game`, `Play ${gameName} Online`],
+          description: `Play ${gameName} free online. A top-rated ${category} browser game played ${plays} times. No installation required.`,
+          url: gameUrl,
+          gamePlatform: ['Web Browser', 'Mobile Browser', 'Desktop Browser', 'iOS Browser', 'Android Browser'],
+          playMode: 'SinglePlayer',
+          applicationCategory: 'Game',
+          operatingSystem: 'Any — Web Browser',
+          genre: [category, 'Browser Games'],
+          offers: {
+            '@type': 'Offer',
+            price: '0',
+            priceCurrency: 'USD',
+            availability: 'https://schema.org/InStock'
+          },
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: String(rating),
+            bestRating: '5',
+            ratingCount: String(Math.floor(Math.random() * 200000 + 15000))
+          },
+          publisher: {
+            '@type': 'Organization',
+            name: 'Playzy',
+            url: 'https://playzy.dharmikgohil.art/'
+          }
+        },
+        {
+          '@type': 'HowTo',
+          '@id': `${gameUrl}#howto`,
+          name: `How to Play ${gameName} Online`,
+          description: `Simple step-by-step instructions to play ${gameName} on desktop and mobile.`,
+          step: [
+            {
+              '@type': 'HowToStep',
+              position: 1,
+              name: 'Open Game',
+              text: `Visit ${gameUrl} on any smartphone, tablet, or desktop browser.`
+            },
+            {
+              '@type': 'HowToStep',
+              position: 2,
+              name: 'Learn Controls',
+              text: 'Use your Keyboard Arrow Keys / WASD on PC or Tap the screen on mobile to control the action.'
+            },
+            {
+              '@type': 'HowToStep',
+              position: 3,
+              name: 'Score Points & Beat High Score',
+              text: 'Complete objectives, make color matches, and build multiplier combos to set a new personal record!'
+            }
+          ]
+        },
+        {
+          '@type': 'FAQPage',
+          '@id': `${gameUrl}#faq`,
+          mainEntity: [
+            {
+              '@type': 'Question',
+              name: `Is ${gameName} free to play?`,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: `Yes! ${gameName} is 100% free to play online at Playzy with no download, no installation, and no registration needed.`
+              }
+            },
+            {
+              '@type': 'Question',
+              name: `Can I play ${gameName} on mobile?`,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: `Yes! ${gameName} works natively on Android, iPhone, iPad, and desktop web browsers with touch and keyboard controls.`
+              }
+            }
+          ]
+        },
+        {
+          '@type': 'BreadcrumbList',
+          '@id': `${gameUrl}#breadcrumb`,
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://playzy.dharmikgohil.art/' },
+            { '@type': 'ListItem', position: 2, name: 'Games', item: 'https://playzy.dharmikgohil.art/#/' },
+            { '@type': 'ListItem', position: 3, name: gameName, item: gameUrl }
+          ]
+        }
+      ]
     }
   };
 }
