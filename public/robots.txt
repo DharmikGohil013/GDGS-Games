@@ -1,13 +1,16 @@
 User-agent: *
 Allow: /
 
-# Disallow admin or private paths (none exist, but standard practice)
+# Disallow private system paths
 Disallow: /dist/
 Disallow: /node_modules/
 Disallow: /.git/
 
-# Allow all major crawlers
+# Allow traditional search engine crawlers
 User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
 Allow: /
 
 User-agent: Bingbot
@@ -34,8 +37,33 @@ Allow: /
 User-agent: LinkedInBot
 Allow: /
 
+# Allow AI Search & Generative Engine Optimization (GEO) Crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
 # Sitemap
 Sitemap: https://playzy.dharmikgohil.art/sitemap.xml
-
-# Crawl delay (optional, helps prevent overloading for smaller bots)
-Crawl-delay: 1
