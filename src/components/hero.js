@@ -3,6 +3,19 @@ import { setState } from '../store.js';
 
 const featuredGames = [
   {
+    id: 'hextris',
+    title: 'Hextris',
+    headline: 'Rotate the hex.<br>Clear the stack.',
+    sub: 'Play Hextris free online! Rotate the central hexagon, match 3 or more colored blocks, and build insane high-score combos.',
+    eyebrow: '🔥 Hot Today #1',
+    bg: 'linear-gradient(155deg, #7C3AED, #4C1D95)',
+    tag: 'Hextris • 🔥 Hot Today',
+    category: 'puzzle',
+    isPlayable: true,
+    engine: 'canvas',
+    artSvg: `<svg viewBox="0 0 80 80" width="76" height="76" aria-hidden="true"><circle cx="40" cy="40" r="38" fill="rgba(255,255,255,0.16)"/><polygon points="40,16 61,28 61,52 40,64 19,52 19,28" stroke="white" stroke-width="4" fill="none"/><polygon points="40,26 52,33 52,47 40,54 28,47 28,33" fill="#f1c40f"/><circle cx="40" cy="40" r="6" fill="#e74c3c"/></svg>`
+  },
+  {
     id: 'color-switch',
     title: 'Color Switch',
     headline: 'Match the colors.<br>Conquer the heights.',

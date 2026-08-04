@@ -46,8 +46,13 @@ export function createGameCard(game) {
     ? `<img src="${game.image}" alt="${game.title} — free ${categoryLabel} browser game thumbnail" class="card-thumb-img" itemprop="image" loading="lazy" decoding="async" />`
     : icon;
 
+  const hotBadge = game.isHot
+    ? `<span style="position:absolute;top:8px;right:8px;background:linear-gradient(135deg, #ef4444, #f59e0b);color:#ffffff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:12px;box-shadow:0 2px 8px rgba(239,68,68,0.4);text-transform:uppercase;letter-spacing:0.5px;z-index:2;display:inline-flex;align-items:center;gap:3px;">🔥 HOT TODAY</span>`
+    : '';
+
   card.innerHTML = `
-    <div class="card-art" style="background:${bgColor}" role="img" aria-hidden="true">
+    <div class="card-art" style="background:${bgColor};position:relative;" role="img" aria-hidden="true">
+      ${hotBadge}
       ${artContent}
     </div>
     <div class="card-body">
