@@ -358,18 +358,21 @@ function updateGame(cx, cy) {
     }
   }
 
-  // Update falling blocks
+  // Calculate current hexagon rotation offset in 60-degree units
+  const rotIndex = Math.round(targetAngle / (Math.PI / 3));
+
+  // Update falling blocks (moving in fixed world lanes)
   for (let i = fallingBlocks.length - 1; i >= 0; i--) {
     const block = fallingBlocks[i];
     block.dist -= currentSpeed;
 
-    // Target side in world space
-    const side = block.side;
+    // Determine which hexagon side is currently facing this fixed world lane
+    const side = ((block.lane - rotIndex) % 6 + 6) % 6;
     const currentStackHeight = stack[side].length;
     const targetDist = hexRadius + currentStackHeight * blockHeight;
 
     if (block.dist <= targetDist) {
-      // Snap to stack
+      // Snap to stack on side facing this world lane
       stack[side].push(block.color);
       fallingBlocks.splice(i, 1);
       playSound('land');
@@ -410,12 +413,11 @@ function updateGame(cx, cy) {
 
 // ─── Block Spawning ───
 function spawnBlock() {
-  const side = Math.floor(Math.random() * 6);
-  // Color selection: choose from colors currently present or active palette
+  const lane = Math.floor(Math.random() * 6); // Fixed world lane 0..5
   const colorIndex = Math.floor(Math.random() * PALETTE.length);
 
   fallingBlocks.push({
-    side: side,
+    lane: lane,
     color: colorIndex,
     dist: spawnRadius
   });
@@ -581,11 +583,12 @@ function drawBackgroundEffects(ctx, w, h, cx, cy) {
 }
 
 function drawGameScene(ctx, cx, cy) {
+  // 1. Draw Rotated Central Hexagon & Stacked Blocks
   ctx.save();
   ctx.translate(cx, cy);
   ctx.rotate(currentAngle);
 
-  // 1. Draw Central Hexagon
+  // Central Hexagon
   ctx.fillStyle = HEX_FILL_COLOR;
   ctx.strokeStyle = HEX_OUTLINE_COLOR;
   ctx.lineWidth = 4;
@@ -593,7 +596,7 @@ function drawGameScene(ctx, cx, cy) {
   ctx.fill();
   ctx.stroke();
 
-  // 2. Draw Stacked Blocks
+  // Stacked Blocks (rotate WITH hexagon)
   for (let side = 0; side < 6; side++) {
     const sideAngle = (side * Math.PI) / 3;
     for (let layer = 0; layer < stack[side].length; layer++) {
@@ -606,15 +609,7 @@ function drawGameScene(ctx, cx, cy) {
     }
   }
 
-  // 3. Draw Falling Blocks
-  fallingBlocks.forEach((block) => {
-    const sideAngle = (block.side * Math.PI) / 3;
-    const innerR = block.dist;
-    const outerR = innerR + blockHeight;
-    drawTrapezoidBlock(ctx, sideAngle, innerR, outerR, PALETTE[block.color]);
-  });
-
-  // 4. Draw Combo Timer Ring (if combo active)
+  // Combo Timer Ring
   if (combo > 1 && comboTimer > 0) {
     const ringRadius = hexRadius + (maxStackLayers + 0.8) * blockHeight;
     ctx.strokeStyle = '#f1c40f';
@@ -624,6 +619,17 @@ function drawGameScene(ctx, cx, cy) {
     ctx.stroke();
   }
 
+  ctx.restore();
+
+  // 2. Draw Falling Blocks (FIXED WORLD LANES — DO NOT ROTATE WITH HEXAGON!)
+  ctx.save();
+  ctx.translate(cx, cy);
+  fallingBlocks.forEach((block) => {
+    const worldLaneAngle = (block.lane * Math.PI) / 3;
+    const innerR = block.dist;
+    const outerR = innerR + blockHeight;
+    drawTrapezoidBlock(ctx, worldLaneAngle, innerR, outerR, PALETTE[block.color]);
+  });
   ctx.restore();
 
   // 5. Draw Particles
