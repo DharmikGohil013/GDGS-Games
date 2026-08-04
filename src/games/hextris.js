@@ -197,7 +197,7 @@ function resizeCanvas() {
   const minDim = Math.min(rect.width, rect.height);
   hexRadius = Math.max(45, minDim * 0.11);
   blockHeight = Math.max(14, hexRadius * 0.28);
-  spawnRadius = Math.max(rect.width, rect.height) * 0.65;
+  spawnRadius = hexRadius + (maxStackLayers + 6) * blockHeight;
 }
 
 // ─── Reset Game ───
@@ -376,6 +376,9 @@ function updateGame(cx, cy) {
       stack[side].push(block.color);
       fallingBlocks.splice(i, 1);
       playSound('land');
+
+      // Instantly snap rotation angle on landing for 100% flush alignment
+      currentAngle = targetAngle;
 
       // Check Game Over condition
       if (stack[side].length > maxStackLayers) {
@@ -621,14 +624,22 @@ function drawGameScene(ctx, cx, cy) {
 
   ctx.restore();
 
-  // 2. Draw Falling Blocks (FIXED WORLD LANES — DO NOT ROTATE WITH HEXAGON!)
+  // 2. Draw Falling Blocks (FIXED WORLD LANES — SLEEK BOUNDED WIDTH)
   ctx.save();
   ctx.translate(cx, cy);
+  const maxStackRadius = hexRadius + maxStackLayers * blockHeight;
   fallingBlocks.forEach((block) => {
-    const worldLaneAngle = (block.lane * Math.PI) / 3;
+    const laneAngle = (block.lane * Math.PI) / 3;
     const innerR = block.dist;
     const outerR = innerR + blockHeight;
-    drawTrapezoidBlock(ctx, worldLaneAngle, innerR, outerR, PALETTE[block.color]);
+
+    // Sleek width tapering so blocks stay proportional as they fall
+    const scale = innerR > maxStackRadius ? maxStackRadius / innerR : 1;
+    const deltaA = (Math.PI / 3) * scale;
+    const a1 = laneAngle + (Math.PI / 3 - deltaA) / 2;
+    const a2 = a1 + deltaA;
+
+    drawCustomTrapezoidBlock(ctx, a1, a2, innerR, outerR, PALETTE[block.color]);
   });
   ctx.restore();
 
@@ -675,6 +686,34 @@ function drawTrapezoidBlock(ctx, sideAngle, r1, r2, colorHex) {
   const a1 = sideAngle;
   const a2 = sideAngle + Math.PI / 3;
 
+  const p1x = Math.cos(a1) * r1;
+  const p1y = Math.sin(a1) * r1;
+  const p2x = Math.cos(a2) * r1;
+  const p2y = Math.sin(a2) * r1;
+
+  const p3x = Math.cos(a2) * r2;
+  const p3y = Math.sin(a2) * r2;
+  const p4x = Math.cos(a1) * r2;
+  const p4y = Math.sin(a1) * r2;
+
+  ctx.save();
+  ctx.fillStyle = colorHex;
+  ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+  ctx.lineWidth = 1.5;
+
+  ctx.beginPath();
+  ctx.moveTo(p1x, p1y);
+  ctx.lineTo(p2x, p2y);
+  ctx.lineTo(p3x, p3y);
+  ctx.lineTo(p4x, p4y);
+  ctx.closePath();
+
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawCustomTrapezoidBlock(ctx, a1, a2, r1, r2, colorHex) {
   const p1x = Math.cos(a1) * r1;
   const p1y = Math.sin(a1) * r1;
   const p2x = Math.cos(a2) * r1;
