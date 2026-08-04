@@ -54,6 +54,19 @@
   ═══════════════════════════════ -->
 
   <url>
+    <loc>https://playzy.dharmikgohil.art/#/play/hextris</loc>
+    <lastmod>2026-08-04</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://playzy.dharmikgohil.art/#/play/hextris"/>
+    <image:image>
+      <image:loc>https://playzy.dharmikgohil.art/images/hextris.jpg</image:loc>
+      <image:title>Hextris — Free Hexagonal Tetris Browser Game</image:title>
+      <image:caption>Play Hextris free online. Fast-paced hexagonal puzzle browser game. No download required.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
     <loc>https://playzy.dharmikgohil.art/#/play/color-switch</loc>
     <lastmod>2026-08-01</lastmod>
     <changefreq>weekly</changefreq>

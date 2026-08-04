@@ -94,7 +94,7 @@ function renderPage() {
 function renderPlayPage(gameId) {
   // Find the game data for SEO
   const game = games.find((g) => g.id === gameId) || { id: gameId, title: gameId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), category: 'arcade', plays: '1M+', rating: 4.8 };
-  const gameSEO = buildGameSEO(game);
+  const gameSEO = PAGE_SEO[gameId] || buildGameSEO(game);
   updateSEO(gameSEO);
   currentPage = 'play';
 

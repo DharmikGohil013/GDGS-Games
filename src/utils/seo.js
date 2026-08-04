@@ -91,6 +91,34 @@ export const PAGE_SEO = {
     }
   },
 
+  hextris: {
+    title: 'Play Hextris Free Online — Hexagonal Tetris Browser Game | Playzy',
+    description: 'Play Hextris free online instantly — the official hexagonal Tetris puzzle game. Rotate the hexagon, match 3+ color blocks, build high-score combos. No download required.',
+    url: '/#/play/hextris',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'VideoGame',
+      name: 'Hextris',
+      alternateName: ['Hextris Game', 'Hexagonal Tetris', 'Hextris Browser Game'],
+      description: 'Hextris is a fast-paced hexagonal puzzle game inspired by Tetris. Rotate the central hexagon to match 3 or more blocks of the same color.',
+      url: 'https://playzy.dharmikgohil.art/#/play/hextris',
+      gamePlatform: ['Web Browser', 'Mobile Browser', 'Desktop Browser'],
+      playMode: 'SinglePlayer',
+      applicationCategory: 'Game',
+      operatingSystem: 'Any — No installation required',
+      genre: ['Puzzle', 'Arcade', 'Casual'],
+      author: { '@type': 'Organization', name: 'Playzy', url: 'https://playzy.dharmikgohil.art/' },
+      publisher: { '@type': 'Organization', name: 'Playzy', url: 'https://playzy.dharmikgohil.art/' },
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', availability: 'https://schema.org/InStock' },
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: '5.0',
+        bestRating: '5',
+        ratingCount: '489000'
+      }
+    }
+  },
+
   about: {
     title: 'About Playzy — Free Browser Games Platform | No Download Gaming',
     description: 'Learn about Playzy — a free browser gaming platform with 1,000+ instant games across 25 categories. Built by dharmikgohil.art. 50M+ monthly plays. 180+ countries served.',
