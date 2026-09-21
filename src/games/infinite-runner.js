@@ -1,5 +1,6 @@
 // ─── Infinite Runner — Flawless Engine & Smooth Parallax ───
 import Phaser from 'phaser';
+import { reportRun } from '../core/runReport.js';
 
 let gameInstance = null;
 
@@ -134,6 +135,8 @@ export function initGame(container) {
       // Game State & Difficulty
       this.state = 'START'; // 'START', 'PLAYING', 'DEAD'
       this.mode = localStorage.getItem('inf_runner_mode') || 'CASUAL';
+      this.runStartedAt = performance.now();
+      this.bestComboCount = 0;
 
       this.modeConfigs = {
         CASUAL: { baseSpeed: 75, maxSpeed: 190, gravity: 820, jump: -410, doubleJump: -340, initialShield: true, multiplier: 1 },
@@ -843,6 +846,14 @@ export function initGame(container) {
       this.dBestText.setText(`BEST: ${this.highScore}m`);
       this.dNewBest.setText(isNew ? '🎉 NEW RECORD!' : '');
       this.deadContainer.setVisible(true);
+
+      reportRun(container, 'infinite-runner', {
+        score: dist,
+        coins: this.coinsCollected || 0,
+        combo: this.bestComboCount || 0,
+        distance: dist,
+        duration: this.runStartedAt ? (performance.now() - this.runStartedAt) / 1000 : 0,
+      });
     }
 
     restartGame() { this.scene.restart(); }

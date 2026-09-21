@@ -98,7 +98,7 @@
   <!-- ═══════════════════════════════════════════
        APP / PWA
   ═══════════════════════════════════════════ -->
-  <meta name="theme-color" content="#16171D">
+  <meta name="theme-color" content="#08090F">
   <meta name="msapplication-TileColor" content="#16171D">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -558,6 +558,20 @@
       }
     ]
   }
+  </script>
+
+  <!-- Apply the saved theme before first paint so there is no flash of the wrong skin -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('playzy:theme');
+        if (t === 'dark' || t === 'light') {
+          document.documentElement.setAttribute('data-theme', t);
+          var m = document.querySelector('meta[name="theme-color"]');
+          if (m) m.setAttribute('content', t === 'dark' ? '#08090F' : '#F3F5FB');
+        }
+      } catch (e) {}
+    })();
   </script>
 
 </head>

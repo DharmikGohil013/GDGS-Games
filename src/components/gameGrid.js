@@ -1,39 +1,79 @@
-// ─── Game Grid Component ───
+// ─── Game Grid ───
+// Filtered catalogue plus curated rails. The "Jump back in" rail is driven by
+// the player's own history, so the homepage changes as they play.
+
 import { getState, setState, subscribe } from '../store.js';
 import { games } from '../data/games.js';
 import { searchGames, filterByCategory, sortGames } from '../utils/search.js';
 import { createGameCard } from './gameCard.js';
+import { getProfile } from '../core/progress.js';
+import { onUnmount } from '../core/lifecycle.js';
 
 export function createGameGrid() {
   const container = document.createElement('div');
   container.id = 'game-grid-container';
 
+  /** Build one titled rail of cards. */
+  function rail({ id, title, items, link, cardOpts }) {
+    if (!items.length) return null;
+
+    const section = document.createElement('section');
+    section.className = 'section';
+    section.setAttribute('aria-labelledby', id);
+
+    const head = document.createElement('div');
+    head.className = 'section-head';
+    head.innerHTML = `
+      <h2 id="${id}">${title}</h2>
+      ${link ? `<a href="${link.href}" class="see-all-link">${link.label} →</a>` : ''}
+    `;
+    section.appendChild(head);
+
+    const grid = document.createElement('div');
+    grid.className = 'card-grid';
+    items.forEach((g) => grid.appendChild(createGameCard(g, cardOpts)));
+    section.appendChild(grid);
+
+    return section;
+  }
+
   function render() {
     const { activeCategory, searchQuery, visibleGames } = getState();
 
-    // Filter and search
     let filtered = filterByCategory(games, activeCategory);
-    if (searchQuery) {
-      filtered = searchGames(filtered, searchQuery);
-    }
+    if (searchQuery) filtered = searchGames(filtered, searchQuery);
     filtered = sortGames(filtered, 'popular');
 
-    // Store filtered count
     const totalCount = filtered.length;
     const visible = filtered.slice(0, visibleGames);
 
-    // Determine section title
     let sectionTitle = 'Trending now';
-    if (searchQuery) {
-      sectionTitle = `Search results for "${searchQuery}"`;
-    } else if (activeCategory !== 'trending') {
-      const catName = activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1);
-      sectionTitle = `${catName} Games`;
+    if (searchQuery) sectionTitle = `Search results for "${searchQuery}"`;
+    else if (activeCategory !== 'trending') {
+      sectionTitle = `${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)} Games`;
     }
 
     container.innerHTML = '';
 
-    // ── Main section ──
+    // ── Jump back in (personalised) ──
+    const isHome = !searchQuery && activeCategory === 'trending';
+    if (isHome) {
+      const profile = getProfile();
+      const recent = Object.entries(profile.games)
+        .sort((a, b) => (b[1].lastPlayed || 0) - (a[1].lastPlayed || 0))
+        .slice(0, 4)
+        .map(([gid]) => games.find((g) => g.id === gid))
+        .filter(Boolean);
+
+      const jumpBack = rail({
+        id: 'jump-back-heading',
+        title: '▶ Jump back in',
+        items: recent,
+      });
+      if (jumpBack) container.appendChild(jumpBack);
+    }
+
+    // ── Main results ──
     const section = document.createElement('section');
     section.className = 'section';
     section.setAttribute('aria-labelledby', 'game-grid-heading');
@@ -46,30 +86,29 @@ export function createGameGrid() {
     `;
     section.appendChild(head);
 
-    const grid = document.createElement('div');
-    grid.className = 'card-grid';
-    grid.id = 'main-game-grid';
+    if (!visible.length) {
+      const empty = document.createElement('div');
+      empty.className = 'drawer-empty';
+      empty.innerHTML = `No games match "<strong>${searchQuery}</strong>".<br>Try a different search or pick a category.`;
+      section.appendChild(empty);
+    } else {
+      const grid = document.createElement('div');
+      grid.className = 'card-grid';
+      grid.id = 'main-game-grid';
+      visible.forEach((game) => grid.appendChild(createGameCard(game)));
+      section.appendChild(grid);
+    }
 
-    visible.forEach((game) => {
-      grid.appendChild(createGameCard(game));
-    });
-
-    section.appendChild(grid);
-
-    // Load more button
     if (visibleGames < totalCount) {
       const loadMore = document.createElement('div');
       loadMore.className = 'load-more-wrap';
       loadMore.innerHTML = `
         <button class="load-more-btn" id="load-more-btn">
           Show more games (${(totalCount - visibleGames).toLocaleString()} remaining)
-          <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor" aria-hidden="true">
-            <path d="M10 14L4 8h12L10 14z"/>
-          </svg>
+          <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M10 14L4 8h12L10 14z"/></svg>
         </button>
       `;
       section.appendChild(loadMore);
-
       loadMore.querySelector('#load-more-btn').addEventListener('click', () => {
         setState({ visibleGames: visibleGames + 40 });
       });
@@ -77,154 +116,69 @@ export function createGameGrid() {
 
     container.appendChild(section);
 
-    // ── "🔥 Hot Games" section (only on trending/home) ──
-    if (!searchQuery && activeCategory === 'trending') {
-      const hotSection = document.createElement('section');
-      hotSection.className = 'section';
-      hotSection.setAttribute('aria-labelledby', 'hot-games-heading');
+    // ── Curated rails (home only) ──
+    if (isHome) {
+      const playable = games.filter((g) => g.isPlayable);
 
-      const hotHead = document.createElement('div');
-      hotHead.className = 'section-head';
-      hotHead.innerHTML = `
-        <h2 id="hot-games-heading" style="display:flex;align-items:center;gap:8px;">🔥 Hot Games</h2>
-        <a href="#" class="see-all-link" aria-label="See all hot games on Playzy">See all →</a>
-      `;
-      hotSection.appendChild(hotHead);
-
-      const hotGrid = document.createElement('div');
-      hotGrid.className = 'card-grid';
-
-      // Pick hot and playable games
-      const hotGamesList = games.filter((g) => g.isHot || g.isPlayable).slice(0, 8);
-      hotGamesList.forEach((game) => {
-        hotGrid.appendChild(createGameCard(game));
-      });
-
-      hotSection.appendChild(hotGrid);
-      container.appendChild(hotSection);
-
-      // ── "New this week" section ──
-      const newSection = document.createElement('section');
-      newSection.className = 'section';
-      newSection.setAttribute('aria-labelledby', 'new-this-week-heading');
-
-      const newHead = document.createElement('div');
-      newHead.className = 'section-head';
-      newHead.innerHTML = `
-        <h2 id="new-this-week-heading">New this week</h2>
-        <a href="#" class="see-all-link" aria-label="See all new browser games this week">See all →</a>
-      `;
-      newSection.appendChild(newHead);
-
-      const newGrid = document.createElement('div');
-      newGrid.className = 'card-grid';
-
-      // Show a different slice of games for "new this week"
-      const newGames = games.slice(100, 108);
-      newGames.forEach((game) => {
-        newGrid.appendChild(createGameCard(game));
-      });
-
-      newSection.appendChild(newGrid);
-      container.appendChild(newSection);
-
-      // ── "Top Rated" section ──
-      const topSection = document.createElement('section');
-      topSection.className = 'section';
-      topSection.setAttribute('aria-labelledby', 'top-rated-heading');
-
-      const topHead = document.createElement('div');
-      topHead.className = 'section-head';
-      topHead.innerHTML = `
-        <h2 id="top-rated-heading">Top Rated</h2>
-        <a href="#" class="see-all-link" aria-label="See all top rated free browser games">See all →</a>
-      `;
-      topSection.appendChild(topHead);
-
-      const topGrid = document.createElement('div');
-      topGrid.className = 'card-grid';
-
-      const topGames = sortGames([...games], 'rating').slice(0, 8);
-      topGames.forEach((game) => {
-        topGrid.appendChild(createGameCard(game));
-      });
-
-      topSection.appendChild(topGrid);
-      container.appendChild(topSection);
-
-      // ── "Popular in Puzzle" section ──
-      const puzzleSection = document.createElement('section');
-      puzzleSection.className = 'section';
-      puzzleSection.setAttribute('aria-labelledby', 'popular-puzzle-heading');
-
-      const puzzleHead = document.createElement('div');
-      puzzleHead.className = 'section-head';
-      puzzleHead.innerHTML = `
-        <h2 id="popular-puzzle-heading">Popular in Puzzle</h2>
-        <a href="#" class="see-all-link" aria-label="See all popular puzzle browser games">See all →</a>
-      `;
-      puzzleSection.appendChild(puzzleHead);
-
-      const puzzleGrid = document.createElement('div');
-      puzzleGrid.className = 'card-grid';
-
-      const puzzleGames = filterByCategory(games, 'puzzle').slice(0, 4);
-      puzzleGames.forEach((game) => {
-        puzzleGrid.appendChild(createGameCard(game));
-      });
-
-      puzzleSection.appendChild(puzzleGrid);
-      container.appendChild(puzzleSection);
-
-      // ── "Racing Favorites" section ──
-      const racingSection = document.createElement('section');
-      racingSection.className = 'section';
-      racingSection.setAttribute('aria-labelledby', 'racing-favorites-heading');
-
-      const racingHead = document.createElement('div');
-      racingHead.className = 'section-head';
-      racingHead.innerHTML = `
-        <h2 id="racing-favorites-heading">Racing Favorites</h2>
-        <a href="#" class="see-all-link" aria-label="See all racing browser games">See all →</a>
-      `;
-      racingSection.appendChild(racingHead);
-
-      const racingGrid = document.createElement('div');
-      racingGrid.className = 'card-grid';
-
-      const racingGames = filterByCategory(games, 'racing').slice(0, 4);
-      racingGames.forEach((game) => {
-        racingGrid.appendChild(createGameCard(game));
-      });
-
-      racingSection.appendChild(racingGrid);
-      container.appendChild(racingSection);
+      [
+        rail({
+          id: 'hot-games-heading',
+          title: '🔥 Play instantly',
+          items: playable.slice(0, 8),
+          link: { href: '#/', label: 'See all' },
+        }),
+        rail({
+          id: 'new-this-week-heading',
+          title: 'New this week',
+          items: games.slice(100, 108),
+          cardOpts: { isNew: true },
+        }),
+        rail({
+          id: 'top-rated-heading',
+          title: 'Top rated',
+          items: sortGames([...games], 'rating').slice(0, 8),
+        }),
+        rail({
+          id: 'popular-puzzle-heading',
+          title: 'Popular in Puzzle',
+          items: filterByCategory(games, 'puzzle').slice(0, 4),
+        }),
+        rail({
+          id: 'racing-favorites-heading',
+          title: 'Racing favourites',
+          items: filterByCategory(games, 'racing').slice(0, 4),
+        }),
+      ].forEach((s) => { if (s) container.appendChild(s); });
     }
 
-    // Trigger GSAP animations on new cards
-    requestAnimationFrame(() => {
-      animateCards();
-    });
+    requestAnimationFrame(animateCards);
   }
 
-  subscribe(() => render());
+  const unsubscribe = subscribe(() => render());
   render();
+
+  // Cards show personal bests, so repaint when a run is banked.
+  const onProgress = () => render();
+  document.addEventListener('playzy:progress', onProgress);
+
+  onUnmount(() => {
+    unsubscribe();
+    document.removeEventListener('playzy:progress', onProgress);
+  });
 
   return container;
 }
 
 function animateCards() {
-  // Animate cards that haven't been animated yet
-  if (typeof window.gsap !== 'undefined') {
-    window.gsap.from('.game-card:not(.animated)', {
-      y: 30,
-      opacity: 0,
-      duration: 0.4,
-      stagger: 0.05,
-      ease: 'power2.out',
-      onComplete: function () {
-        document.querySelectorAll('.game-card:not(.animated)').forEach((c) => c.classList.add('animated'));
-      },
-    });
-  }
+  if (typeof window.gsap === 'undefined') return;
+  window.gsap.from('.game-card:not(.animated)', {
+    y: 24,
+    opacity: 0,
+    duration: 0.4,
+    stagger: 0.04,
+    ease: 'power2.out',
+    onComplete() {
+      document.querySelectorAll('.game-card:not(.animated)').forEach((c) => c.classList.add('animated'));
+    },
+  });
 }

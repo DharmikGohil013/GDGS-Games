@@ -32,6 +32,12 @@ let comboTimer = 0; // 0 to 1
 let maxComboTime = 180; // frames (~3 seconds)
 let comboFrameCount = 0;
 
+// ── Meta-progression bridge ──
+let runStart = 0;
+let runBestCombo = 0;
+let runClears = 0;
+let runBanked = false;
+
 let currentAngle = 0;
 let targetAngle = 0;
 
@@ -203,6 +209,10 @@ function resizeCanvas() {
 
 // ─── Reset Game ───
 function resetGame() {
+  runStart = performance.now();
+  runBestCombo = 0;
+  runClears = 0;
+  runBanked = false;
   score = 0;
   combo = 1;
   comboTimer = 0;
@@ -512,6 +522,8 @@ function checkAndClearMatches(cx, cy) {
     highScore = score;
     localStorage.setItem('hextris_highscore', highScore.toString());
   }
+  runBestCombo = Math.max(runBestCombo, combo);
+  runClears += totalCleared;
 
   // Audio & SFX
   if (combo > 1) {
@@ -563,6 +575,17 @@ function triggerGameOver() {
   gameState = 'GAMEOVER';
   playSound('gameover');
   bankRun();
+}
+
+function bankRun() {
+  if (runBanked) return;
+  runBanked = true;
+  reportRun(containerElement, 'hextris', {
+    score,
+    coins: Math.floor(runClears / 2),
+    combo: runBestCombo,
+    duration: runStart ? (performance.now() - runStart) / 1000 : 0,
+  });
 }
 
 // ─── Drawing Functions ───

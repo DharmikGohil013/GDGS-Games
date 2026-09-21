@@ -1,5 +1,6 @@
 // ─── Color Switch — Deluxe Arcade Engine ───
 import Phaser from 'phaser';
+import { reportRun } from '../core/runReport.js';
 
 let gameInstance = null;
 
@@ -184,6 +185,8 @@ export function initGame(container) {
       this.height = this.sys.game.config.height;
 
       this.gameState = 'START'; // 'START', 'PLAYING', 'PAUSED', 'GAMEOVER'
+      this.runStartedAt = performance.now();
+      this.bestComboCount = 0;
       this.mode = localStorage.getItem('color_switch_mode') || 'CASUAL'; // 'CASUAL', 'NORMAL', 'PRO'
       this.score = 0;
       this.highScore = parseInt(localStorage.getItem(`color_switch_highscore_${this.mode}`) || '0', 10);
@@ -1098,6 +1101,7 @@ export function initGame(container) {
 
         if (item.type === 'STAR') {
           this.comboCount++;
+          this.bestComboCount = Math.max(this.bestComboCount || 0, this.comboCount);
           const mult = cfg.multiplier;
           const addedScore = 1 * mult;
           this.score += addedScore;
@@ -1160,6 +1164,13 @@ export function initGame(container) {
       this.finalScoreText.setText(`SCORE: ${this.score}`);
       this.bestScoreText.setText(`BEST: ${this.highScore}`);
       this.gameOverContainer.setVisible(true);
+
+      reportRun(container, 'color-switch', {
+        score: this.score,
+        coins: 0,
+        combo: this.bestComboCount || 0,
+        duration: this.runStartedAt ? (performance.now() - this.runStartedAt) / 1000 : 0,
+      });
     }
 
     restartGame() {

@@ -1,5 +1,6 @@
 // ─── Hero Section Component with Auto-Swapping Carousel ───
 import { setState } from '../store.js';
+import { onUnmount } from '../core/lifecycle.js';
 
 const featuredGames = [
   {
@@ -120,6 +121,7 @@ export function createHero() {
   section.setAttribute('aria-labelledby', 'hero-title');
   section.setAttribute('itemscope', '');
   section.setAttribute('itemtype', 'https://schema.org/WPHeader');
+  section.setAttribute('data-accent', 'purple');
 
   let currentIndex = 0;
   let autoTimer = null;
@@ -162,6 +164,9 @@ export function createHero() {
       <div id="hero-art-svg" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
         ${featuredGames[0].image ? `<img src="${featuredGames[0].image}" alt="${featuredGames[0].title}" class="hero-art-img" />` : featuredGames[0].artSvg}
       </div>
+      <span class="hero-play-overlay" aria-hidden="true">
+        <span><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+      </span>
     </div>
   `;
 
@@ -178,9 +183,12 @@ export function createHero() {
   const tagEl = section.querySelector('#hero-art-tag');
   const svgEl = section.querySelector('#hero-art-svg');
 
+  const SLIDE_ACCENTS = ['purple', 'purple', 'purple', 'coral', 'blue', 'green', 'purple', 'blue'];
+
   function updateSlide(index) {
     currentIndex = index;
     const currentGame = featuredGames[currentIndex];
+    section.setAttribute('data-accent', SLIDE_ACCENTS[currentIndex] || 'purple');
 
     // Smooth transition
     copyEl.style.opacity = '0.3';
@@ -265,6 +273,16 @@ export function createHero() {
   // Pause autoplay on mouse hover
   section.addEventListener('mouseenter', stopAutoPlay);
   section.addEventListener('mouseleave', startAutoPlay);
+
+  function onVisibility() {
+    if (document.hidden) stopAutoPlay();
+    else startAutoPlay();
+  }
+  document.addEventListener('visibilitychange', onVisibility);
+  onUnmount(() => {
+    stopAutoPlay();
+    document.removeEventListener('visibilitychange', onVisibility);
+  });
 
   startAutoPlay();
 
