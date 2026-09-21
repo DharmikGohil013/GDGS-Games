@@ -1,4 +1,5 @@
 // ─── Gravity Switch Game Engine (HTML5 Canvas - White Theme) ───
+import { reportRun } from '../core/runReport.js';
 
 let animId = null;
 let containerRef = null;
@@ -305,6 +306,7 @@ export function initGame(container) {
             highscore = score;
             localStorage.setItem('gravity_switch_highscore', highscore.toString());
           }
+          bankRun();
         }
 
         if (obs.x < -60) {

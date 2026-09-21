@@ -1,4 +1,5 @@
 // ─── Hextris HTML5 Canvas Game Module ───
+import { reportRun } from '../core/runReport.js';
 // Fully responsive, high-performance hexagon puzzle game matching Hextris UI & logic
 
 let containerElement = null;
@@ -561,6 +562,7 @@ function spawnFloatingText(x, y, text) {
 function triggerGameOver() {
   gameState = 'GAMEOVER';
   playSound('gameover');
+  bankRun();
 }
 
 // ─── Drawing Functions ───

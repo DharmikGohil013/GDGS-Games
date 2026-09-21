@@ -1,4 +1,5 @@
 // ─── City Sprint Game Engine (HTML5 Canvas - Light Theme & Perfect Controls) ───
+import { reportRun } from '../core/runReport.js';
 
 let animId = null;
 let containerRef = null;
@@ -357,6 +358,7 @@ export function initGame(container) {
             highscore = score;
             localStorage.setItem('city_sprint_highscore', highscore.toString());
           }
+          bankRun();
         }
 
         if (obs.x < -60) obstacles.splice(i, 1);
