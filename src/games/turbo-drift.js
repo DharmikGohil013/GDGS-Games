@@ -68,6 +68,11 @@ export function initGame(container) {
     </div>
   `);
 
+  // Local handle: destroyGame() nulls the module-level `shell`, and the
+  // results screen is shown from a timeout that can outlive that.
+  const gs = shell;
+  let overTimer = null;
+
   /* ── renderer ── */
   const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -430,8 +435,8 @@ export function initGame(container) {
     shakeAmt = 1;
     sfx.crash();
     haptic([40, 60, 80]);
-    setTimeout(() => {
-      shell.gameOver({
+    overTimer = setTimeout(() => {
+      gs.gameOver({
         bestCombo: bestDriftCombo + 1,
         distance: Math.floor(distance),
         eyebrow: what === 'wall' ? 'Into the barrier' : 'Rear-ended',
@@ -645,6 +650,7 @@ export function initGame(container) {
 
   function cleanup() {
     running = false;
+    if (overTimer) { clearTimeout(overTimer); overTimer = null; }
     if (rafId) cancelAnimationFrame(rafId);
     rafId = null;
     ro.disconnect();

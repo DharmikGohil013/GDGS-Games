@@ -60,6 +60,11 @@ export function initGame(container) {
     onDestroy: cleanup,
   });
 
+  // Local handle: destroyGame() nulls the module-level `shell`, and the
+  // results screen is shown from a timeout that can outlive that.
+  const gs = shell;
+  let overTimer = null;
+
   /* ── canvas ── */
   const canvas = document.createElement('canvas');
   canvas.style.background = '#05070F';
@@ -501,8 +506,8 @@ export function initGame(container) {
     sfx.crash();
     haptic([30, 50, 60]);
 
-    setTimeout(() => {
-      shell.gameOver({
+    overTimer = setTimeout(() => {
+      gs.gameOver({
         bestCombo,
         eyebrow: cause === 'self' ? 'Tangled in your own tail' : 'Crashed',
         stats: [
@@ -783,6 +788,7 @@ export function initGame(container) {
 
   function cleanup() {
     running = false;
+    if (overTimer) { clearTimeout(overTimer); overTimer = null; }
     if (rafId) cancelAnimationFrame(rafId);
     rafId = null;
     ro.disconnect();

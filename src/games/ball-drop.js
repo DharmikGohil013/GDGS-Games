@@ -61,6 +61,11 @@ export function initGame(container) {
     onDestroy: cleanup,
   });
 
+  // Local handle: destroyGame() nulls the module-level `shell`, and the
+  // results screen is shown from a timeout that can outlive that.
+  const gs = shell;
+  let overTimer = null;
+
   const canvas = document.createElement('canvas');
   canvas.style.background = '#070A14';
   shell.stage.appendChild(canvas);
@@ -419,8 +424,8 @@ export function initGame(container) {
     over = true;
     running = false;
     sfx.gameOver();
-    setTimeout(() => {
-      shell.gameOver({
+    overTimer = setTimeout(() => {
+      gs.gameOver({
         bestCombo: bestCombo + 1,
         eyebrow: 'Out of balls',
         stats: [
@@ -608,6 +613,7 @@ export function initGame(container) {
 
   function cleanup() {
     running = false;
+    if (overTimer) { clearTimeout(overTimer); overTimer = null; }
     if (rafId) cancelAnimationFrame(rafId);
     rafId = null;
     ro.disconnect();

@@ -68,10 +68,10 @@ export function createGameShell(container, opts = {}) {
   const shell = document.createElement('div');
   shell.className = 'gs-shell';
   shell.innerHTML = `
-    <div class="gs-stage" id="gs-stage"></div>
+    <div class="gs-stage" data-gs="stage"></div>
 
-    <div class="gs-hud" id="gs-hud" aria-live="off">
-      <div class="gs-hud-stats" id="gs-stats">
+    <div class="gs-hud" data-gs="hud" aria-live="off">
+      <div class="gs-hud-stats" data-gs="stats">
         ${statDefs.map((s) => `
           <div class="gs-stat" data-stat="${s.key}">
             <span class="gs-stat-label">${s.label}</span>
@@ -79,23 +79,23 @@ export function createGameShell(container, opts = {}) {
           </div>`).join('')}
       </div>
 
-      <div class="gs-combo" id="gs-combo" hidden>
-        <div class="gs-combo-badge"><span id="gs-combo-x">2</span>x</div>
-        <div class="gs-combo-track"><i id="gs-combo-fill"></i></div>
+      <div class="gs-combo" data-gs="combo" hidden>
+        <div class="gs-combo-badge"><span data-gs="combo-x">2</span>x</div>
+        <div class="gs-combo-track"><i data-gs="combo-fill"></i></div>
       </div>
 
       <div class="gs-hud-actions">
-        <button class="gs-icon-btn" id="gs-sound" title="Toggle sound" aria-label="Toggle sound"></button>
-        <button class="gs-icon-btn" id="gs-pause" title="Pause (P)" aria-label="Pause">${ICON.pause}</button>
+        <button class="gs-icon-btn" data-gs="sound" title="Toggle sound" aria-label="Toggle sound"></button>
+        <button class="gs-icon-btn" data-gs="pause" title="Pause (P)" aria-label="Pause">${ICON.pause}</button>
       </div>
     </div>
 
-    <div class="gs-powerups" id="gs-powerups" aria-live="polite"></div>
-    <div class="gs-controls" id="gs-controls"></div>
-    <div class="gs-toasts" id="gs-toasts" aria-live="polite"></div>
+    <div class="gs-powerups" data-gs="powerups" aria-live="polite"></div>
+    <div class="gs-controls" data-gs="controls"></div>
+    <div class="gs-toasts" data-gs="toasts" aria-live="polite"></div>
 
     <!-- ── Start screen ── -->
-    <div class="gs-overlay gs-start is-open" id="gs-start-screen">
+    <div class="gs-overlay gs-start is-open" data-gs="start-screen">
       <div class="gs-panel">
         <span class="gs-eyebrow">${opts.tagline || 'Ready when you are'}</span>
         <h2 class="gs-title">${title}</h2>
@@ -105,49 +105,49 @@ export function createGameShell(container, opts = {}) {
               <div class="gs-howto-row"><kbd>${h.key}</kbd><span>${h.label}</span></div>`).join('')}
           </div>` : ''}
         <div class="gs-start-meta">
-          <div class="gs-meta-chip">${ICON.trophy}<span>Best <b id="gs-start-best">${best.toLocaleString()}</b></span></div>
-          <div class="gs-meta-chip">${ICON.coin}<span id="gs-start-coins">${getCoins().toLocaleString()}</span></div>
-          <div class="gs-meta-chip">${ICON.bolt}<span>Lv <b id="gs-start-level">${getLevelInfo().level}</b></span></div>
+          <div class="gs-meta-chip">${ICON.trophy}<span>Best <b data-gs="start-best">${best.toLocaleString()}</b></span></div>
+          <div class="gs-meta-chip">${ICON.coin}<span data-gs="start-coins">${getCoins().toLocaleString()}</span></div>
+          <div class="gs-meta-chip">${ICON.bolt}<span>Lv <b data-gs="start-level">${getLevelInfo().level}</b></span></div>
         </div>
-        <div class="gs-missions" id="gs-start-missions"></div>
-        <button class="gs-btn gs-btn-primary gs-btn-lg" id="gs-start-btn">${ICON.play}<span>Play now</span></button>
+        <div class="gs-missions" data-gs="start-missions"></div>
+        <button class="gs-btn gs-btn-primary gs-btn-lg" data-gs="start-btn">${ICON.play}<span>Play now</span></button>
         <p class="gs-hint">Press <kbd>Space</kbd> or tap to start</p>
       </div>
     </div>
 
     <!-- ── Pause ── -->
-    <div class="gs-overlay gs-pause" id="gs-pause-screen">
+    <div class="gs-overlay gs-pause" data-gs="pause-screen">
       <div class="gs-panel gs-panel-sm">
         <h2 class="gs-title gs-title-sm">Paused</h2>
-        <div class="gs-pause-stats" id="gs-pause-stats"></div>
+        <div class="gs-pause-stats" data-gs="pause-stats"></div>
         <div class="gs-btn-row">
-          <button class="gs-btn gs-btn-primary" id="gs-resume-btn">${ICON.resume}<span>Resume</span></button>
-          <button class="gs-btn gs-btn-ghost" id="gs-pause-restart">${ICON.restart}<span>Restart</span></button>
+          <button class="gs-btn gs-btn-primary" data-gs="resume-btn">${ICON.resume}<span>Resume</span></button>
+          <button class="gs-btn gs-btn-ghost" data-gs="pause-restart">${ICON.restart}<span>Restart</span></button>
         </div>
         <a class="gs-link" href="#/">Quit to all games</a>
       </div>
     </div>
 
     <!-- ── Results ── -->
-    <div class="gs-overlay gs-over" id="gs-over-screen">
+    <div class="gs-overlay gs-over" data-gs="over-screen">
       <div class="gs-panel">
-        <span class="gs-eyebrow" id="gs-over-eyebrow">Run complete</span>
+        <span class="gs-eyebrow" data-gs="over-eyebrow">Run complete</span>
         <div class="gs-final">
           <span class="gs-final-label">Score</span>
-          <span class="gs-final-score" id="gs-final-score">0</span>
-          <span class="gs-final-best" id="gs-final-best"></span>
+          <span class="gs-final-score" data-gs="final-score">0</span>
+          <span class="gs-final-best" data-gs="final-best"></span>
         </div>
-        <div class="gs-rewards" id="gs-rewards"></div>
+        <div class="gs-rewards" data-gs="rewards"></div>
         <div class="gs-xpbar">
           <div class="gs-xpbar-head">
-            <span>Level <b id="gs-xp-level">1</b> <em id="gs-xp-title">Newcomer</em></span>
-            <span id="gs-xp-nums">0 / 160 XP</span>
+            <span>Level <b data-gs="xp-level">1</b> <em data-gs="xp-title">Newcomer</em></span>
+            <span data-gs="xp-nums">0 / 160 XP</span>
           </div>
-          <div class="gs-xpbar-track"><i id="gs-xp-fill"></i></div>
+          <div class="gs-xpbar-track"><i data-gs="xp-fill"></i></div>
         </div>
-        <div class="gs-over-extra" id="gs-over-extra"></div>
+        <div class="gs-over-extra" data-gs="over-extra"></div>
         <div class="gs-btn-row">
-          <button class="gs-btn gs-btn-primary gs-btn-lg" id="gs-again-btn">${ICON.restart}<span>Play again</span></button>
+          <button class="gs-btn gs-btn-primary gs-btn-lg" data-gs="again-btn">${ICON.restart}<span>Play again</span></button>
           <a class="gs-btn gs-btn-ghost" href="#/">More games</a>
         </div>
       </div>
@@ -157,18 +157,18 @@ export function createGameShell(container, opts = {}) {
 
   /* ── refs ── */
   const $ = (sel) => shell.querySelector(sel);
-  const stage = $('#gs-stage');
-  const hud = $('#gs-hud');
-  const comboEl = $('#gs-combo');
-  const comboX = $('#gs-combo-x');
-  const comboFill = $('#gs-combo-fill');
-  const powerupsEl = $('#gs-powerups');
-  const controlsEl = $('#gs-controls');
-  const toastsEl = $('#gs-toasts');
-  const startScreen = $('#gs-start-screen');
-  const pauseScreen = $('#gs-pause-screen');
-  const overScreen = $('#gs-over-screen');
-  const soundBtn = $('#gs-sound');
+  const stage = $('[data-gs="stage"]');
+  const hud = $('[data-gs="hud"]');
+  const comboEl = $('[data-gs="combo"]');
+  const comboX = $('[data-gs="combo-x"]');
+  const comboFill = $('[data-gs="combo-fill"]');
+  const powerupsEl = $('[data-gs="powerups"]');
+  const controlsEl = $('[data-gs="controls"]');
+  const toastsEl = $('[data-gs="toasts"]');
+  const startScreen = $('[data-gs="start-screen"]');
+  const pauseScreen = $('[data-gs="pause-screen"]');
+  const overScreen = $('[data-gs="over-screen"]');
+  const soundBtn = $('[data-gs="sound"]');
 
   function paintSoundBtn() {
     soundBtn.innerHTML = isSoundOn() ? ICON.soundOn : ICON.soundOff;
@@ -206,7 +206,7 @@ export function createGameShell(container, opts = {}) {
 
   /* ── missions on the start screen ── */
   function renderStartMissions() {
-    const host = $('#gs-start-missions');
+    const host = $('[data-gs="start-missions"]');
     const missions = getMissions();
     if (!missions.length) { host.innerHTML = ''; return; }
     host.innerHTML = `
@@ -239,9 +239,9 @@ export function createGameShell(container, opts = {}) {
 
   function refreshStartMeta() {
     const lvl = getLevelInfo();
-    const bestEl = $('#gs-start-best');
-    const coinEl = $('#gs-start-coins');
-    const lvlEl = $('#gs-start-level');
+    const bestEl = $('[data-gs="start-best"]');
+    const coinEl = $('[data-gs="start-coins"]');
+    const lvlEl = $('[data-gs="start-level"]');
     if (bestEl) bestEl.textContent = getHighScore(id).toLocaleString();
     if (coinEl) coinEl.textContent = getCoins().toLocaleString();
     if (lvlEl) lvlEl.textContent = lvl.level;
@@ -342,7 +342,7 @@ export function createGameShell(container, opts = {}) {
     state = 'paused';
     pauseStamp = performance.now();
     if (!silent) sfx.uiBack();
-    $('#gs-pause-stats').innerHTML = `
+    $('[data-gs="pause-stats"]').innerHTML = `
       <div><b>${score.toLocaleString()}</b><span>Score</span></div>
       <div><b>${getHighScore(id).toLocaleString()}</b><span>Best</span></div>
       <div><b>${Math.floor(runSeconds())}s</b><span>Time</span></div>`;
@@ -386,12 +386,12 @@ export function createGameShell(container, opts = {}) {
     });
     best = result.best;
 
-    $('#gs-over-eyebrow').textContent = result.isHighScore
+    $('[data-gs="over-eyebrow"]').textContent = result.isHighScore
       ? 'New personal best!'
       : (extra.eyebrow || 'Run complete');
-    $('#gs-over-eyebrow').classList.toggle('is-record', result.isHighScore);
-    $('#gs-final-score').textContent = score.toLocaleString();
-    $('#gs-final-best').innerHTML = result.isHighScore
+    $('[data-gs="over-eyebrow"]').classList.toggle('is-record', result.isHighScore);
+    $('[data-gs="final-score"]').textContent = score.toLocaleString();
+    $('[data-gs="final-best"]').innerHTML = result.isHighScore
       ? `<span class="gs-record-pill">Beat ${result.previousBest.toLocaleString()}</span>`
       : `Best ${result.best.toLocaleString()}`;
 
@@ -404,17 +404,17 @@ export function createGameShell(container, opts = {}) {
     if (shownCombo > 1) rewardRows.push({ icon: '', label: 'Best combo', value: `${shownCombo}x` });
     (extra.stats || []).forEach((s) => rewardRows.push({ icon: '', label: s.label, value: s.value }));
 
-    $('#gs-rewards').innerHTML = rewardRows.map((r) => `
+    $('[data-gs="rewards"]').innerHTML = rewardRows.map((r) => `
       <div class="gs-reward-row">
         <span class="gs-reward-label">${r.icon}${r.label}</span>
         <span class="gs-reward-value">${r.value}</span>
       </div>`).join('');
 
     const lvl = getLevelInfo();
-    $('#gs-xp-level').textContent = lvl.level;
-    $('#gs-xp-title').textContent = lvl.title;
-    $('#gs-xp-nums').textContent = `${lvl.xp.toLocaleString()} / ${lvl.need.toLocaleString()} XP`;
-    requestAnimationFrame(() => { $('#gs-xp-fill').style.transform = `scaleX(${lvl.pct.toFixed(3)})`; });
+    $('[data-gs="xp-level"]').textContent = lvl.level;
+    $('[data-gs="xp-title"]').textContent = lvl.title;
+    $('[data-gs="xp-nums"]').textContent = `${lvl.xp.toLocaleString()} / ${lvl.need.toLocaleString()} XP`;
+    requestAnimationFrame(() => { $('[data-gs="xp-fill"]').style.transform = `scaleX(${lvl.pct.toFixed(3)})`; });
 
     const extras = [];
     if (result.levels > 0) {
@@ -430,7 +430,7 @@ export function createGameShell(container, opts = {}) {
     if (streak.count > 1) {
       extras.push(`<div class="gs-unlock gs-unlock-streak">🔥 <b>${streak.count}-day streak</b> — come back tomorrow to keep it alive</div>`);
     }
-    $('#gs-over-extra').innerHTML = extras.join('');
+    $('[data-gs="over-extra"]').innerHTML = extras.join('');
 
     if (result.levels > 0) sfx.levelUp();
     else if (result.isHighScore) sfx.reward();
@@ -445,11 +445,11 @@ export function createGameShell(container, opts = {}) {
   }
 
   /* ── events ── */
-  $('#gs-start-btn').addEventListener('click', start);
-  $('#gs-again-btn').addEventListener('click', restart);
-  $('#gs-resume-btn').addEventListener('click', resume);
-  $('#gs-pause-restart').addEventListener('click', restart);
-  $('#gs-pause').addEventListener('click', togglePause);
+  $('[data-gs="start-btn"]').addEventListener('click', start);
+  $('[data-gs="again-btn"]').addEventListener('click', restart);
+  $('[data-gs="resume-btn"]').addEventListener('click', resume);
+  $('[data-gs="pause-restart"]').addEventListener('click', restart);
+  $('[data-gs="pause"]').addEventListener('click', togglePause);
   soundBtn.addEventListener('click', () => {
     toggleSound();
     paintSoundBtn();
