@@ -108,7 +108,29 @@ export function initGame(container) {
     }
   }
 
+
+  // ── Meta-progression bridge ──
+  let runStart = performance.now();
+  let runCoins = 0;
+  let runBestCombo = 0;
+  let runBanked = false;
+
+  function bankRun() {
+    if (runBanked) return;
+    runBanked = true;
+    reportRun(containerRef, 'gravity-switch', {
+      score,
+      coins: runCoins,
+      combo: runBestCombo,
+      duration: (performance.now() - runStart) / 1000,
+    });
+  }
+
   function resetGame() {
+    runStart = performance.now();
+    runCoins = 0;
+    runBestCombo = 0;
+    runBanked = false;
     score = 0;
     frame = 0;
     speed = 6.5;
@@ -323,6 +345,8 @@ export function initGame(container) {
         const dist = Math.hypot(player.x + player.size / 2 - coin.x, player.y + player.size / 2 - coin.y);
         if (dist < coin.radius + player.size / 2) {
           combo++;
+          runCoins++;
+          runBestCombo = Math.max(runBestCombo, combo);
           const bonus = 50 * combo;
           score += bonus;
           spawnExplosion(coin.x, coin.y, '#F59E0B', 12);
