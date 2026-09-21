@@ -1,3 +1,5 @@
+/* ═══════════ PLAYZY BASE ═══════════ */
+
 *,
 *::before,
 *::after {
@@ -10,19 +12,60 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: var(--bg);
 }
 
 body {
-  font-family: 'Space Grotesk', sans-serif;
-  background-color: var(--paper);
-  color: var(--ink);
-  line-height: 1.5;
+  font-family: var(--font-body);
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
   overflow-x: hidden;
+  min-height: 100vh;
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+/* Ambient aurora field behind the whole app — cheap, GPU-free, theme aware. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(900px 620px at 12% -8%, var(--aurora-1), transparent 60%),
+    radial-gradient(760px 560px at 88% 4%, var(--aurora-2), transparent 62%),
+    radial-gradient(680px 520px at 50% 108%, var(--aurora-3), transparent 64%);
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(1100px 700px at 50% 0%, #000 20%, transparent 78%);
+  -webkit-mask-image: radial-gradient(1100px 700px at 50% 0%, #000 20%, transparent 78%);
+}
+
+#app {
+  position: relative;
+  z-index: 1;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  line-height: 1.12;
 }
 
 ::selection {
-  background-color: var(--coral);
-  color: #fff;
+  background-color: var(--accent);
+  color: var(--on-accent);
 }
 
 a {
@@ -37,51 +80,85 @@ button {
   background: none;
   cursor: pointer;
   outline: none;
+  color: inherit;
 }
 
 button:focus-visible,
 a:focus-visible,
 input:focus-visible {
-  outline: 3px solid var(--blue);
-  outline-offset: 2px;
-  border-radius: 4px;
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 
 img {
   max-width: 100%;
   display: block;
-  /* Default lazy loading for performance (Core Web Vitals — affects SEO) */
   content-visibility: auto;
 }
 
 .wrap {
-  max-width: 1180px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 24px;
 }
 
-/* ─── Skip link (accessibility + SEO signal) ─── */
+/* ── Scrollbars ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 99px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover { background: var(--text-mute); background-clip: content-box; }
+
+/* ── Skip link ── */
 .skip-link {
   position: absolute;
   top: -60px;
   left: 16px;
-  background: var(--coral);
-  color: #fff;
-  padding: 8px 16px;
-  border-radius: 0 0 8px 8px;
-  font-weight: 600;
+  background: var(--accent);
+  color: var(--on-accent);
+  padding: 10px 18px;
+  border-radius: 0 0 10px 10px;
+  font-weight: 700;
   font-size: 14px;
   z-index: 9999;
   transition: top 0.2s ease;
-  text-decoration: none;
 }
-.skip-link:focus {
-  top: 0;
-  outline: 3px solid #fff;
-  outline-offset: 2px;
+.skip-link:focus { top: 0; outline: 2px solid #fff; outline-offset: 2px; }
+
+/* ── Shared atoms ── */
+.u-glass {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
 }
 
-/* ─── Footer inner flex ─── */
+.u-gradient-text {
+  background: var(--accent-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 footer .footer-inner {
   display: flex;
   align-items: center;
@@ -91,3 +168,6 @@ footer .footer-inner {
   width: 100%;
 }
 
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+}
