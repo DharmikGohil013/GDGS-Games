@@ -43,7 +43,7 @@ export function createGameCard(game, opts = {}) {
 
   const artContent = game.image
     ? `<img src="${game.image}" alt="${game.title} — free ${categoryLabel} browser game thumbnail" class="card-thumb-img" itemprop="image" loading="lazy" decoding="async" />`
-    : icon;
+    : `<span class="card-icon-float">${icon}</span>`;
 
   const badges = [];
   if (game.isHot) badges.push('<span class="card-badge card-badge-hot">🔥 Hot</span>');

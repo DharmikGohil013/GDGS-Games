@@ -502,6 +502,26 @@
 }
 .game-card:hover .card-art svg { transform: scale(1.1) rotate(-3deg); }
 
+/* Idle loop: generated icons breathe gently so cards feel alive at rest */
+.card-icon-float {
+  display: grid;
+  place-items: center;
+  animation: card-icon-bob 3.2s ease-in-out infinite;
+}
+.card-grid .game-card:nth-child(3n+1) .card-icon-float { animation-delay: 0s; }
+.card-grid .game-card:nth-child(3n+2) .card-icon-float { animation-delay: -1.05s; }
+.card-grid .game-card:nth-child(3n+3) .card-icon-float { animation-delay: -2.1s; }
+.game-card:hover .card-icon-float { animation-play-state: paused; }
+
+@keyframes card-icon-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(2deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-icon-float { animation: none; }
+}
+
 .card-thumb-img {
   width: 100%;
   height: 100%;
