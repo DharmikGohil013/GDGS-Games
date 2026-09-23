@@ -42,7 +42,8 @@ function generateGames() {
     { id: 'turbo-drift', title: 'Turbo Drift', category: 'racing', isPlayable: true, plays: '22.3M', rating: 4.6, color: 'blue', iconType: 'car', engine: 'three' },
     { id: 'ball-drop', title: 'Ball Drop', category: 'arcade', isPlayable: true, plays: '5.6M', rating: 4.5, color: 'coral', iconType: 'ball', engine: 'pixi' },
     { id: 'city-sprint', title: 'City Sprint', category: 'runner', isPlayable: true, plays: '18.9M', rating: 4.8, color: 'gold', iconType: 'runner', engine: 'canvas', isLightTheme: true },
-    { id: 'infinite-runner', title: 'Infinite Runner', category: 'runner', isPlayable: true, plays: '31.2M', rating: 4.9, color: 'blue', iconType: 'runner', engine: 'phaser', image: '/images/infinite-runner.jpg' }
+    { id: 'infinite-runner', title: 'Infinite Runner', category: 'runner', isPlayable: true, plays: '31.2M', rating: 4.9, color: 'blue', iconType: 'runner', engine: 'phaser', image: '/images/infinite-runner.jpg' },
+    { id: 'mario-king', title: 'Mario King', category: 'platformer', isPlayable: true, plays: '27.6M', rating: 4.9, color: 'gold', iconType: 'platform', engine: 'canvas', isHot: true }
   ];
 
   generatedGames.push(...playableGames);

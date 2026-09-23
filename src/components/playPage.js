@@ -22,6 +22,7 @@ const gameModules = {
   'ball-drop': () => import('../games/ball-drop.js'),
   'city-sprint': () => import('../games/city-sprint.js'),
   'infinite-runner': () => import('../games/infinite-runner.js'),
+  'mario-king': () => import('../games/mario-king.js'),
 };
 
 let activeGameModule = null;

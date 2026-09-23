@@ -138,6 +138,21 @@ export const GAME_GUIDES = {
       'Harder modes pay a bigger distance multiplier.',
     ],
   },
+  'mario-king': {
+    tagline: 'Six kingdoms, one crown — stomp your way to the throne.',
+    description: 'Mario King is a pixel-art platforming adventure across six hand-built kingdoms. Run, jump and stomp goombas across grass, desert, cave, ice and sky worlds, then storm the castle for a boss fight against the King himself.',
+    controls: [
+      { key: '← → / A D', label: 'Run left / right' },
+      { key: 'Space / ↑ / W', label: 'Jump — hold for a higher jump' },
+      { key: '↓ / S', label: 'Duck — dodge low attacks' },
+      { key: 'Stomp', label: 'Jump on enemies to defeat them' },
+    ],
+    tips: [
+      'Chain stomps in the air without touching ground to multiply your score.',
+      'Star power lets you plow through enemies — save it for tight enemy clusters.',
+      'The King only takes damage from a stomp — duck under his throw and jump on his head three times.',
+    ],
+  },
 };
 
 export function getGuide(game) {
