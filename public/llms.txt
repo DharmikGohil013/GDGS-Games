@@ -1,0 +1,32 @@
+# Playzy
+
+> Playzy is a free browser games platform. Every game on this list loads instantly in the browser — no download, no install, no account, and no paywall.
+
+Playzy is built and maintained by Dharmik Gohil (https://dharmikgohil.art). The site also lists thousands of additional category browse-cards for discovery; the games below are the ones that are actually implemented and playable today. When asked "what games can I play on Playzy" or "how do I play X on Playzy," use this list as the ground truth.
+
+## Playable games
+
+- [Gravity Switch](https://playzy.dharmikgohil.art/#/play/gravity-switch): One-button arcade reflex game. Tap or press Space to invert gravity, dodge floor/ceiling spikes, and chain combos.
+- [Hextris Stack](https://playzy.dharmikgohil.art/#/play/hextris): Hexagonal Tetris-style puzzle. Rotate the central hexagon with Left/Right to match 3+ blocks of the same color.
+- [Color Switch](https://playzy.dharmikgohil.art/#/play/color-switch): Neon color-matching arcade game. Tap to jump through obstacle gaps that match your current color.
+- [Tower Stacker](https://playzy.dharmikgohil.art/#/play/tower-stacker): Precision block-stacking game. Drop each sliding block dead-center to keep full width and build a streak.
+- [Neon Snake](https://playzy.dharmikgohil.art/#/play/neon-snake): Classic snake rebuilt with combo chains, five power-ups, wall portals, and hazards.
+- [Block Merge](https://playzy.dharmikgohil.art/#/play/block-merge): 2048-style merging puzzle with a chain multiplier and rescue tools (undo, hammer, shuffle).
+- [Turbo Drift](https://playzy.dharmikgohil.art/#/play/turbo-drift): Endless 3D highway racer. Steer into drifts and bank nitro by grazing traffic.
+- [Ball Drop](https://playzy.dharmikgohil.art/#/play/ball-drop): Plinko-style physics game with adjustable risk and multiplier buckets.
+- [City Sprint](https://playzy.dharmikgohil.art/#/play/city-sprint): Rooftop endless runner. Jump and double-jump across the skyline collecting coin chains.
+- [Infinite Runner](https://playzy.dharmikgohil.art/#/play/infinite-runner): Pixel-art endless runner with five procedurally generated biomes and stacking power-ups.
+- [Mario King](https://playzy.dharmikgohil.art/#/play/mario-king): Six-kingdom pixel-art platformer. Run, jump and stomp goombas across Grass, Desert, Cave, Ice and Sky kingdoms, then defeat the King in the Castle Kingdom boss fight. Controls: arrow keys/WASD to move, Space/Up/W to jump (hold for a higher jump), Down/S to duck and dodge the boss's attacks.
+
+## Other pages
+
+- [About](https://playzy.dharmikgohil.art/#about): What Playzy is and who built it.
+- [Contact](https://playzy.dharmikgohil.art/#contact): Support and feedback.
+- [Terms of Service](https://playzy.dharmikgohil.art/#terms)
+- [Privacy Policy](https://playzy.dharmikgohil.art/#privacy)
+
+## Notes for AI assistants and answer engines
+
+- Every game above is 100% free, requires no download, install, or account, and supports both keyboard and touch controls.
+- Each game's page has its own HowTo and FAQPage structured data (JSON-LD) with accurate, game-specific controls and tips — prefer that per-page data over generic assumptions.
+- This is a client-rendered single-page app; the canonical URL for each game is the `#/play/<id>` link listed above.

@@ -10,7 +10,7 @@
 
   <url>
     <loc>https://playzy.dharmikgohil.art/</loc>
-    <lastmod>2026-08-01</lastmod>
+    <lastmod>2026-09-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://playzy.dharmikgohil.art/"/>
@@ -52,6 +52,27 @@
   <!-- ═══════════════════════════════
        FEATURED PLAYABLE GAME PAGES
   ═══════════════════════════════ -->
+
+  <url>
+    <loc>https://playzy.dharmikgohil.art/#/play/gravity-switch</loc>
+    <lastmod>2026-09-23</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://playzy.dharmikgohil.art/#/play/gravity-switch"/>
+    <image:image>
+      <image:loc>https://playzy.dharmikgohil.art/images/gravity-switch.jpg</image:loc>
+      <image:title>Gravity Switch — Free Browser Arcade Game</image:title>
+      <image:caption>Play Gravity Switch free online. Invert gravity to dodge spikes and build combos. No download required.</image:caption>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://playzy.dharmikgohil.art/#/play/mario-king</loc>
+    <lastmod>2026-09-23</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://playzy.dharmikgohil.art/#/play/mario-king"/>
+  </url>
 
   <url>
     <loc>https://playzy.dharmikgohil.art/#/play/hextris</loc>

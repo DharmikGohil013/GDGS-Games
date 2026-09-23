@@ -56,6 +56,21 @@ Allow: /
 User-agent: Claude-Web
 Allow: /
 
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: DuckAssistBot
+Allow: /
+
 User-agent: Applebot-Extended
 Allow: /
 
@@ -67,3 +82,6 @@ Allow: /
 
 # Sitemap
 Sitemap: https://playzy.dharmikgohil.art/sitemap.xml
+
+# LLM / GEO summary (see llmstxt.org)
+# https://playzy.dharmikgohil.art/llms.txt

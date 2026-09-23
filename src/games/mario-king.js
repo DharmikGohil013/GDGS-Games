@@ -295,11 +295,11 @@ function loadLevelData(index) {
       speed: 65, hitTimer: 0, throwTimer: rand(1400, 2000), windup: 0, alive: true, defeated: false,
     } : null,
     projectiles: [],
-    decos: buildDecos(def.width, index),
+    decos: buildDecos(def.width),
   };
 }
 
-function buildDecos(width, kIndex) {
+function buildDecos(width) {
   const decos = [];
   const count = Math.ceil(width / 260);
   for (let i = 0; i < count; i++) {
@@ -398,12 +398,12 @@ export function initGame(container) {
   `);
 
   /* ── canvas + camera state ── */
-  let W = 0, H = 0, scale = 1, viewW = 0;
+  let W = 0, H = 0, scale = 1, viewW = 0, dpr = 1;
   let camX = 0;
 
   function resize() {
     const d = fitCanvas(canvas, shell.stage);
-    W = d.w; H = d.h;
+    W = d.w; H = d.h; dpr = d.dpr;
     scale = H / VH;
     viewW = W / scale;
   }
@@ -491,9 +491,12 @@ export function initGame(container) {
       finalGameOver(cause, false);
     } else {
       shell.toast(cause === 'fell' ? 'You fell — level restarts' : 'Ouch! Level restarts', 'warn');
-      overTimer = setTimeout(() => { if (!over) loadLevel(levelIndex); }, 500);
       running = false;
-      setTimeout(() => { running = true; }, 520);
+      overTimer = setTimeout(() => {
+        if (over) return;
+        loadLevel(levelIndex);
+        running = true;
+      }, 550);
     }
   }
 
@@ -522,7 +525,6 @@ export function initGame(container) {
     shell.toast(`Level clear! +${bonus}`, 'good');
     sfx.levelUp();
     showBanner('LEVEL CLEAR!', `+${bonus} bonus`, 1300, true);
-    particles.burst({ x: player.x - camX + player.w / 2, y: (player.y - camX * 0) + 0, count: 0 }); // no-op guard
     overTimer = setTimeout(() => {
       running = true;
       if (levelIndex + 1 < LEVEL_DEFS.length) loadLevel(levelIndex + 1);
@@ -602,8 +604,7 @@ export function initGame(container) {
   function updatePlayerPhysics(dt) {
     const moveLeft = keys.left || touchLeft;
     const moveRight = keys.right || touchRight;
-    const jumpHeld = keys.jumpHeld || touchJump;
-    const wantsDuck = (keys.duck) && player.onGround;
+    const wantsDuck = keys.duck && player.onGround;
 
     if (wantsDuck !== player.ducking) {
       const newH = wantsDuck ? DUCK_H : PLAYER_H;
@@ -794,8 +795,8 @@ export function initGame(container) {
         flash = 1;
         playBossHit();
         shell.addScore(400, { pop: true });
-        particles.burst({ x: boss.x + boss.w / 2 - camX, y: boss.y + 20, count: 26, color: ['#FFD700', '#FF3355', '#ffffff'], speed: 5, size: 4, life: 30, gravity: 0.15 });
-        floats.add(boss.x + boss.w / 2 - camX, boss.y - 10, boss.hp > 0 ? 'HIT!' : 'DEFEATED!', { color: '#FFD700', size: 20, stroke: 'rgba(0,0,0,0.6)' });
+        particles.burst({ x: boss.x + boss.w / 2, y: boss.y + 20, count: 26, color: ['#FFD700', '#FF3355', '#ffffff'], speed: 5, size: 4, life: 30, gravity: 0.15 });
+        floats.add(boss.x + boss.w / 2, boss.y - 10, boss.hp > 0 ? 'HIT!' : 'DEFEATED!', { color: '#FFD700', size: 20, stroke: 'rgba(0,0,0,0.6)' });
         if (boss.hp <= 0) {
           boss.alive = false;
           defeatBoss();
@@ -816,7 +817,7 @@ export function initGame(container) {
       if (p.x < -80 || p.x > level.width + 80) { level.projectiles.splice(i, 1); continue; }
       if (player.invuln <= 0 && aabb(player, p)) {
         if (shell.hasPowerup('star')) {
-          particles.burst({ x: p.x - camX, y: p.y, count: 10, color: '#FFD700', speed: 3, size: 3, life: 18, gravity: 0.1 });
+          particles.burst({ x: p.x, y: p.y, count: 10, color: '#FFD700', speed: 3, size: 3, life: 18, gravity: 0.1 });
           level.projectiles.splice(i, 1);
         } else {
           damagePlayer(p.vx > 0 ? 1 : -1);
@@ -836,7 +837,7 @@ export function initGame(container) {
         shell.addCoins(1);
         shell.addScore(40);
         sfx.coin();
-        floats.add(c.x - camX, c.y - 16, '+40', { color: '#FFC93C', size: 13, life: 30 });
+        floats.add(c.x, c.y - 16, '+40', { color: '#FFC93C', size: 13, life: 30 });
       }
     });
 
@@ -855,7 +856,7 @@ export function initGame(container) {
           shell.setStat('lives', lives, { pop: true });
           sfx.reward();
           shell.toast('Extra life!', 'good');
-          particles.burst({ x: p.x - camX, y: p.y, count: 16, color: '#FF5F8E', speed: 3, size: 3, life: 26, gravity: 0.15 });
+          particles.burst({ x: p.x, y: p.y, count: 16, color: '#FF5F8E', speed: 3, size: 3, life: 26, gravity: 0.15 });
         }
       }
     });
@@ -1019,10 +1020,12 @@ export function initGame(container) {
       const scaleP = en.w / 10;
       if (!en.alive) {
         if (en.squishT <= 0) return;
+        const deadFrame = en.type === 'hopper' ? HOPPER_DOWN : GRUMP_A;
         ctx.save();
-        ctx.translate(en.x, en.y + en.h * 0.7);
+        ctx.translate(en.x, GROUND_Y);
         ctx.scale(1, 0.3);
-        drawPixels(ctx, GRUMP_A, palette, 0, -en.h * 0.7 / 0.3 + en.h, scaleP, false);
+        ctx.translate(0, -en.h);
+        drawPixels(ctx, deadFrame, palette, 0, 0, scaleP, false);
         ctx.restore();
         return;
       }
@@ -1102,7 +1105,7 @@ export function initGame(container) {
     const boss = level.boss;
     if (!boss) return;
     ctx.save();
-    ctx.resetTransform();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.font = '800 13px Outfit, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillStyle = 'rgba(8,10,18,0.6)';
@@ -1120,7 +1123,7 @@ export function initGame(container) {
 
   function drawLevelLabel() {
     ctx.save();
-    ctx.resetTransform();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.font = '700 12px Outfit, sans-serif';
     ctx.fillStyle = 'rgba(255,255,255,0.75)';
     ctx.textAlign = 'left';
@@ -1133,7 +1136,7 @@ export function initGame(container) {
     const p = clamp(banner.timer / banner.total, 0, 1);
     const alpha = p > 0.85 ? (1 - p) / 0.15 : (p < 0.15 ? p / 0.15 : 1);
     ctx.save();
-    ctx.resetTransform();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.globalAlpha = clamp(alpha, 0, 1);
     ctx.fillStyle = 'rgba(6,7,14,0.55)';
     ctx.fillRect(0, H / 2 - 46, W, 92);
@@ -1150,6 +1153,13 @@ export function initGame(container) {
   }
 
   function render() {
+    if (!level) {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = '#0B1026';
+      ctx.fillRect(0, 0, W, H);
+      return;
+    }
+
     ctx.save();
     shake.apply(ctx);
     ctx.save();
@@ -1168,8 +1178,8 @@ export function initGame(container) {
     floats.draw(ctx);
 
     ctx.restore();
-    if (level && level.isBoss) drawBossBar();
-    if (level) drawLevelLabel();
+    if (level.isBoss) drawBossBar();
+    drawLevelLabel();
     drawBanner();
     ctx.restore();
   }
