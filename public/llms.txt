@@ -16,6 +16,7 @@ Playzy is built and maintained by Dharmik Gohil (https://dharmikgohil.art). The 
 - [Ball Drop](https://playzy.dharmikgohil.art/#/play/ball-drop): Plinko-style physics game with adjustable risk and multiplier buckets.
 - [City Sprint](https://playzy.dharmikgohil.art/#/play/city-sprint): Rooftop endless runner. Jump and double-jump across the skyline collecting coin chains.
 - [Infinite Runner](https://playzy.dharmikgohil.art/#/play/infinite-runner): Pixel-art endless runner with five procedurally generated biomes and stacking power-ups.
+- [Infinite World](https://playzy.dharmikgohil.art/#/play/infinite-world): Multiplayer 3D city builder. Build roads, towers, parks, rail and rivers, grow a hamlet into a metropolis, and invite friends to build the same world live. Free account (username + birthday); worlds can be private or public. Privacy: https://playzy.dharmikgohil.art/#infinite-world/privacy · Terms: https://playzy.dharmikgohil.art/#infinite-world/terms · Support: https://playzy.dharmikgohil.art/#infinite-world/support
 - [Mario King](https://playzy.dharmikgohil.art/#/play/mario-king): Six-kingdom pixel-art platformer. Run, jump and stomp goombas across Grass, Desert, Cave, Ice and Sky kingdoms, then defeat the King in the Castle Kingdom boss fight. Controls: arrow keys/WASD to move, Space/Up/W to jump (hold for a higher jump), Down/S to duck and dodge the boss's attacks.
 
 ## Other pages

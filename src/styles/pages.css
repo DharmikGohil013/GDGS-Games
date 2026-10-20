@@ -676,3 +676,18 @@
   .page-content { padding: 0 16px 44px; }
   .play-record b { font-size: 18px; }
 }
+
+/* ─────────────── Infinite World pages ─────────────── */
+.play-legal-links { margin-top: 14px; font-size: 13px; color: var(--text-muted, #8b93a7); }
+.play-legal-links a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.iw-legal-nav { display: flex; flex-wrap: wrap; gap: 10px 18px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 14px; font-weight: 700; }
+.iw-legal-nav a { color: var(--text); text-decoration: none; }
+.iw-legal-nav a:hover { text-decoration: underline; }
+.iw-legal-nav a:last-child { margin-left: auto; color: var(--blue); }
+.iw-support-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 12px; }
+.iw-support-chip { padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border); color: var(--text); font-weight: 700; font-size: 14px; text-decoration: none; }
+.iw-support-chip:hover { border-color: var(--blue); }
+.iw-support-email { margin-bottom: 26px; }
+.iw-faq { border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; }
+.iw-faq summary { font-weight: 700; cursor: pointer; color: var(--text); }
+.iw-faq p { margin-top: 8px; }

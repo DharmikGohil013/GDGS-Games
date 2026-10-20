@@ -265,7 +265,7 @@ export function buildGameSEO(game) {
           description: guide.description || `Play ${gameName} free online. A top-rated ${category} browser game played ${plays} times. No installation required.`,
           url: gameUrl,
           gamePlatform: ['Web Browser', 'Mobile Browser', 'Desktop Browser', 'iOS Browser', 'Android Browser'],
-          playMode: 'SinglePlayer',
+          playMode: game.category === 'multiplayer' ? ['MultiPlayer', 'CoOp', 'SinglePlayer'] : 'SinglePlayer',
           applicationCategory: 'Game',
           operatingSystem: 'Any — Web Browser',
           genre: [category, 'Browser Games'],
@@ -275,12 +275,15 @@ export function buildGameSEO(game) {
             priceCurrency: 'USD',
             availability: 'https://schema.org/InStock'
           },
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: String(rating),
-            bestRating: '5',
-            ratingCount
-          },
+          // New games have no ratings yet — don't publish one
+          ...(game.isNew ? {} : {
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: String(rating),
+              bestRating: '5',
+              ratingCount
+            },
+          }),
           publisher: {
             '@type': 'Organization',
             name: 'Playzy',

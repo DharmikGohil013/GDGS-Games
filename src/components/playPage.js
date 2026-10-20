@@ -23,6 +23,7 @@ const gameModules = {
   'city-sprint': () => import('../games/city-sprint.js'),
   'infinite-runner': () => import('../games/infinite-runner.js'),
   'mario-king': () => import('../games/mario-king.js'),
+  'infinite-world': () => import('../games/infinite-world.js'),
 };
 
 let activeGameModule = null;
@@ -138,6 +139,12 @@ export function createPlayPage(gameId) {
             </ul>` : ''}
 
           <meta itemprop="tool" content="Web Browser">
+          ${game.legal ? `
+            <p class="play-legal-links">
+              <a href="#infinite-world/privacy">Privacy</a> ·
+              <a href="#infinite-world/terms">Terms</a> ·
+              <a href="#infinite-world/support">Support</a>
+            </p>` : ''}
           <meta itemprop="supply" content="Free to play — no download required">
         </article>
 

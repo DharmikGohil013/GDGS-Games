@@ -28,6 +28,7 @@ import { createAboutPage } from './components/aboutPage.js';
 import { createTermsPage } from './components/termsPage.js';
 import { createPrivacyPage } from './components/privacyPage.js';
 import { createContactPage } from './components/contactPage.js';
+import { createIWPrivacyPage, createIWTermsPage, createIWSupportPage, IW_PAGE_SEO } from './components/infiniteWorldPages.js';
 import { createPlayPage, destroyActiveGame, siteToast } from './components/playPage.js';
 
 window.gsap = gsap;
@@ -78,6 +79,11 @@ function renderPage() {
   } else if (hash === 'privacy') {
     updateSEO(PAGE_SEO.privacy);
     renderSubPage(createPrivacyPage(), PAGE_SEO.privacy.title);
+  } else if (hash.startsWith('infinite-world/') && IW_PAGE_SEO[hash.split('/')[1]]) {
+    const kind = hash.split('/')[1];
+    const create = { privacy: createIWPrivacyPage, terms: createIWTermsPage, support: createIWSupportPage }[kind];
+    updateSEO(IW_PAGE_SEO[kind]);
+    renderSubPage(create(), IW_PAGE_SEO[kind].title);
   } else if (hash === 'contact') {
     updateSEO(PAGE_SEO.contact);
     renderSubPage(createContactPage(), PAGE_SEO.contact.title);

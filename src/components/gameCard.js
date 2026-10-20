@@ -30,7 +30,7 @@ export function createGameCard(game, opts = {}) {
   card.setAttribute('data-game-id', game.id);
   card.setAttribute('data-accent', game.color || 'purple');
   card.setAttribute('title', `Play ${game.title} free online — ${game.category} browser game`);
-  card.setAttribute('aria-label', `Play ${game.title} — ${game.category} game, rated ${game.rating} out of 5 stars, ${game.plays} plays`);
+  card.setAttribute('aria-label', `Play ${game.title} — ${game.category} game, ${game.isNew ? 'new' : `rated ${game.rating} out of 5 stars, ${game.plays} plays`}`);
 
   card.setAttribute('itemscope', '');
   card.setAttribute('itemtype', 'https://schema.org/VideoGame');
@@ -67,6 +67,9 @@ export function createGameCard(game, opts = {}) {
       <span class="card-tag" style="background:${tag.bg};color:${tag.text}" itemprop="genre">${categoryLabel}</span>
       <div class="card-title" itemprop="name">${game.title}</div>
       <div class="card-meta">
+        ${game.isNew ? `
+        <span class="card-new">New</span>
+        <span>${game.metaNote || ''}</span>` : `
         <span itemprop="interactionStatistic" itemscope itemtype="https://schema.org/InteractionCounter">
           <meta itemprop="interactionType" content="https://schema.org/PlayAction">
           <span itemprop="userInteractionCount" content="${game.plays}">${game.plays} plays</span>
@@ -75,7 +78,7 @@ export function createGameCard(game, opts = {}) {
           ★ <span itemprop="ratingValue">${game.rating}</span>
           <meta itemprop="bestRating" content="5">
           <meta itemprop="ratingCount" content="1000">
-        </span>
+        </span>`}
       </div>
       <meta itemprop="gamePlatform" content="Web Browser">
       <meta itemprop="applicationCategory" content="Game">

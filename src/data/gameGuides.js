@@ -2,6 +2,23 @@
 // Used by the play page. Any id missing here falls back to generic text.
 
 export const GAME_GUIDES = {
+  'infinite-world': {
+    tagline: 'Build a 3D city together — live, with friends.',
+    description: 'Infinite World is a 3D city builder you can play alone or with friends in realtime. Lay roads, towers, parks, rail and rivers, grow from a hamlet into a metropolis, and invite a partner to build the same world with you live. Keep your world private or make it public so anyone can watch.',
+    controls: [
+      { key: 'Click / Drag', label: 'Build — drag to lay roads, rail and water' },
+      { key: 'Right-drag / Shift-drag', label: 'Move the camera' },
+      { key: 'Wheel', label: 'Zoom' },
+      { key: 'R', label: 'Rotate the building' },
+      { key: 'X', label: 'Demolish' },
+      { key: 'V', label: 'Drive through your city' },
+    ],
+    tips: [
+      'The first 20 minutes are free — build big, then manage your coins.',
+      'Tap Share to get an invite code: your partner builds with you instantly.',
+      'Homes near roads, parks and services earn more rent.',
+    ],
+  },
   'gravity-switch': {
     tagline: 'Flip gravity, dodge the spikes, chain the combo.',
     description: 'Gravity Switch is a one-button arcade reflex game. Tap to invert gravity, slip between floor and ceiling hazards, and collect orbs without breaking your chain. The longer you survive, the faster it gets.',

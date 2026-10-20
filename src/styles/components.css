@@ -1373,3 +1373,5 @@ footer {
   .cat-btn:hover { transform: none !important; }
   .site-toast, .rr-card { animation: none !important; }
 }
+
+.card-new { font-weight: 800; color: var(--blue); }

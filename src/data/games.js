@@ -33,6 +33,7 @@ function generateGames() {
 
   // Playable games
   const playableGames = [
+    { id: 'infinite-world', title: 'Infinite World', category: 'multiplayer', isPlayable: true, isNew: true, metaNote: 'Co-op city builder', plays: 'New', rating: 5.0, color: 'blue', iconType: 'star', engine: 'three', isHot: true, image: '/images/infinite-world.jpg', legal: true },
     { id: 'gravity-switch', title: 'Gravity Switch', category: 'arcade', isPlayable: true, plays: '38.5M', rating: 4.9, color: 'purple', iconType: 'runner', engine: 'canvas', isHot: true, isLightTheme: true, image: '/images/gravity-switch.jpg' },
     { id: 'hextris', title: 'Hextris Stack', category: 'puzzle', isPlayable: true, plays: '48.9M', rating: 5.0, color: 'purple', iconType: 'puzzle', engine: 'canvas', isHot: true, image: '/images/hextris-stack.jpg' },
     { id: 'color-switch', title: 'Color Switch', category: 'arcade', isPlayable: true, plays: '24.8M', rating: 4.9, color: 'purple', iconType: 'ball', engine: 'phaser', image: '/images/color-switch.jpg' },
