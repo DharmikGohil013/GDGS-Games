@@ -2,7 +2,9 @@
 // A multiplayer 3D city builder with its own server (accounts, saved worlds,
 // realtime co-op). It runs on its own subdomain and is embedded here.
 
-const GAME_URL = import.meta.env.VITE_INFINITE_WORLD_URL || 'https://world.playzyy.me/';
+// Temporary HTTPS address until world.playzyy.me has a DNS record; then switch
+// this to 'https://world.playzyy.me/' (the game server already accepts both).
+const GAME_URL = import.meta.env.VITE_INFINITE_WORLD_URL || 'https://187-126-123-208.sslip.io/';
 
 let frame = null;
 
