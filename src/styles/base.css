@@ -33,9 +33,8 @@ body::before {
   pointer-events: none;
   z-index: 0;
   background:
-    radial-gradient(900px 620px at 12% -8%, var(--aurora-1), transparent 60%),
-    radial-gradient(760px 560px at 88% 4%, var(--aurora-2), transparent 62%),
-    radial-gradient(680px 520px at 50% 108%, var(--aurora-3), transparent 64%);
+    radial-gradient(900px 620px at 12% -8%, color-mix(in srgb, var(--aurora-1) 38%, transparent), transparent 60%),
+    radial-gradient(760px 560px at 88% 4%, color-mix(in srgb, var(--aurora-2) 34%, transparent), transparent 62%);
 }
 
 body::after {
@@ -44,12 +43,7 @@ body::after {
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background-image:
-    linear-gradient(var(--grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(1100px 700px at 50% 0%, #000 20%, transparent 78%);
-  -webkit-mask-image: radial-gradient(1100px 700px at 50% 0%, #000 20%, transparent 78%);
+  background: none;
 }
 
 #app {

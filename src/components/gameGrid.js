@@ -1,6 +1,5 @@
 // ─── Game Grid ───
-// Filtered catalogue plus curated rails. The "Jump back in" rail is driven by
-// the player's own history, so the homepage changes as they play.
+// Filtered catalogue with a personalised "Jump back in" rail from play history.
 
 import { getState, setState, subscribe } from '../store.js';
 import { games } from '../data/games.js';
@@ -47,7 +46,7 @@ export function createGameGrid() {
     const totalCount = filtered.length;
     const visible = filtered.slice(0, visibleGames);
 
-    let sectionTitle = 'Trending now';
+    let sectionTitle = 'Trending games';
     if (searchQuery) sectionTitle = `Search results for "${searchQuery}"`;
     else if (activeCategory !== 'trending') {
       sectionTitle = `${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)} Games`;
@@ -115,41 +114,6 @@ export function createGameGrid() {
     }
 
     container.appendChild(section);
-
-    // ── Curated rails (home only) ──
-    if (isHome) {
-      const playable = games.filter((g) => g.isPlayable);
-
-      [
-        rail({
-          id: 'hot-games-heading',
-          title: '🔥 Play instantly',
-          items: playable.slice(0, 8),
-          link: { href: '#/', label: 'See all' },
-        }),
-        rail({
-          id: 'new-this-week-heading',
-          title: 'New this week',
-          items: games.slice(100, 108),
-          cardOpts: { isNew: true },
-        }),
-        rail({
-          id: 'top-rated-heading',
-          title: 'Top rated',
-          items: sortGames([...games], 'rating').slice(0, 8),
-        }),
-        rail({
-          id: 'popular-puzzle-heading',
-          title: 'Popular in Puzzle',
-          items: filterByCategory(games, 'puzzle').slice(0, 4),
-        }),
-        rail({
-          id: 'racing-favorites-heading',
-          title: 'Racing favourites',
-          items: filterByCategory(games, 'racing').slice(0, 4),
-        }),
-      ].forEach((s) => { if (s) container.appendChild(s); });
-    }
 
     requestAnimationFrame(animateCards);
   }

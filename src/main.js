@@ -117,8 +117,8 @@ function renderHomePage() {
 
   const wrap = document.createElement('div');
   wrap.className = 'wrap';
-  wrap.appendChild(createCategories());
   wrap.appendChild(createHero());
+  wrap.appendChild(createCategories());
   wrap.appendChild(createGameGrid());
 
   app.appendChild(wrap);

@@ -5,13 +5,19 @@ import { categories } from '../data/categories.js';
 export function createCategories() {
   const row = document.createElement('div');
   row.className = 'cat-row';
-  row.setAttribute('role', 'tablist');
+  row.setAttribute('role', 'group');
   row.setAttribute('aria-label', 'Game categories');
+
+  const primaryCategories = ['trending', 'puzzle', 'racing', 'runner', 'arcade', 'sports'];
 
   function render() {
     const { activeCategory } = getState();
 
-    row.innerHTML = categories
+    const primary = categories.filter((cat) => primaryCategories.includes(cat.id));
+    const more = categories.filter((cat) => !primaryCategories.includes(cat.id));
+    const isMoreActive = more.some((cat) => cat.id === activeCategory);
+
+    row.innerHTML = primary
       .map(
         (cat) => `
         <button
@@ -23,7 +29,14 @@ export function createCategories() {
         >${cat.name}</button>
       `
       )
-      .join('');
+      .join('') + `
+      <label class="cat-more-label">
+        <span class="sr-only">More game categories</span>
+        <select class="cat-more${isMoreActive ? ' active' : ''}" aria-label="More game categories">
+          <option value="" ${isMoreActive ? '' : 'selected'}>More</option>
+          ${more.map((cat) => `<option value="${cat.id}" ${cat.id === activeCategory ? 'selected' : ''}>${cat.name}</option>`).join('')}
+        </select>
+      </label>`;
   }
 
   row.addEventListener('click', (e) => {
@@ -42,6 +55,15 @@ export function createCategories() {
     if (section) {
       section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  });
+
+  row.addEventListener('change', (e) => {
+    if (!e.target.matches('.cat-more')) return;
+    if (!e.target.value) return;
+    setState({ activeCategory: e.target.value, visibleGames: 40, searchQuery: '' });
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.value = '';
+    document.querySelector('.section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
   subscribe(() => render());

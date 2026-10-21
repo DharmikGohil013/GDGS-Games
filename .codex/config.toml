@@ -1,0 +1,3 @@
+[mcp_servers.phaser-editor]
+command = "npx"
+args = ["@phaserjs/editor-mcp-server"]
