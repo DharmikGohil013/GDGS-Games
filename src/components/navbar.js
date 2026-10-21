@@ -16,7 +16,7 @@ export function createNavbar() {
   nav.className = 'nav-outer';
   nav.innerHTML = `
     <nav class="nav" role="navigation" aria-label="Main navigation">
-      <a href="#/" class="logo" id="playzy-logo">
+      <a href="/" class="logo" id="playzy-logo">
         <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
           <rect x="2" y="8" width="20" height="10" rx="5" fill="#FF5F4D"/>
           <circle cx="8" cy="13" r="1.6" fill="#16171D"/>
@@ -31,7 +31,7 @@ export function createNavbar() {
           <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="2"/>
           <line x1="13.5" y1="13.5" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
-        <input type="text" id="search-input" placeholder="Search 1,000+ games..." autocomplete="off" aria-label="Search games" />
+        <input type="text" id="search-input" placeholder="Search games..." autocomplete="off" aria-label="Search games" />
         <kbd class="search-kbd">Ctrl+K</kbd>
       </div>
 

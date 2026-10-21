@@ -207,7 +207,7 @@ function renderScores() {
   return `
     <div class="drawer-section-title">Personal bests</div>
     ${entries.map((e) => `
-      <a class="mission-card" href="#/play/${e.id}" style="display:block">
+      <a class="mission-card" href="${e.isPlayable ? `/games/${e.id}/` : `#/play/${e.id}`}" style="display:block">
         <div class="mission-card-top">
           <span>${e.title}</span>
           <b>${e.best.toLocaleString()}</b>

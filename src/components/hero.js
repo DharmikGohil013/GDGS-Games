@@ -249,7 +249,8 @@ export function createHero() {
 
   const playGame = () => {
     const game = featuredGames[currentIndex];
-    window.location.hash = `#/play/${game.id}`;
+    if (game.isPlayable) window.location.assign(`/games/${game.id}/`);
+    else window.location.hash = `#/play/${game.id}`;
   };
 
   // Event Listeners

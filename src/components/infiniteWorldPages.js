@@ -5,7 +5,7 @@
 
 const SUPPORT_EMAIL = 'dharmikgohil.work@gmail.com';
 const UPDATED = 'October 20, 2026';
-const GAME_LINK = '<a href="#/play/infinite-world">Infinite World</a>';
+const GAME_LINK = '<a href="/games/infinite-world/">Infinite World</a>';
 
 const mail = (subject) =>
   `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(`Infinite World — ${subject}`)}`;
@@ -21,10 +21,10 @@ function shell(badge, title, subtitle, body) {
     </div>
     <div class="page-section legal-content">${body}</div>
     <div class="page-section iw-legal-nav">
-      <a href="#infinite-world/privacy">Privacy</a>
-      <a href="#infinite-world/terms">Terms</a>
-      <a href="#infinite-world/support">Support</a>
-      <a href="#/play/infinite-world">Play Infinite World →</a>
+      <a href="/games/infinite-world/privacy/">Privacy</a>
+      <a href="/games/infinite-world/terms/">Terms</a>
+      <a href="/games/infinite-world/support/">Support</a>
+      <a href="/games/infinite-world/">Play Infinite World →</a>
     </div>
   `;
   return page;
@@ -38,7 +38,7 @@ export function createIWPrivacyPage() {
     `
       <div class="legal-block">
         <h2>1. Who we are</h2>
-        <p>${GAME_LINK} is a multiplayer 3D city builder on Playzy, run by Dharmik Gohil (“we”, “us”). It is played at <strong>world.playzyy.me</strong> and inside <strong>playzyy.me</strong>. This policy covers only Infinite World. The rest of Playzy is covered by the <a href="#privacy">Playzy Privacy Policy</a>.</p>
+        <p>${GAME_LINK} is a multiplayer 3D city builder on Playzy, run by Dharmik Gohil (“we”, “us”). It is played at <strong>world.playzyy.me</strong> and inside <strong>playzyy.me</strong>. This policy covers only Infinite World. The rest of Playzy is covered by the <a href="/privacy/">Playzy Privacy Policy</a>.</p>
         <p>Questions: <a href="mailto:${SUPPORT_EMAIL}">${SUPPORT_EMAIL}</a>.</p>
       </div>
 
@@ -66,7 +66,7 @@ export function createIWPrivacyPage() {
           <li><strong>IP address</strong> — used briefly to limit repeated login attempts, and recorded in standard server logs that we use only for security and fixing problems.</li>
           <li><strong>Backups</strong> — if you use the Backups menu, those copies stay in your own browser and are not sent to us.</li>
         </ul>
-        <p>The game itself has no ads, no analytics and no tracking cookies. When you play inside playzyy.me, that page has its own analytics as described in the <a href="#privacy">Playzy Privacy Policy</a>.</p>
+        <p>The game itself has no ads, no analytics and no tracking cookies. When you play inside playzyy.me, that page has its own analytics as described in the <a href="/privacy/">Playzy Privacy Policy</a>.</p>
       </div>
 
       <div class="legal-block">
@@ -124,7 +124,7 @@ export function createIWTermsPage() {
     `
       <div class="legal-block">
         <h2>1. Agreement</h2>
-        <p>By creating an account or playing ${GAME_LINK}, you agree to these terms and the <a href="#infinite-world/privacy">Infinite World Privacy Policy</a>. If you do not agree, please do not use the game. These terms add to the general <a href="#terms">Playzy Terms</a>.</p>
+        <p>By creating an account or playing ${GAME_LINK}, you agree to these terms and the <a href="/games/infinite-world/privacy/">Infinite World Privacy Policy</a>. If you do not agree, please do not use the game. These terms add to the general <a href="/terms/">Playzy Terms</a>.</p>
       </div>
 
       <div class="legal-block">
@@ -221,16 +221,16 @@ export const IW_PAGE_SEO = {
   privacy: {
     title: 'Infinite World Privacy Policy | Playzy',
     description: 'What Infinite World stores — username, a hashed birthday, your worlds and progress — who can see it, and how to delete it.',
-    url: '/#infinite-world/privacy',
+    url: '/games/infinite-world/privacy/',
   },
   terms: {
     title: 'Infinite World Terms & Conditions | Playzy',
     description: 'Rules for Infinite World accounts, worlds, partners, public worlds and fair play.',
-    url: '/#infinite-world/terms',
+    url: '/games/infinite-world/terms/',
   },
   support: {
     title: 'Infinite World Support | Playzy',
     description: 'Help with Infinite World: logging in, inviting partners, private and public worlds, reporting players and deleting your account.',
-    url: '/#infinite-world/support',
+    url: '/games/infinite-world/support/',
   },
 };

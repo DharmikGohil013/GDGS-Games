@@ -124,7 +124,7 @@ export function createGameShell(container, opts = {}) {
           <button class="gs-btn gs-btn-primary" data-gs="resume-btn">${ICON.resume}<span>Resume</span></button>
           <button class="gs-btn gs-btn-ghost" data-gs="pause-restart">${ICON.restart}<span>Restart</span></button>
         </div>
-        <a class="gs-link" href="#/">Quit to all games</a>
+        <a class="gs-link" href="/">Quit to all games</a>
       </div>
     </div>
 
@@ -148,7 +148,7 @@ export function createGameShell(container, opts = {}) {
         <div class="gs-over-extra" data-gs="over-extra"></div>
         <div class="gs-btn-row">
           <button class="gs-btn gs-btn-primary gs-btn-lg" data-gs="again-btn">${ICON.restart}<span>Play again</span></button>
-          <a class="gs-btn gs-btn-ghost" href="#/">More games</a>
+          <a class="gs-btn gs-btn-ghost" href="/">More games</a>
         </div>
       </div>
     </div>

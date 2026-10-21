@@ -11,7 +11,7 @@ export function createAboutPage() {
     <div class="page-hero" role="banner">
       <span class="page-badge" aria-label="Section: About Us">About Us</span>
       <h1 class="page-title" itemprop="headline">We build games people love.</h1>
-      <p class="page-subtitle" itemprop="description">Playzy is a free browser-based gaming platform that brings instant entertainment to millions of players worldwide — no downloads, no installs, no hassle.</p>
+      <p class="page-subtitle" itemprop="description">Playzy is a browser games platform built by Dharmik Gohil. Play selected arcade, puzzle, racing and other games online without downloading an app.</p>
     </div>
 
     <div class="page-section">
@@ -35,8 +35,8 @@ export function createAboutPage() {
               <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
             </svg>
           </div>
-          <h3>Global Reach</h3>
-          <p>With over 50 million plays every month, Playzy serves gamers across 180+ countries. Our platform is optimized for speed, loading games in under 2 seconds on any device.</p>
+          <h3>Play in Your Browser</h3>
+          <p>Open a game on desktop or mobile and play in your browser. Most games do not require an account; Infinite World uses an account to save and share multiplayer worlds.</p>
         </div>
         <div class="about-card">
           <div class="about-icon" style="background:rgba(31,201,139,0.12);color:var(--green)">
@@ -45,7 +45,7 @@ export function createAboutPage() {
             </svg>
           </div>
           <h3>Quality Games</h3>
-          <p>We curate and develop over 1,000 games across 25 categories — from brain-teasing puzzles to high-speed racing, classic arcade to immersive 3D experiences.</p>
+          <p>Playzy includes a growing set of playable games across categories such as puzzles, racing, arcade, runners, and multiplayer. Cards marked “Coming soon” are catalogue previews and are not playable yet.</p>
         </div>
       </div>
     </div>
@@ -54,8 +54,8 @@ export function createAboutPage() {
       <h2 class="section-title">What We Do</h2>
       <div class="about-text-block">
         <p>Playzy is a next-generation gaming platform designed for the modern web. We develop, curate, and host browser-based games that run entirely in your browser using cutting-edge web technologies including <strong>HTML5 Canvas</strong>, <strong>WebGL</strong>, <strong>Phaser 3</strong>, <strong>PixiJS</strong>, and <strong>Three.js</strong>.</p>
-        <p>Our platform eliminates the traditional friction of gaming — there are no app store downloads, no storage requirements, no sign-ups needed. Simply open a game and start playing in seconds. Whether you're on a laptop, tablet, or phone, Playzy delivers a seamless gaming experience.</p>
-        <p>We continuously add new games every week, ensuring there's always something fresh and exciting to discover. Our library spans 25 diverse categories including Puzzle, Racing, Arcade, Runner, Sports, Strategy, Shooter, Simulation, and many more.</p>
+        <p>Most games run directly in the browser without an app download or sign-up. Infinite World is the exception: it requires an account to save worlds and play with others. The site works on desktop and mobile browsers.</p>
+        <p>Browse games by category, read each game's controls and tips, and open a game to play. The catalogue also includes preview cards for games that are still in development.</p>
       </div>
     </div>
 
@@ -70,7 +70,7 @@ export function createAboutPage() {
         </div>
         <div class="creator-info">
           <h3><a href="https://dharmikgohil.art" target="_blank" rel="noopener noreferrer">dharmikgohil.art</a></h3>
-          <p>Playzy is designed and developed by <strong>dharmikgohil.art</strong> — a creative studio specializing in interactive web experiences, browser-based game development, and modern web applications. With a passion for blending art and technology, dharmikgohil.art crafts immersive digital products that delight users worldwide.</p>
+          <p>Playzy is designed and developed by <strong>dharmikgohil.art</strong>, which creates interactive web experiences, browser games, and web applications.</p>
           <p>From concept to deployment, every aspect of Playzy — the game engine integration, visual design, user interface, animations, and the gaming experience itself — is built with meticulous attention to detail and a commitment to quality.</p>
         </div>
       </div>
@@ -110,20 +110,20 @@ export function createAboutPage() {
       <h2 class="section-title">Platform Highlights</h2>
       <div class="highlights-grid">
         <div class="highlight-item">
-          <b>1,000+</b>
-          <span>Games Available</span>
+          <b>14</b>
+          <span>Playable Games</span>
         </div>
         <div class="highlight-item">
           <b>25</b>
           <span>Game Categories</span>
         </div>
         <div class="highlight-item">
-          <b>50M+</b>
-          <span>Monthly Plays</span>
+          <b>No</b>
+          <span>App Download Needed</span>
         </div>
         <div class="highlight-item">
-          <b>180+</b>
-          <span>Countries Served</span>
+          <b>Free</b>
+          <span>To Play</span>
         </div>
         <div class="highlight-item">
           <b>&lt;2s</b>

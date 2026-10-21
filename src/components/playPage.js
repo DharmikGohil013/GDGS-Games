@@ -72,7 +72,7 @@ export function createPlayPage(gameId) {
   container.innerHTML = `
     <header class="play-page-header" role="banner">
       <div class="play-header-left">
-        <a href="#/" class="play-back-btn" aria-label="Back to Playzy home — all free browser games">
+        <a href="/" class="play-back-btn" aria-label="Back to Playzy home — all free browser games">
           ${ICON.back}<span>All games</span>
         </a>
         <div class="play-title-wrap">
@@ -114,7 +114,7 @@ export function createPlayPage(gameId) {
         </svg>
         <h2>Coming soon</h2>
         <p>This one is still in the workshop.<br>Here are ten you can play right now.</p>
-        <a href="#/" class="btn-primary" style="margin-top:12px">← Browse playable games</a>
+        <a href="/" class="btn-primary" style="margin-top:12px">← Browse playable games</a>
       </div>
     </main>
 
@@ -142,9 +142,9 @@ export function createPlayPage(gameId) {
           <meta itemprop="tool" content="Web Browser">
           ${game.legal ? `
             <p class="play-legal-links">
-              <a href="#infinite-world/privacy">Privacy</a> ·
-              <a href="#infinite-world/terms">Terms</a> ·
-              <a href="#infinite-world/support">Support</a>
+              <a href="/games/infinite-world/privacy/">Privacy</a> ·
+              <a href="/games/infinite-world/terms/">Terms</a> ·
+              <a href="/games/infinite-world/support/">Support</a>
             </p>` : ''}
           <meta itemprop="supply" content="Free to play — no download required">
         </article>
@@ -161,13 +161,8 @@ export function createPlayPage(gameId) {
           <div class="play-missions" id="play-missions"></div>
 
           <div class="play-meta-stats">
-            <span title="${game.plays || '10M+'} total plays">🔥 ${game.plays || '10M+'} plays</span>
-            <span class="rating" itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating">
-              ★ <span itemprop="ratingValue">${game.rating || 4.8}</span>
-              <meta itemprop="bestRating" content="5">
-              <meta itemprop="ratingCount" content="10000">
-              / 5
-            </span>
+            <span>🎮 Free to play</span>
+            <span>🌐 Runs in your browser</span>
           </div>
 
           <div class="play-offers" hidden>
@@ -183,7 +178,7 @@ export function createPlayPage(gameId) {
       <section class="play-related-section" aria-labelledby="related-games-heading">
         <div class="section-head">
           <h2 id="related-games-heading">More games you might like</h2>
-          <a href="#/" class="see-all-link">All games →</a>
+          <a href="/" class="see-all-link">All games →</a>
         </div>
         <div class="card-grid" id="play-related-grid" aria-label="Related free browser games"></div>
       </section>

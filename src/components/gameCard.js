@@ -1,6 +1,5 @@
 // ─── Game Card ───
-// Keeps the schema.org VideoGame microdata and adds the personal-best ribbon
-// that appears once the visitor has actually played the game.
+// Renders a catalogue card and the personal-best ribbon for played games.
 
 import { getGameIcon } from '../utils/icons.js';
 import { getGameStats } from '../core/progress.js';
@@ -26,15 +25,11 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" fill="current
 export function createGameCard(game, opts = {}) {
   const card = document.createElement('a');
   card.className = 'game-card';
-  card.href = `#/play/${game.id}`;
+  card.href = game.isPlayable ? `/games/${game.id}/` : `#/play/${game.id}`;
   card.setAttribute('data-game-id', game.id);
   card.setAttribute('data-accent', game.color || 'purple');
   card.setAttribute('title', `Play ${game.title} free online — ${game.category} browser game`);
-  card.setAttribute('aria-label', `Play ${game.title} — ${game.category} game, ${game.isNew ? 'new' : `rated ${game.rating} out of 5 stars, ${game.plays} plays`}`);
-
-  card.setAttribute('itemscope', '');
-  card.setAttribute('itemtype', 'https://schema.org/VideoGame');
-  card.setAttribute('itemprop', 'url');
+  card.setAttribute('aria-label', `Play ${game.title} — ${game.category} game, ${game.isPlayable ? 'playable now' : 'coming soon'}`);
 
   const bg = colorMap[game.color] || colorMap.purple;
   const tag = tagColorMap[game.color] || tagColorMap.purple;
@@ -42,7 +37,7 @@ export function createGameCard(game, opts = {}) {
   const categoryLabel = game.category.charAt(0).toUpperCase() + game.category.slice(1);
 
   const artContent = game.image
-    ? `<img src="${game.image}" alt="${game.title} — free ${categoryLabel} browser game thumbnail" class="card-thumb-img" itemprop="image" loading="lazy" decoding="async" />`
+      ? `<img src="${game.image}" alt="${game.title} — free ${categoryLabel} browser game thumbnail" class="card-thumb-img" loading="lazy" decoding="async" />`
     : `<span class="card-icon-float">${icon}</span>`;
 
   const badges = [];
@@ -64,32 +59,19 @@ export function createGameCard(game, opts = {}) {
       <span class="card-play"><span>${PLAY_ICON}</span></span>
     </div>
     <div class="card-body">
-      <span class="card-tag" style="background:${tag.bg};color:${tag.text}" itemprop="genre">${categoryLabel}</span>
-      <div class="card-title" itemprop="name">${game.title}</div>
+      <span class="card-tag" style="background:${tag.bg};color:${tag.text}">${categoryLabel}</span>
+      <div class="card-title">${game.title}</div>
       <div class="card-meta">
-        ${game.isNew ? `
-        <span class="card-new">New</span>
-        <span>${game.metaNote || ''}</span>` : `
-        <span itemprop="interactionStatistic" itemscope itemtype="https://schema.org/InteractionCounter">
-          <meta itemprop="interactionType" content="https://schema.org/PlayAction">
-          <span itemprop="userInteractionCount" content="${game.plays}">${game.plays} plays</span>
-        </span>
-        <span class="rating" itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating">
-          ★ <span itemprop="ratingValue">${game.rating}</span>
-          <meta itemprop="bestRating" content="5">
-          <meta itemprop="ratingCount" content="1000">
-        </span>`}
+        ${game.isNew ? `<span class="card-new">New</span><span>${game.metaNote || ''}</span>` :
+          `<span>${game.isPlayable ? 'Playable now' : 'Coming soon'}</span>`}
       </div>
-      <meta itemprop="gamePlatform" content="Web Browser">
-      <meta itemprop="applicationCategory" content="Game">
-      <meta itemprop="operatingSystem" content="Any">
-      <link itemprop="offers" href="https://schema.org/InStock">
     </div>
   `;
 
   card.addEventListener('click', (e) => {
     e.preventDefault();
-    window.location.hash = `#/play/${game.id}`;
+    if (game.isPlayable) window.location.assign(`/games/${game.id}/`);
+    else window.location.hash = `#/play/${game.id}`;
   });
 
   return card;

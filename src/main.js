@@ -61,7 +61,14 @@ function renderPage() {
   runUnmounts();
   app.innerHTML = '';
 
-  const hash = (window.location.hash || '#/').replace('#', '');
+  const pathname = window.location.pathname.replace(/^\/+|\/+$/g, '');
+  const hash = pathname
+    ? pathname.startsWith('games/infinite-world/')
+      ? pathname.slice('games/'.length)
+      : pathname.startsWith('games/')
+        ? `play/${pathname.slice('games/'.length)}`
+        : pathname
+    : (window.location.hash || '#/').replace('#', '');
 
   if (hash.startsWith('/play/') || hash.startsWith('play/')) {
     renderPlayPage(hash.replace(/^\/?play\//, ''));
@@ -134,7 +141,7 @@ function renderSubPage(pageContent, title) {
   backWrap.className = 'wrap';
   backWrap.style.paddingTop = '20px';
   backWrap.innerHTML = `
-    <a href="#/" class="back-home">
+    <a href="/" class="back-home">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
         <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
       </svg>

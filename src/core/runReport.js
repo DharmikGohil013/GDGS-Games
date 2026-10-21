@@ -55,7 +55,7 @@ function showCard(container, result) {
       <button class="rr-close" aria-label="Dismiss rewards">×</button>
     </div>
     <div class="rr-rows">${rows.join('')}</div>
-    <a class="rr-cta" href="#/">See all games</a>
+    <a class="rr-cta" href="/">See all games</a>
   `;
 
   container.appendChild(card);

@@ -14,7 +14,7 @@ export function createFooter() {
     <div class="footer-inner">
       <div class="footer-main">
         <div class="footer-brand-block">
-          <a href="#/" class="footer-brand" aria-label="Playzy home">
+          <a href="/" class="footer-brand" aria-label="Playzy home">
             <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
               <rect x="2" y="8" width="20" height="10" rx="5" fill="#FF5F4D"/>
               <circle cx="8" cy="13" r="1.6" fill="#16171D"/>
@@ -29,18 +29,18 @@ export function createFooter() {
         <nav class="footer-nav" aria-label="Footer navigation">
           <div class="footer-nav-group">
             <h2>Explore</h2>
-            <a href="#/">All games</a>
-            <a href="#/play/infinite-world">Infinite World</a>
+            <a href="/">All games</a>
+            <a href="/games/infinite-world/">Infinite World</a>
           </div>
           <div class="footer-nav-group">
             <h2>Playzy</h2>
-            <a href="#about">About</a>
-            <a href="#contact">Contact</a>
+            <a href="/about/">About</a>
+            <a href="/contact/">Contact</a>
           </div>
           <div class="footer-nav-group">
             <h2>Legal</h2>
-            <a href="#terms">Terms</a>
-            <a href="#privacy">Privacy</a>
+            <a href="/terms/">Terms</a>
+            <a href="/privacy/">Privacy</a>
           </div>
         </nav>
       </div>
