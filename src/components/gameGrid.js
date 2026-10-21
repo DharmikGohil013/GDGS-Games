@@ -42,6 +42,8 @@ export function createGameGrid() {
     let filtered = filterByCategory(games, activeCategory);
     if (searchQuery) filtered = searchGames(filtered, searchQuery);
     filtered = sortGames(filtered, 'popular');
+    // Keep games visitors can launch ahead of catalogue entries marked coming soon.
+    filtered.sort((a, b) => Number(b.isPlayable) - Number(a.isPlayable));
 
     const totalCount = filtered.length;
     const visible = filtered.slice(0, visibleGames);
