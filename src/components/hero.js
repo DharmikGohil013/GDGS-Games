@@ -42,6 +42,7 @@ const featuredGames = [
     category: 'arcade',
     isPlayable: true,
     engine: 'phaser',
+    image: '/images/tower-stacker.webp',
     image: '/images/color-switch.jpg',
     artSvg: `<svg viewBox="0 0 80 80" width="76" height="76" aria-hidden="true"><circle cx="40" cy="40" r="38" fill="rgba(255,255,255,0.16)"/><path d="M40 18 A22 22 0 0 1 62 40" stroke="#FF3366" stroke-width="7" fill="none"/><path d="M62 40 A22 22 0 0 1 40 62" stroke="#FFC93C" stroke-width="7" fill="none"/><path d="M40 62 A22 22 0 0 1 18 40" stroke="#3E6BFF" stroke-width="7" fill="none"/><path d="M18 40 A22 22 0 0 1 40 18" stroke="#8B5CF6" stroke-width="7" fill="none"/><circle cx="40" cy="40" r="7" fill="white"/></svg>`
   },
@@ -69,6 +70,7 @@ const featuredGames = [
     category: 'racing',
     isPlayable: true,
     engine: 'three',
+    image: '/images/turbo-drift.webp',
     artSvg: `<svg viewBox="0 0 80 80" width="76" height="76" aria-hidden="true"><circle cx="40" cy="40" r="38" fill="rgba(255,255,255,0.16)"/><path d="M20 56 L40 24 L60 56" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`
   },
   {
@@ -82,6 +84,7 @@ const featuredGames = [
     category: 'arcade',
     isPlayable: true,
     engine: 'pixi',
+    image: '/images/neon-snake.webp',
     artSvg: `<svg viewBox="0 0 80 80" width="76" height="76" aria-hidden="true"><circle cx="40" cy="40" r="38" fill="rgba(255,255,255,0.16)"/><path d="M16 56 H34 V38 H52 V20 H66" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="66" cy="20" r="5" fill="white"/></svg>`
   },
   {
@@ -95,6 +98,7 @@ const featuredGames = [
     category: 'runner',
     isPlayable: true,
     engine: 'pixi',
+    image: '/images/city-sprint.webp',
     artSvg: `<svg viewBox="0 0 80 80" width="76" height="76" aria-hidden="true"><circle cx="40" cy="40" r="38" fill="rgba(255,255,255,0.16)"/><circle cx="44" cy="18" r="7" fill="white"/><path d="M44 28 L34 48 L20 56 M44 28 L54 44 L66 40 M34 48 L42 60 L36 72" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`
   },
   {
