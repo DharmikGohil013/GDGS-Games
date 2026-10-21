@@ -147,8 +147,8 @@
 .play-viewport {
   position: relative;
   width: 100%;
-  height: min(74vh, 780px);
-  min-height: 420px;
+  height: min(90svh, 1000px, calc(100svh - 60px));
+  min-height: min(520px, calc(100svh - 60px));
   overflow: hidden;
   background: #05070F;
   border-bottom: 1px solid var(--border);
@@ -659,7 +659,7 @@
   .play-page-header { flex-wrap: wrap; padding: 10px 14px; gap: 9px; }
   .play-header-left { width: 100%; }
   .play-header-right { width: 100%; justify-content: flex-end; }
-  .play-viewport { height: 64vh; min-height: 400px; }
+  .play-viewport { height: max(400px, calc(100svh - 112px)); min-height: min(400px, calc(100svh - 112px)); }
   .play-info-section { padding: 26px 16px 16px; }
   .play-card { padding: 18px; }
   .play-control kbd { min-width: 78px; font-size: 11px; }
@@ -672,7 +672,7 @@
   .play-action-btn.is-primary span { display: none; }
   .play-chip { padding: 0 10px; font-size: 11.5px; }
   .play-game-title { font-size: 16px; }
-  .play-viewport { height: 72vh; min-height: 460px; }
+  .play-viewport { height: max(360px, calc(100svh - 112px)); min-height: min(360px, calc(100svh - 112px)); }
   .page-content { padding: 0 16px 44px; }
   .play-record b { font-size: 18px; }
 }
