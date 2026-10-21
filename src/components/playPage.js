@@ -19,6 +19,7 @@ const gameModules = {
   'neon-snake': () => import('../games/neon-snake.js'),
   'block-merge': () => import('../games/block-merge.js'),
   'turbo-drift': () => import('../games/turbo-drift.js'),
+  'monsoon-rickshaw-rush': () => import('../games/monsoon-rickshaw-rush.js'),
   'ball-drop': () => import('../games/ball-drop.js'),
   'city-sprint': () => import('../games/city-sprint.js'),
   'infinite-runner': () => import('../games/infinite-runner.js'),

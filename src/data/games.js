@@ -41,6 +41,7 @@ function generateGames() {
     { id: 'neon-snake', title: 'Neon Snake', category: 'arcade', isPlayable: true, plays: '8.2M', rating: 4.7, color: 'green', iconType: 'snake', engine: 'canvas', image: '/images/neon-snake.webp' },
     { id: 'block-merge', title: 'Block Merge', category: 'puzzle', isPlayable: true, plays: '15.1M', rating: 4.9, color: 'purple', iconType: 'puzzle', engine: 'html5', image: '/images/block-merge.webp' },
     { id: 'turbo-drift', title: 'Turbo Drift', category: 'racing', isPlayable: true, plays: '22.3M', rating: 4.6, color: 'blue', iconType: 'car', engine: 'three', image: '/images/turbo-drift.webp' },
+    { id: 'monsoon-rickshaw-rush', title: 'Monsoon Rickshaw Rush', category: 'racing', isPlayable: true, isNew: true, plays: 'New', rating: 4.9, color: 'gold', iconType: 'car', engine: 'three' },
     { id: 'ball-drop', title: 'Ball Drop', category: 'arcade', isPlayable: true, plays: '5.6M', rating: 4.5, color: 'coral', iconType: 'ball', engine: 'pixi', image: '/images/ball-drop.webp' },
     { id: 'city-sprint', title: 'City Sprint', category: 'runner', isPlayable: true, plays: '18.9M', rating: 4.8, color: 'gold', iconType: 'runner', engine: 'canvas', isLightTheme: true, image: '/images/city-sprint.webp' },
     { id: 'infinite-runner', title: 'Infinite Runner', category: 'runner', isPlayable: true, plays: '31.2M', rating: 4.9, color: 'blue', iconType: 'runner', engine: 'phaser', image: '/images/infinite-runner.jpg' },

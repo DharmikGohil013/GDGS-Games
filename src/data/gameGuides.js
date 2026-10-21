@@ -114,6 +114,24 @@ export const GAME_GUIDES = {
       'Nitro is invincibility-free: you still crash into traffic.',
     ],
   },
+  'monsoon-rickshaw-rush': {
+    tagline: 'Pick up fares and race through Mumbai in the monsoon.',
+    description: 'Take the wheel of a Mumbai auto-rickshaw, collect passengers, and deliver them through busy monsoon streets. Dodge traffic and slippery puddles, tune your ride in the garage, and earn fares before the shift ends.',
+    controls: [
+      { key: 'WASD / Arrows', label: 'Accelerate, reverse, and steer' },
+      { key: 'Space', label: 'Brake' },
+      { key: 'Shift', label: 'Use nitro' },
+      { key: 'H', label: 'Sound the horn' },
+      { key: 'R', label: 'Reposition the rickshaw' },
+      { key: 'Esc / P', label: 'Pause or resume' },
+      { key: 'Touch controls', label: 'Drive on mobile' },
+    ],
+    tips: [
+      'Pick up the passenger marked on your map, then drive to the drop-off marker.',
+      'Brake before tight turns to keep traction on wet roads.',
+      'Use nitro on open stretches to reach fares faster.',
+    ],
+  },
   'ball-drop': {
     tagline: 'Aim wide for the big multipliers.',
     description: 'Ball Drop is plinko with a risk dial. Aim the dropper, release a ball, and watch it bounce into a multiplier bucket. Switch to Wild mode for huge edge payouts and a dead centre that eats your ball.',
