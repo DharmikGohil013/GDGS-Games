@@ -1481,9 +1481,50 @@
   aspect-ratio: 1.55 / 1;
   border-radius: 14px;
   box-shadow: 0 18px 46px rgba(0, 0, 0, 0.22);
+  isolation: isolate;
+  border: 1px solid rgba(255, 255, 255, 0.24);
 }
 .hero-art:hover { transform: translateY(-2px); box-shadow: 0 22px 50px rgba(0, 0, 0, 0.28); }
-.hero-art .tag { top: 16px; left: 16px; font-size: 11px; }
+.hero-art::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(9, 12, 24, 0.2), transparent 34%, transparent 62%, rgba(9, 12, 24, 0.5));
+  pointer-events: none;
+}
+.hero-art::after {
+  content: 'CLICK TO PLAY';
+  position: absolute;
+  right: 20px;
+  bottom: 18px;
+  z-index: 3;
+  padding: 9px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(12, 15, 27, 0.46);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  pointer-events: none;
+}
+.hero-art .tag { top: 16px; left: 16px; z-index: 4; font-size: 11px; }
+.hero-art-img { transition: transform 650ms cubic-bezier(0.2, 0.7, 0.2, 1); }
+.hero-art:hover .hero-art-img { transform: scale(1.045); }
+.hero-play-overlay { z-index: 4; opacity: 1; background: transparent; }
+.hero-play-overlay span {
+  width: 72px;
+  height: 72px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  box-shadow: 0 10px 35px rgba(5, 8, 20, 0.25);
+  transition: transform 180ms ease, background 180ms ease;
+}
+.hero-art:hover .hero-play-overlay span { transform: scale(1.08); background: rgba(255, 255, 255, 0.3); }
 .btn-primary {
   padding: 12px 20px;
   border-radius: 10px;

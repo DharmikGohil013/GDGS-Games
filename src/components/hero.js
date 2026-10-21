@@ -57,6 +57,7 @@ const featuredGames = [
     category: 'arcade',
     isPlayable: true,
     engine: 'phaser',
+    image: '/images/tower-stacker.webp',
     artSvg: `<svg viewBox="0 0 80 80" width="76" height="76" aria-hidden="true"><circle cx="40" cy="40" r="38" fill="rgba(255,255,255,0.16)"/><path d="M32 24 L58 40 L32 56 Z" fill="white"/></svg>`
   },
   {
