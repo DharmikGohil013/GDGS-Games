@@ -989,31 +989,82 @@
 
 /* ─────────────── Footer ─────────────── */
 
-footer {
-  padding: 34px 0;
+.site-footer {
+  padding: 42px 24px 20px;
   border-top: 1px solid var(--border);
   color: var(--text-mute);
+  background: color-mix(in srgb, var(--surface) 58%, var(--bg));
   font-size: 13px;
 }
-
-.foot-links {
+.site-footer .footer-inner {
+  display: block;
+  width: min(100%, 1200px);
+  margin: 0 auto;
+}
+.footer-main {
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 48px;
+  padding-bottom: 34px;
 }
-.foot-links a {
-  font-weight: 600;
-  color: var(--text-dim);
-  transition: color var(--transition-fast);
+.footer-brand-block { min-width: 190px; }
+.footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
 }
-.foot-links a:hover { color: var(--accent); }
-
+.footer-brand svg { flex-shrink: 0; }
+.footer-brand-block p { margin-top: 9px; color: var(--text-mute); }
+.footer-nav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(100px, 1fr));
+  gap: clamp(24px, 6vw, 82px);
+}
+.footer-nav-group { display: grid; align-content: start; gap: 10px; }
+.footer-nav-group h2 {
+  margin-bottom: 3px;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.footer-nav-group a,
 .footer-credit {
-  font-weight: 600;
+  width: fit-content;
   color: var(--text-dim);
+  font-weight: 600;
   transition: color var(--transition-fast);
 }
+.footer-nav-group a:hover,
 .footer-credit:hover { color: var(--accent); }
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px 24px;
+  flex-wrap: wrap;
+  padding-top: 17px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+}
+.footer-made-by { display: inline-flex; gap: 4px; }
+
+@media (max-width: 640px) {
+  .site-footer { padding: 32px 16px 18px; }
+  .footer-main { flex-direction: column; gap: 28px; padding-bottom: 26px; }
+  .footer-nav { width: 100%; gap: 18px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 380px) {
+  .footer-nav { gap: 12px; }
+  .footer-nav-group h2 { font-size: 10px; }
+  .footer-nav-group a { font-size: 12px; }
+}
 
 /* ─────────────── Toasts (site-level) ─────────────── */
 

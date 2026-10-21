@@ -108,6 +108,7 @@ function renderPlayPage(gameId) {
   currentPage = 'play';
 
   app.appendChild(createPlayPage(gameId));
+  app.appendChild(createFooter());
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 

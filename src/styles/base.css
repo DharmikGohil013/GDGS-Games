@@ -153,15 +153,6 @@ img {
   border: 0;
 }
 
-footer .footer-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
 @media (max-width: 640px) {
   .wrap { padding: 0 16px; }
 }
