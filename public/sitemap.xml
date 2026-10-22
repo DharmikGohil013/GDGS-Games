@@ -1,126 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url><loc>https://playzy.dharmikgohil.art/</loc></url>
+  <url><loc>https://playzy.dharmikgohil.art/about/</loc></url>
+  <url><loc>https://playzy.dharmikgohil.art/contact/</loc></url>
+  <url><loc>https://playzy.dharmikgohil.art/terms/</loc></url>
+  <url><loc>https://playzy.dharmikgohil.art/privacy/</loc></url>
   <url>
-    <loc>https://playzy.dharmikgohil.art/</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://playzy.dharmikgohil.art/about/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://playzy.dharmikgohil.art/contact/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://playzy.dharmikgohil.art/terms/</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  <url>
-    <loc>https://playzy.dharmikgohil.art/privacy/</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.2</priority>
+    <loc>https://playzy.dharmikgohil.art/games/infinite-world/</loc>
+    <image:image><image:loc>https://playzy.dharmikgohil.art/images/infinite-world.jpg</image:loc><image:title>Play Infinite World Online | Playzy</image:title></image:image>
   </url>
   <url>
     <loc>https://playzy.dharmikgohil.art/games/gravity-switch/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-    <image:image><image:loc>https://playzy.dharmikgohil.art/images/gravity-switch.jpg</image:loc><image:title>Gravity Switch — Free Browser Arcade Game</image:title></image:image>
-  </url>
-  <url>
-    <loc>https://playzy.dharmikgohil.art/gravity-shift.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <image:image><image:loc>https://playzy.dharmikgohil.art/images/gravity-switch.jpg</image:loc><image:title>Play Gravity Switch Online | Playzy</image:title></image:image>
   </url>
   <url>
     <loc>https://playzy.dharmikgohil.art/games/hextris/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-    <image:image><image:loc>https://playzy.dharmikgohil.art/images/hextris-stack.jpg</image:loc><image:title>Hextris Stack — Free Hexagonal Puzzle Game</image:title></image:image>
+    <image:image><image:loc>https://playzy.dharmikgohil.art/images/hextris-stack.jpg</image:loc><image:title>Play Hextris Stack Online | Playzy</image:title></image:image>
   </url>
   <url>
     <loc>https://playzy.dharmikgohil.art/games/color-switch/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://playzy.dharmikgohil.art/images/color-switch.jpg</image:loc><image:title>Color Switch — Free Browser Arcade Game</image:title></image:image>
+    <image:image><image:loc>https://playzy.dharmikgohil.art/images/color-switch.jpg</image:loc><image:title>Play Color Switch Online | Playzy</image:title></image:image>
   </url>
   <url>
     <loc>https://playzy.dharmikgohil.art/games/tower-stacker/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://playzy.dharmikgohil.art/images/tower-stacker.webp</image:loc><image:title>Tower Stacker — Free Browser Game</image:title></image:image>
+    <image:image><image:loc>https://playzy.dharmikgohil.art/images/tower-stacker.webp</image:loc><image:title>Play Tower Stacker Online | Playzy</image:title></image:image>
   </url>
   <url>
     <loc>https://playzy.dharmikgohil.art/games/neon-snake/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://playzy.dharmikgohil.art/images/neon-snake.webp</image:loc><image:title>Neon Snake — Free Browser Game</image:title></image:image>
+    <image:image><image:loc>https://playzy.dharmikgohil.art/images/neon-snake.webp</image:loc><image:title>Play Neon Snake Online | Playzy</image:title></image:image>
   </url>
   <url>
     <loc>https://playzy.dharmikgohil.art/games/block-merge/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://playzy.dharmikgohil.art/images/block-merge.webp</image:loc><image:title>Block Merge — Free Browser Puzzle Game</image:title></image:image>
+    <image:image><image:loc>https://playzy.dharmikgohil.art/images/block-merge.webp</image:loc><image:title>Play Block Merge Online | Playzy</image:title></image:image>
   </url>
   <url>
     <loc>https://playzy.dharmikgohil.art/games/turbo-drift/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://playzy.dharmikgohil.art/images/turbo-drift.webp</image:loc><image:title>Turbo Drift — Free 3D Racing Game</image:title></image:image>
+    <image:image><image:loc>https://playzy.dharmikgohil.art/images/turbo-drift.webp</image:loc><image:title>Play Turbo Drift Online | Playzy</image:title></image:image>
   </url>
   <url>
     <loc>https://playzy.dharmikgohil.art/games/monsoon-rickshaw-rush/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://playzy.dharmikgohil.art/games/ball-drop/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-    <image:image><image:loc>https://playzy.dharmikgohil.art/images/ball-drop.webp</image:loc><image:title>Ball Drop — Free Physics Puzzle Game</image:title></image:image>
+    <image:image><image:loc>https://playzy.dharmikgohil.art/images/ball-drop.webp</image:loc><image:title>Play Ball Drop Online | Playzy</image:title></image:image>
   </url>
   <url>
     <loc>https://playzy.dharmikgohil.art/games/city-sprint/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://playzy.dharmikgohil.art/images/city-sprint.webp</image:loc><image:title>City Sprint — Free Endless Runner Game</image:title></image:image>
+    <image:image><image:loc>https://playzy.dharmikgohil.art/images/city-sprint.webp</image:loc><image:title>Play City Sprint Online | Playzy</image:title></image:image>
   </url>
   <url>
     <loc>https://playzy.dharmikgohil.art/games/infinite-runner/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://playzy.dharmikgohil.art/images/infinite-runner.jpg</image:loc><image:title>Infinite Runner — Free Endless Runner Game</image:title></image:image>
-  </url>
-  <url>
-    <loc>https://playzy.dharmikgohil.art/games/infinite-world/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-    <image:image><image:loc>https://playzy.dharmikgohil.art/images/infinite-world.jpg</image:loc><image:title>Infinite World — Multiplayer City Builder</image:title></image:image>
+    <image:image><image:loc>https://playzy.dharmikgohil.art/images/infinite-runner.jpg</image:loc><image:title>Play Infinite Runner Online | Playzy</image:title></image:image>
   </url>
   <url>
     <loc>https://playzy.dharmikgohil.art/games/mario-king/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-    <image:image><image:loc>https://playzy.dharmikgohil.art/images/mario-king.webp</image:loc><image:title>Mario King — Free Pixel Platformer</image:title></image:image>
+    <image:image><image:loc>https://playzy.dharmikgohil.art/images/mario-king.webp</image:loc><image:title>Play Mario King Online | Playzy</image:title></image:image>
   </url>
-  <url>
-    <loc>https://playzy.dharmikgohil.art/games/infinite-world/privacy/</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  <url>
-    <loc>https://playzy.dharmikgohil.art/games/infinite-world/terms/</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  <url>
-    <loc>https://playzy.dharmikgohil.art/games/infinite-world/support/</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
+  <url><loc>https://playzy.dharmikgohil.art/games/infinite-world/privacy/</loc></url>
+  <url><loc>https://playzy.dharmikgohil.art/games/infinite-world/terms/</loc></url>
+  <url><loc>https://playzy.dharmikgohil.art/games/infinite-world/support/</loc></url>
+  <url><loc>https://playzy.dharmikgohil.art/gravity-shift.html</loc></url>
 </urlset>

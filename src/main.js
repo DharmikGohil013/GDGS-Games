@@ -111,7 +111,7 @@ function renderPlayPage(gameId) {
     plays: '1M+',
     rating: 4.8,
   };
-  updateSEO(PAGE_SEO[gameId] || buildGameSEO(game));
+  updateSEO(buildGameSEO(game));
   currentPage = 'play';
 
   app.appendChild(createPlayPage(gameId));

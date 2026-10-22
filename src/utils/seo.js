@@ -5,6 +5,8 @@ import { getGuide } from '../data/gameGuides.js';
 const BASE_URL = 'https://playzy.dharmikgohil.art';
 
 function canonicalPath(url = '/') {
+  // Canonicals should identify the page, not a tracking query or legacy hash.
+  const pathOnly = url.split(/[?#]/, 1)[0] || '/';
   // Accept old hash URLs while keeping canonicals on crawlable path URLs.
   const legacy = url.match(/^\/#\/?(.*)$/);
   if (legacy) {
@@ -13,7 +15,7 @@ function canonicalPath(url = '/') {
     if (route === 'about' || route === 'terms' || route === 'privacy' || route === 'contact') return `/${route}/`;
     if (route.startsWith('infinite-world/')) return `/games/${route.replace(/\/?$/, '/')}`;
   }
-  return url.endsWith('/') ? url : `${url}/`;
+  return pathOnly.endsWith('/') ? pathOnly : `${pathOnly}/`;
 }
 
 /**
@@ -242,8 +244,8 @@ export function buildGameSEO(game) {
   const controls = guide.controls && guide.controls.length ? guide.controls : [{ key: 'Mouse / Tap', label: 'Primary action' }];
 
   return {
-    title: `Play ${gameName} Free Online — ${category} Browser Game | Playzy`,
-    description: guide.description || `Play ${gameName} free online instantly — no download or installation required. A ${category.toLowerCase()} browser game for desktop and mobile.`,
+    title: `Play ${gameName} Online | Playzy`,
+    description: guide.description || `Play ${gameName}, a ${category.toLowerCase()} browser game, free on Playzy.`,
     url: game.isPlayable ? `/games/${game.id}/` : '/',
     robots: game.isPlayable ? 'index, follow, max-image-preview:large' : 'noindex, follow',
     image: game.image || null,

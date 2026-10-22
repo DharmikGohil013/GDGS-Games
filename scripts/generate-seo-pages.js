@@ -12,6 +12,10 @@ function escapeHtml(value) {
   return String(value).replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;');
 }
 
+function escapeXml(value) {
+  return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&apos;');
+}
+
 function replaceMeta(html, selector, replacement) {
   const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const pattern = new RegExp(`<meta\\s+${escapedSelector}\\s+content="[^"]*"\\s*\\/?\\s*>`, 'i');
@@ -30,6 +34,7 @@ function renderPage(html, seo) {
   result = replaceMeta(result, 'property="og:image"', `<meta property="og:image" content="${image}">`);
   result = replaceMeta(result, 'property="og:image:secure_url"', `<meta property="og:image:secure_url" content="${image}">`);
   result = replaceMeta(result, 'property="og:image:alt"', `<meta property="og:image:alt" content="${escapeHtml(`${seo.title} — Playzy`)}">`);
+  result = replaceMeta(result, 'property="og:type"', `<meta property="og:type" content="${escapeHtml(seo.type || 'website')}">`);
   result = replaceMeta(result, 'name="twitter:title"', `<meta name="twitter:title" content="${escapeHtml(seo.title)}">`);
   result = replaceMeta(result, 'name="twitter:description"', `<meta name="twitter:description" content="${escapeHtml(seo.description)}">`);
   result = replaceMeta(result, 'name="twitter:image"', `<meta name="twitter:image" content="${image}">`);
@@ -47,7 +52,7 @@ function renderPage(html, seo) {
 const pages = [
   PAGE_SEO.home,
   ...['about', 'terms', 'privacy', 'contact'].map((key) => PAGE_SEO[key]),
-  ...games.filter((game) => game.isPlayable).map((game) => PAGE_SEO[game.id] || buildGameSEO(game)),
+  ...games.filter((game) => game.isPlayable).map(buildGameSEO),
   ...Object.values(IW_PAGE_SEO),
 ];
 
@@ -58,4 +63,15 @@ for (const seo of pages) {
   await writeFile(outputFile, renderPage(sourceHtml, seo));
 }
 
-console.log(`Generated SEO entry pages for ${pages.length} routes.`);
+const sitemapPages = pages.filter((seo) => !String(seo.robots || '').includes('noindex'));
+const sitemapEntries = sitemapPages.map((seo) => {
+  const location = new URL(seo.url, `${baseUrl}/`).href;
+  const image = seo.image
+    ? `\n    <image:image><image:loc>${escapeXml(new URL(seo.image, `${baseUrl}/`).href)}</image:loc><image:title>${escapeXml(seo.title)}</image:title></image:image>`
+    : '';
+  return `  <url>\n    <loc>${escapeXml(location)}</loc>${image}\n  </url>`;
+});
+sitemapEntries.push(`  <url>\n    <loc>${baseUrl}/gravity-shift.html</loc>\n  </url>`);
+await writeFile(join(outputRoot, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${sitemapEntries.join('\n')}\n</urlset>\n`);
+
+console.log(`Generated SEO entry pages for ${pages.length} routes and a sitemap with ${sitemapEntries.length} URLs.`);
