@@ -112,52 +112,6 @@ export const PAGE_SEO = {
     }
   },
 
-  'gravity-switch': {
-    title: 'Play Gravity Switch Free Online — Invert Gravity Arcade Game | Playzy',
-    description: 'Play Gravity Switch free online instantly — tap screen or press Space to invert gravity! Dodge ceiling spikes, jump hazards, and build unbeatable high scores.',
-    url: '/games/gravity-switch/',
-    image: '/images/gravity-switch.jpg',
-    jsonLd: {
-      '@context': 'https://schema.org',
-      '@type': 'VideoGame',
-      name: 'Gravity Switch',
-      alternateName: ['Gravity Switch Game', 'Gravity Flip', 'Gravity Runner'],
-      description: 'Gravity Switch is an intense action arcade runner where tapping or pressing Space inverts gravity. Dodge floor and ceiling spikes to survive.',
-      url: 'https://playzy.dharmikgohil.art/games/gravity-switch/',
-      gamePlatform: ['Web Browser', 'Mobile Browser', 'Desktop Browser'],
-      playMode: 'SinglePlayer',
-      applicationCategory: 'Game',
-      operatingSystem: 'Any — No installation required',
-      genre: ['Arcade', 'Runner', 'Action'],
-      author: { '@type': 'Organization', name: 'Playzy', url: 'https://playzy.dharmikgohil.art/' },
-      publisher: { '@type': 'Organization', name: 'Playzy', url: 'https://playzy.dharmikgohil.art/' },
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', availability: 'https://schema.org/InStock' },
-    }
-  },
-
-  hextris: {
-    title: 'Play Hextris Stack Free Online — Hexagonal Tetris Browser Game | Playzy',
-    description: 'Play Hextris Stack free online instantly — the official hexagonal Tetris puzzle game. Rotate the hexagon, match 3+ color blocks, build high-score combos. No download required.',
-    url: '/games/hextris/',
-    image: '/images/hextris-stack.jpg',
-    jsonLd: {
-      '@context': 'https://schema.org',
-      '@type': 'VideoGame',
-      name: 'Hextris Stack',
-      alternateName: ['Hextris Stack Game', 'Hexagonal Tetris', 'Hextris Browser Game'],
-      description: 'Hextris Stack is a fast-paced hexagonal puzzle game inspired by Tetris. Rotate the central hexagon to match 3 or more blocks of the same color.',
-      url: 'https://playzy.dharmikgohil.art/games/hextris/',
-      gamePlatform: ['Web Browser', 'Mobile Browser', 'Desktop Browser'],
-      playMode: 'SinglePlayer',
-      applicationCategory: 'Game',
-      operatingSystem: 'Any — No installation required',
-      genre: ['Puzzle', 'Arcade', 'Casual'],
-      author: { '@type': 'Organization', name: 'Playzy', url: 'https://playzy.dharmikgohil.art/' },
-      publisher: { '@type': 'Organization', name: 'Playzy', url: 'https://playzy.dharmikgohil.art/' },
-      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', availability: 'https://schema.org/InStock' },
-    }
-  },
-
   about: {
     title: 'About Playzy — Free Browser Games Platform | No Download Gaming',
     description: 'Learn about Playzy, a browser gaming platform built by Dharmik Gohil. Browse free arcade, puzzle, racing and other browser games.',

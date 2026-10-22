@@ -62,7 +62,8 @@ export function sortGames(games, sortBy = 'popular') {
   const sorted = [...games];
   switch (sortBy) {
     case 'popular':
-      return sorted.sort((a, b) => parsePlayCount(b.plays) - parsePlayCount(a.plays));
+      // Keep curated catalogue order until real popularity data is available.
+      return sorted;
     case 'rating':
       return sorted.sort((a, b) => b.rating - a.rating);
     case 'name':
@@ -72,10 +73,3 @@ export function sortGames(games, sortBy = 'popular') {
   }
 }
 
-function parsePlayCount(str) {
-  if (!str) return 0;
-  const num = parseFloat(str);
-  if (str.includes('M')) return num * 1000000;
-  if (str.includes('K')) return num * 1000;
-  return num;
-}

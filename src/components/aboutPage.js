@@ -110,28 +110,8 @@ export function createAboutPage() {
       <h2 class="section-title">Platform Highlights</h2>
       <div class="highlights-grid">
         <div class="highlight-item">
-          <b>13</b>
-          <span>Playable Games</span>
-        </div>
-        <div class="highlight-item">
-          <b>Free</b>
-          <span>To play in your browser</span>
-        </div>
-        <div class="highlight-item">
-          <b>No</b>
-          <span>App Download Needed</span>
-        </div>
-        <div class="highlight-item">
-          <b>Free</b>
-          <span>To Play</span>
-        </div>
-        <div class="highlight-item">
-          <b>No</b>
-          <span>App download needed</span>
-        </div>
-        <div class="highlight-item">
-          <b>13</b>
-          <span>Games currently playable</span>
+          <b>6</b>
+          <span>Game categories</span>
         </div>
       </div>
     </div>
