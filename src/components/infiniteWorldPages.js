@@ -222,15 +222,36 @@ export const IW_PAGE_SEO = {
     title: 'Infinite World Privacy Policy | Playzy',
     description: 'What Infinite World stores — username, a hashed birthday, your worlds and progress — who can see it, and how to delete it.',
     url: '/games/infinite-world/privacy/',
+    jsonLd: buildLegalPageSchema('Infinite World Privacy Policy', '/games/infinite-world/privacy/'),
   },
   terms: {
     title: 'Infinite World Terms & Conditions | Playzy',
     description: 'Rules for Infinite World accounts, worlds, partners, public worlds and fair play.',
     url: '/games/infinite-world/terms/',
+    jsonLd: buildLegalPageSchema('Infinite World Terms & Conditions', '/games/infinite-world/terms/'),
   },
   support: {
     title: 'Infinite World Support | Playzy',
     description: 'Help with Infinite World: logging in, inviting partners, private and public worlds, reporting players and deleting your account.',
     url: '/games/infinite-world/support/',
+    jsonLd: buildLegalPageSchema('Infinite World Support', '/games/infinite-world/support/', 'ContactPage'),
   },
 };
+
+function buildLegalPageSchema(name, path, type = 'WebPage') {
+  const url = `https://playzy.dharmikgohil.art${path}`;
+  return {
+    '@context': 'https://schema.org',
+    '@type': type,
+    name,
+    url,
+    breadcrumb: {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://playzy.dharmikgohil.art/' },
+        { '@type': 'ListItem', position: 2, name: 'Infinite World', item: 'https://playzy.dharmikgohil.art/games/infinite-world/' },
+        { '@type': 'ListItem', position: 3, name, item: url },
+      ],
+    },
+  };
+}
