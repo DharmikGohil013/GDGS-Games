@@ -43,7 +43,7 @@ function canonicalPath(url = '/') {
  * Update <title>, meta description, Open Graph and Twitter meta tags for each page.
  * Also injects or replaces per-page JSON-LD.
  */
-export function updateSEO({ title, description, url = '/', image, type = 'website', jsonLd = null, robots = 'index, follow, max-image-preview:large' }) {
+export function updateSEO({ title, description, url = '/', image, type = 'website', jsonLd = null, robots = 'max-image-preview:large' }) {
   const path = canonicalPath(url);
   const fullUrl = `${BASE_URL}${path}`;
   const ogImage = image ? `${BASE_URL}${image}` : `${BASE_URL}/images/city-bg.png`;
@@ -118,7 +118,7 @@ export function updateSEO({ title, description, url = '/', image, type = 'websit
 export const PAGE_SEO = {
   home: {
     title: 'Play Free Browser Games Online — Playzy',
-    description: 'Play free browser games on Playzy. Choose from arcade, puzzle, racing, runner and multiplayer games, with no download or installation required.',
+    description: 'Play free browser games on Playzy across arcade, puzzle, racing, runner, platform and multiplayer genres. No download or installation is required.',
     url: '/',
     jsonLd: {
       '@context': 'https://schema.org',
@@ -221,7 +221,7 @@ export function buildGameSEO(game) {
     title: `Play ${gameName} Online | Playzy`,
     description: guide.description || `Play ${gameName}, a ${category.toLowerCase()} browser game, free on Playzy.`,
     url: game.isPlayable ? `/games/${game.id}/` : '/',
-    robots: game.isPlayable ? 'index, follow, max-image-preview:large' : 'noindex, follow',
+    robots: game.isPlayable ? 'max-image-preview:large' : 'noindex',
     image: game.image || null,
     type: 'website',
     jsonLd: game.isPlayable ? {

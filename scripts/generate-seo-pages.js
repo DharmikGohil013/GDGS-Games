@@ -28,7 +28,7 @@ function renderPage(html, seo) {
   const image = new URL(seo.image || '/images/city-bg.png', `${baseUrl}/`).href;
   let result = html.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(seo.title)}</title>`);
   result = replaceMeta(result, 'name="description"', `<meta name="description" content="${escapeHtml(seo.description)}">`);
-  result = replaceMeta(result, 'name="robots"', `<meta name="robots" content="${escapeHtml(seo.robots || 'index, follow, max-image-preview:large')}">`);
+  result = replaceMeta(result, 'name="robots"', `<meta name="robots" content="${escapeHtml(seo.robots || 'max-image-preview:large')}">`);
   result = replaceMeta(result, 'property="og:title"', `<meta property="og:title" content="${escapeHtml(seo.title)}">`);
   result = replaceMeta(result, 'property="og:description"', `<meta property="og:description" content="${escapeHtml(seo.description)}">`);
   result = replaceMeta(result, 'property="og:url"', `<meta property="og:url" content="${url}">`);
@@ -57,15 +57,15 @@ function renderStaticContent(seo) {
     const guide = getGuide(game);
     const controls = guide.controls.map((control) => `<li><strong>${escapeHtml(control.key)}:</strong> ${escapeHtml(control.label)}</li>`).join('');
     const tips = guide.tips.map((tip) => `<li>${escapeHtml(tip)}</li>`).join('');
-    return `<main><h1>${escapeHtml(game.title)}</h1><p>${escapeHtml(guide.description)}</p><h2>How to play ${escapeHtml(game.title)}</h2><ul>${controls}</ul>${tips ? `<h2>Tips</h2><ul>${tips}</ul>` : ''}<p><a href="/">Browse all free browser games</a></p></main>`;
+    return `<section aria-label="${escapeHtml(game.title)} game details"><h1>${escapeHtml(game.title)}</h1><p>${escapeHtml(guide.description)}</p><h2>How to play ${escapeHtml(game.title)}</h2><ul>${controls}</ul>${tips ? `<h2>Tips</h2><ul>${tips}</ul>` : ''}<p><a href="/">Browse all free browser games</a></p></section>`;
   }
 
   if (seo.url === '/') {
     const links = games.filter((item) => item.isPlayable).map((item) => `<li><a href="${escapeHtml(item.url || `/games/${encodeURIComponent(item.id)}/`)}">${escapeHtml(item.title)}</a> — ${escapeHtml(getGuide(item).description)}</li>`).join('');
-    return `<main><h1>Play free browser games online</h1><p>Playzy is a free browser games site. Explore arcade, puzzle, racing, runner, platform and multiplayer games. No app download is required.</p><h2>Games you can play</h2><ul>${links}</ul></main>`;
+    return `<section aria-label="Playable browser games"><h1>Play free browser games online</h1><p>Playzy is a free browser games site. Explore arcade, puzzle, racing, runner, platformer and multiplayer games. No app download is required.</p><h2>Games you can play</h2><ul>${links}</ul></section>`;
   }
 
-  return `<main><h1>${escapeHtml(seo.title.split(' | ')[0].split(' — ')[0])}</h1><p>${escapeHtml(seo.description)}</p><p><a href="/">Browse free browser games</a></p></main>`;
+  return `<section aria-label="${escapeHtml(seo.title)}"><h1>${escapeHtml(seo.title.split(' | ')[0].split(' — ')[0])}</h1><p>${escapeHtml(seo.description)}</p><p><a href="/">Browse free browser games</a></p></section>`;
 }
 
 const pages = [
