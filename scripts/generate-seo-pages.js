@@ -61,7 +61,7 @@ function renderStaticContent(seo) {
   }
 
   if (seo.url === '/') {
-    const links = games.filter((item) => item.isPlayable).map((item) => `<li><a href="/games/${encodeURIComponent(item.id)}/">${escapeHtml(item.title)}</a> — ${escapeHtml(getGuide(item).description)}</li>`).join('');
+    const links = games.filter((item) => item.isPlayable).map((item) => `<li><a href="${escapeHtml(item.url || `/games/${encodeURIComponent(item.id)}/`)}">${escapeHtml(item.title)}</a> — ${escapeHtml(getGuide(item).description)}</li>`).join('');
     return `<main><h1>Play free browser games online</h1><p>Playzy is a free browser games site. Explore arcade, puzzle, racing, runner, platform and multiplayer games. No app download is required.</p><h2>Games you can play</h2><ul>${links}</ul></main>`;
   }
 
@@ -71,7 +71,7 @@ function renderStaticContent(seo) {
 const pages = [
   PAGE_SEO.home,
   ...['about', 'terms', 'privacy', 'contact'].map((key) => PAGE_SEO[key]),
-  ...games.filter((game) => game.isPlayable).map(buildGameSEO),
+  ...games.filter((game) => game.isPlayable && !game.url).map(buildGameSEO),
   ...Object.values(IW_PAGE_SEO),
 ];
 

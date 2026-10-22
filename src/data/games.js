@@ -13,7 +13,8 @@ export const games = [
     { id: 'ball-drop', title: 'Ball Drop', category: 'arcade', isPlayable: true, color: 'coral', iconType: 'ball', engine: 'pixi', image: '/images/ball-drop.webp' },
     { id: 'city-sprint', title: 'City Sprint', category: 'runner', isPlayable: true, color: 'gold', iconType: 'runner', engine: 'canvas', isLightTheme: true, image: '/images/city-sprint.webp' },
     { id: 'infinite-runner', title: 'Infinite Runner', category: 'runner', isPlayable: true, color: 'blue', iconType: 'runner', engine: 'phaser', image: '/images/infinite-runner.jpg' },
-    { id: 'mario-king', title: 'Mario King', category: 'platformer', isPlayable: true, color: 'gold', iconType: 'platform', engine: 'canvas', isHot: true, image: '/images/mario-king.webp' }
+    { id: 'mario-king', title: 'Mario King', category: 'platformer', isPlayable: true, color: 'gold', iconType: 'platform', engine: 'canvas', isHot: true, image: '/images/mario-king.webp' },
+    { id: 'gravity-shift', title: 'Gravity Shift', category: 'arcade', isPlayable: true, url: '/gravity-shift.html', color: 'blue', iconType: 'runner', engine: 'canvas', image: '/images/gravity-switch.jpg' }
 ];
 
 export default games;

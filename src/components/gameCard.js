@@ -25,7 +25,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" fill="current
 export function createGameCard(game, opts = {}) {
   const card = document.createElement('a');
   card.className = 'game-card';
-  card.href = game.isPlayable ? `/games/${game.id}/` : `#/play/${game.id}`;
+  card.href = game.url || (game.isPlayable ? `/games/${game.id}/` : `#/play/${game.id}`);
   card.setAttribute('data-game-id', game.id);
   card.setAttribute('data-accent', game.color || 'purple');
   card.setAttribute('title', `Play ${game.title} free online — ${game.category} browser game`);
@@ -70,7 +70,7 @@ export function createGameCard(game, opts = {}) {
 
   card.addEventListener('click', (e) => {
     e.preventDefault();
-    if (game.isPlayable) window.location.assign(`/games/${game.id}/`);
+    if (game.isPlayable) window.location.assign(game.url || `/games/${game.id}/`);
     else window.location.hash = `#/play/${game.id}`;
   });
 
