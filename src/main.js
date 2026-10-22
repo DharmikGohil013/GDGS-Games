@@ -135,6 +135,7 @@ function renderHomePage() {
 
 function renderSubPage(pageContent, title) {
   if (document.title !== title) document.title = title;
+  if (!pageContent.id) pageContent.id = 'main-content';
   currentPage = 'sub';
 
   const backWrap = document.createElement('div');

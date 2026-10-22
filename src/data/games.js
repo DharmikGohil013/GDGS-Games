@@ -1,38 +1,6 @@
-const colors = ['coral', 'blue', 'green', 'purple', 'gold'];
-const engines = ['phaser', 'pixi', 'three', 'html5', 'canvas'];
-const icons = ['stack', 'car', 'snake', 'ball', 'sword', 'gun', 'card', 'puzzle', 'runner', 'fighter', 'ship', 'star'];
-
-const categoriesList = [
-  'trending', 'puzzle', 'racing', 'runner', 'arcade', 'io', 'sports', 'physics', 
-  'strategy', 'shooter', 'card', 'board', 'word', 'trivia', 'platformer', 
-  'fighting', 'simulation', 'cooking', 'music', 'horror', 'casual', 'multiplayer', 
-  '3d', 'retro', 'educational'
-];
-
-const adjectives = ['Super', 'Mega', 'Hyper', 'Crazy', 'Epic', 'Neon', 'Turbo', 'Cosmic', 'Galactic', 'Magic', 'Pixel', 'Blocky', 'Speed', 'Ghost', 'Dark', 'Light', 'Funky', 'Retro', 'Action', 'Battle', 'Dream', 'Happy', 'Angry', 'Tiny', 'Giant', 'Cyber'];
-const nouns = ['Clash', 'Rush', 'Dash', 'Racer', 'Fighter', 'Builder', 'Crusher', 'Quest', 'Adventure', 'Ninja', 'Zombie', 'Knight', 'Wizard', 'Dragon', 'Hero', 'Legend', 'Master', 'King', 'Queen', 'Slayer', 'Hunter', 'Runner', 'Jumper', 'Sniper', 'Pilot', 'Driver'];
-
-function getRandomItem(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function getRandomPlays() {
-  const value = Math.random();
-  if (value > 0.9) return (Math.random() * 40 + 10).toFixed(1) + 'M';
-  if (value > 0.6) return (Math.random() * 9 + 1).toFixed(1) + 'M';
-  return Math.floor(Math.random() * 900 + 10) + 'K';
-}
-
-function getRandomRating() {
-  return Number((Math.random() * 1.0 + 4.0).toFixed(1));
-}
-
-function generateGames() {
-  const generatedGames = [];
-  let idCounter = 1;
-
-  // Playable games
-  const playableGames = [
+// Keep the public catalogue limited to games visitors can actually play.
+// Generated placeholder titles and invented popularity numbers undermine trust.
+export const games = [
     { id: 'infinite-world', title: 'Infinite World', category: 'multiplayer', isPlayable: true, isNew: true, metaNote: 'Co-op city builder', plays: 'New', rating: 5.0, color: 'blue', iconType: 'star', engine: 'three', isHot: true, image: '/images/infinite-world.jpg', legal: true },
     { id: 'gravity-switch', title: 'Gravity Switch', category: 'arcade', isPlayable: true, plays: '38.5M', rating: 4.9, color: 'purple', iconType: 'runner', engine: 'canvas', isHot: true, isLightTheme: true, image: '/images/gravity-switch.jpg' },
     { id: 'hextris', title: 'Hextris Stack', category: 'puzzle', isPlayable: true, plays: '48.9M', rating: 5.0, color: 'purple', iconType: 'puzzle', engine: 'canvas', isHot: true, image: '/images/hextris-stack.jpg' },
@@ -46,34 +14,6 @@ function generateGames() {
     { id: 'city-sprint', title: 'City Sprint', category: 'runner', isPlayable: true, plays: '18.9M', rating: 4.8, color: 'gold', iconType: 'runner', engine: 'canvas', isLightTheme: true, image: '/images/city-sprint.webp' },
     { id: 'infinite-runner', title: 'Infinite Runner', category: 'runner', isPlayable: true, plays: '31.2M', rating: 4.9, color: 'blue', iconType: 'runner', engine: 'phaser', image: '/images/infinite-runner.jpg' },
     { id: 'mario-king', title: 'Mario King', category: 'platformer', isPlayable: true, plays: '27.6M', rating: 4.9, color: 'gold', iconType: 'platform', engine: 'canvas', isHot: true, image: '/images/mario-king.webp' }
-  ];
+];
 
-  generatedGames.push(...playableGames);
-
-  categoriesList.forEach(cat => {
-    // 40+ games per category
-    for (let i = 0; i < 41; i++) {
-      const adj = getRandomItem(adjectives);
-      const noun = getRandomItem(nouns);
-      const title = `${adj} ${noun}`;
-      const idStr = title.toLowerCase().replace(/\s+/g, '-') + '-' + idCounter++;
-      
-      generatedGames.push({
-        id: idStr,
-        title: title,
-        category: cat,
-        plays: getRandomPlays(),
-        rating: getRandomRating(),
-        color: getRandomItem(colors),
-        iconType: getRandomItem(icons),
-        isPlayable: false,
-        engine: getRandomItem(engines)
-      });
-    }
-  });
-
-  return generatedGames;
-}
-
-export const games = generateGames();
 export default games;

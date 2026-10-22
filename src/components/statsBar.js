@@ -3,6 +3,7 @@
 // switches to their own progress so the homepage reflects them back.
 
 import { getTotals, getLevelInfo, getCoins } from '../core/progress.js';
+import { games } from '../data/games.js';
 
 export function createStatsBar() {
   const outer = document.createElement('div');
@@ -19,15 +20,15 @@ export function createStatsBar() {
          <span>Your coins · level ${lvl.level}</span>
        </div>`
     : `<div class="stat">
-         <b>Weekly</b>
-         <span>New drops</span>
+         <b>Free</b>
+         <span>Play in your browser</span>
        </div>`;
 
   outer.innerHTML = `
     <div class="stats">
-      <div class="stat"><b class="counter" data-target="1000">0</b><span>Games</span></div>
-      <div class="stat"><b class="counter" data-target="50" data-suffix="M+">0</b><span>Plays this month</span></div>
-      <div class="stat"><b class="counter" data-target="25">0</b><span>Categories</span></div>
+      <div class="stat"><b>${games.filter((game) => game.isPlayable).length}</b><span>Games you can play</span></div>
+      <div class="stat"><b>No</b><span>Download required</span></div>
+      <div class="stat"><b>Free</b><span>To play</span></div>
       ${personalTile}
     </div>
   `;

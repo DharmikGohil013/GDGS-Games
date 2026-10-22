@@ -20,7 +20,7 @@ export function createTermsPage() {
 
       <div class="legal-block">
         <h2>2. Description of Service</h2>
-        <p>Playzy is a free-to-use, browser-based gaming platform that hosts and provides access to over 1,000 instant-play games. Our games run directly in your web browser and require no downloads, installations, or account creation to play.</p>
+        <p>Playzy is a free-to-use, browser-based gaming platform with a curated catalogue of games you can play in your web browser. Most games do not require an account; Infinite World requires an account for multiplayer worlds and saved progress. Games may have different browser, device, or network requirements, which are described on their respective pages.</p>
         <p>We reserve the right to modify, suspend, or discontinue any part of the Platform at any time, with or without notice. We shall not be liable to you or any third party for any such modification, suspension, or discontinuation.</p>
       </div>
 

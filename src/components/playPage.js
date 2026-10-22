@@ -65,6 +65,7 @@ export function createPlayPage(gameId) {
 
   const container = document.createElement('div');
   container.className = `play-page-container${game.isLightTheme ? ' light-theme' : ''}`;
+  container.id = 'main-content';
   container.setAttribute('data-accent', game.color || 'purple');
   container.setAttribute('itemscope', '');
   container.setAttribute('itemtype', 'https://schema.org/VideoGame');

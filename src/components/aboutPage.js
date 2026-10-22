@@ -110,12 +110,12 @@ export function createAboutPage() {
       <h2 class="section-title">Platform Highlights</h2>
       <div class="highlights-grid">
         <div class="highlight-item">
-          <b>14</b>
+          <b>13</b>
           <span>Playable Games</span>
         </div>
         <div class="highlight-item">
-          <b>25</b>
-          <span>Game Categories</span>
+          <b>Free</b>
+          <span>To play in your browser</span>
         </div>
         <div class="highlight-item">
           <b>No</b>
@@ -126,12 +126,12 @@ export function createAboutPage() {
           <span>To Play</span>
         </div>
         <div class="highlight-item">
-          <b>&lt;2s</b>
-          <span>Average Load Time</span>
+          <b>No</b>
+          <span>App download needed</span>
         </div>
         <div class="highlight-item">
-          <b>Weekly</b>
-          <span>New Game Drops</span>
+          <b>13</b>
+          <span>Games currently playable</span>
         </div>
       </div>
     </div>
