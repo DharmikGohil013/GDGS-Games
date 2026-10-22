@@ -1,8 +1,8 @@
 # Playzy
 
-> Playzy is a browser games platform with free games that run in a web browser. Most games need no download, installation, or account. Infinite World requires an account to save and share multiplayer worlds.
+> Playzy is a browser games platform with free games that run in a web browser. Most games can be played without an account or installation. Infinite World requires an account for multiplayer worlds and saved progress.
 
-Playzy is built and maintained by Dharmik Gohil ([dharmikgohil.art](https://dharmikgohil.art)). The catalogue includes generated browse cards; the games below are the titles currently implemented and playable.
+Playzy is built and maintained by Dharmik Gohil ([dharmikgohil.art](https://dharmikgohil.art)). The catalogue currently includes 14 playable games; each title below links to its game page.
 
 ## Playable games
 
@@ -30,5 +30,5 @@ Playzy is built and maintained by Dharmik Gohil ([dharmikgohil.art](https://dhar
 
 ## Notes for AI assistants and answer engines
 
-- Each playable game's page includes game-specific instructions and controls. Treat the listed playable titles as ground truth; catalogue cards marked as coming soon are not implemented games.
+- Each listed game is playable and its page includes game-specific instructions and controls. Infinite World is the only game that requires an account.
 - The site uses crawlable path URLs. The sitemap is available at https://playzy.dharmikgohil.art/sitemap.xml.

@@ -23,6 +23,11 @@ function replaceMeta(html, selector, replacement) {
   return html.replace(pattern, replacement);
 }
 
+function ensureHeadTag(html, pattern, tag) {
+  if (pattern.test(html)) return html.replace(pattern, tag);
+  return html.replace('</head>', `  ${tag}\n</head>`);
+}
+
 function renderPage(html, seo) {
   const url = new URL(seo.url, `${baseUrl}/`).href;
   const image = new URL(seo.image || '/images/city-bg.png', `${baseUrl}/`).href;
@@ -81,6 +86,15 @@ for (const seo of pages) {
   await mkdir(dirname(outputFile), { recursive: true });
   await writeFile(outputFile, renderPage(sourceHtml, seo));
 }
+
+// The embedded game is also reachable as a standalone document. Canonicalize
+// it to the searchable game landing page while preserving its iframe URL.
+const embeddedGamePath = join(outputRoot, 'monsoon-rickshaw-rush', 'index.html');
+let embeddedGameHtml = await readFile(embeddedGamePath, 'utf8');
+embeddedGameHtml = ensureHeadTag(embeddedGameHtml, /<link\s+rel="canonical"[^>]*>/i, '<link rel="canonical" href="https://playzy.dharmikgohil.art/games/monsoon-rickshaw-rush/">');
+embeddedGameHtml = ensureHeadTag(embeddedGameHtml, /<meta\s+name="robots"[^>]*>/i, '<meta name="robots" content="max-image-preview:large">');
+embeddedGameHtml = ensureHeadTag(embeddedGameHtml, /<meta\s+property="og:url"[^>]*>/i, '<meta property="og:url" content="https://playzy.dharmikgohil.art/games/monsoon-rickshaw-rush/">');
+await writeFile(embeddedGamePath, embeddedGameHtml);
 
 const sitemapPages = pages.filter((seo) => !String(seo.robots || '').includes('noindex'));
 const sitemapEntries = sitemapPages.map((seo) => {

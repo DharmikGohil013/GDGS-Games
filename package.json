@@ -2,7 +2,7 @@
   "name": "playzy",
   "private": true,
   "version": "1.0.0",
-  "description": "Playzy — 1,000+ instant browser games",
+  "description": "Playzy — free browser games you can play online",
   "type": "module",
   "scripts": {
     "dev": "vite",
