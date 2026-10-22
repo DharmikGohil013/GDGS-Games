@@ -2,7 +2,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { games } from '../src/data/games.js';
 import { getGuide } from '../src/data/gameGuides.js';
-import { PAGE_SEO, buildGameSEO } from '../src/utils/seo.js';
+import { PAGE_SEO, buildGameSEO, normalizeGoogleStructuredData } from '../src/utils/seo.js';
 import { IW_PAGE_SEO } from '../src/components/infiniteWorldPages.js';
 
 const outputRoot = join(process.cwd(), 'dist');
@@ -44,7 +44,7 @@ function renderPage(html, seo) {
   result = result.replace(/(<link\s+rel="alternate"\s+hreflang="(?:en|x-default)"\s+href=")[^"]*("\s*\/?\s*>)/gi, `$1${url}$2`);
 
   if (seo.jsonLd) {
-    const json = JSON.stringify(seo.jsonLd).replaceAll('<', '\\u003c');
+    const json = JSON.stringify(normalizeGoogleStructuredData(seo.jsonLd)).replaceAll('<', '\\u003c');
     result = result.replace('</head>', `  <script id="page-jsonld" type="application/ld+json">${json}</script>\n</head>`);
   }
   result = result.replace(/<noscript>[\s\S]*?<\/noscript>/i, `<noscript>${renderStaticContent(seo)}</noscript>`);

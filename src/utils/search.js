@@ -65,7 +65,7 @@ export function sortGames(games, sortBy = 'popular') {
       // Keep curated catalogue order until real popularity data is available.
       return sorted;
     case 'rating':
-      return sorted.sort((a, b) => b.rating - a.rating);
+      return sorted;
     case 'name':
       return sorted.sort((a, b) => a.title.localeCompare(b.title));
     default:

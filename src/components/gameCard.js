@@ -41,7 +41,7 @@ export function createGameCard(game, opts = {}) {
     : `<span class="card-icon-float">${icon}</span>`;
 
   const badges = [];
-  if (game.isHot) badges.push('<span class="card-badge card-badge-hot">🔥 Hot</span>');
+  if (game.isHot) badges.push('<span class="card-badge card-badge-hot">Featured</span>');
   if (opts.isNew) badges.push('<span class="card-badge card-badge-new">New</span>');
   else if (game.isPlayable && !game.isHot) badges.push('<span class="card-badge card-badge-play">▶ Playable</span>');
 

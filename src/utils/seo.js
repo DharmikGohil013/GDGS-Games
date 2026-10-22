@@ -4,6 +4,27 @@ import { getGuide } from '../data/gameGuides.js';
 
 const BASE_URL = 'https://playzy.dharmikgohil.art';
 
+export function normalizeGoogleStructuredData(schema) {
+  if (!schema || typeof schema !== 'object') return schema;
+
+  const sourceGraph = Array.isArray(schema['@graph']) ? schema['@graph'] : [schema];
+  const graph = sourceGraph.flatMap((node) => {
+    // HowTo is valid Schema.org vocabulary, but Google no longer shows HowTo rich results.
+    if (!node || node['@type'] === 'HowTo') return [];
+
+    if (node.breadcrumb) {
+      const { breadcrumb, ...page } = node;
+      const items = breadcrumb.itemListElement || [];
+      return items.length > 1 ? [page, breadcrumb] : [page];
+    }
+
+    return [node];
+  });
+
+  if (graph.length === 1 && !Array.isArray(schema['@graph']) && !schema.breadcrumb) return schema;
+  return { '@context': schema['@context'] || 'https://schema.org', '@graph': graph };
+}
+
 function canonicalPath(url = '/') {
   // Canonicals should identify the page, not a tracking query or legacy hash.
   const pathOnly = url.split(/[?#]/, 1)[0] || '/';
@@ -79,7 +100,7 @@ export function updateSEO({ title, description, url = '/', image, type = 'websit
     const script = document.createElement('script');
     script.type = 'application/ld+json';
     script.id = 'page-jsonld';
-    script.textContent = JSON.stringify(jsonLd, null, 2);
+    script.textContent = JSON.stringify(normalizeGoogleStructuredData(jsonLd), null, 2);
     document.head.appendChild(script);
   }
 
@@ -172,7 +193,7 @@ export const PAGE_SEO = {
 
   contact: {
     title: 'Contact Playzy — Get in Touch | Free Browser Games Support',
-    description: 'Contact the Playzy team. Report bugs, suggest games, ask about partnerships, or send feedback. We\'re based in Mumbai, India and respond within 24-48 hours.',
+    description: 'Contact Playzy with a question, game suggestion or feedback. Email the Playzy team or use the message form.',
     url: '/contact/',
     jsonLd: {
       '@context': 'https://schema.org',
@@ -195,7 +216,6 @@ export function buildGameSEO(game) {
   const category = (game.category || 'arcade').charAt(0).toUpperCase() + (game.category || 'arcade').slice(1);
   const gameUrl = game.isPlayable ? `${BASE_URL}/games/${game.id}/` : `${BASE_URL}/`;
   const guide = getGuide(game); // real per-game description/controls/tips — keeps every game's SEO copy unique
-  const controls = guide.controls && guide.controls.length ? guide.controls : [{ key: 'Mouse / Tap', label: 'Primary action' }];
 
   return {
     title: `Play ${gameName} Online | Playzy`,
@@ -232,38 +252,11 @@ export function buildGameSEO(game) {
           }
         },
         {
-          '@type': 'HowTo',
-          '@id': `${gameUrl}#howto`,
-          name: `How to Play ${gameName} Online`,
-          description: `Step-by-step instructions to play ${gameName} on desktop and mobile.`,
-          step: [
-            {
-              '@type': 'HowToStep',
-              position: 1,
-              name: 'Open the game',
-              text: `Visit ${gameUrl} on any phone, tablet, or desktop browser — it loads instantly with no download or install.`
-            },
-            ...controls.slice(0, 4).map((c, i) => ({
-              '@type': 'HowToStep',
-              position: i + 2,
-              name: c.label,
-              text: `${c.key} — ${c.label}.`
-            })),
-            {
-              '@type': 'HowToStep',
-              position: controls.slice(0, 4).length + 2,
-              name: 'Beat your high score',
-              text: guide.tips && guide.tips[0] ? guide.tips[0] : 'Keep playing to climb the leaderboard and beat your personal best.'
-            }
-          ]
-        },
-        {
           '@type': 'BreadcrumbList',
           '@id': `${gameUrl}#breadcrumb`,
           itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://playzy.dharmikgohil.art/' },
-            { '@type': 'ListItem', position: 2, name: 'Games', item: `${BASE_URL}/` },
-            { '@type': 'ListItem', position: 3, name: gameName, item: gameUrl }
+            { '@type': 'ListItem', position: 2, name: gameName, item: gameUrl }
           ]
         }
       ]

@@ -2,6 +2,14 @@
 // Used by the play page. Any id missing here falls back to generic text.
 
 export const GAME_GUIDES = {
+  'gravity-shift': {
+    tagline: 'Jump between platforms and stay ahead of the hazards.',
+    description: 'Gravity Shift is an arcade platform game where you jump between platforms, avoid hazards and try to survive as the game speeds up.',
+    controls: [
+      { key: 'Space / W / Up Arrow', label: 'Jump between platforms' },
+    ],
+    tips: ['Watch the next platform before you jump, and leave room to react as the pace increases.'],
+  },
   'infinite-world': {
     tagline: 'Build a 3D city together — live, with friends.',
     description: 'Infinite World is a 3D city builder you can play alone or with friends in realtime. Lay roads, towers, parks, rail and rivers, grow from a hamlet into a metropolis, and invite a partner to build the same world with you live. Keep your world private or make it public so anyone can watch.',

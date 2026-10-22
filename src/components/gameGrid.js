@@ -48,7 +48,7 @@ export function createGameGrid() {
     const totalCount = filtered.length;
     const visible = filtered.slice(0, visibleGames);
 
-    let sectionTitle = 'Trending games';
+    let sectionTitle = 'Games you can play';
     if (searchQuery) sectionTitle = `Search results for "${searchQuery}"`;
     else if (activeCategory !== 'trending') {
       sectionTitle = `${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)} Games`;

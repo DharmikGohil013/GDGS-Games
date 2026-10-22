@@ -1,6 +1,7 @@
 // ─── Category Bar Component ───
 import { getState, setState, subscribe } from '../store.js';
 import { categories } from '../data/categories.js';
+import { games } from '../data/games.js';
 
 export function createCategories() {
   const row = document.createElement('div');
@@ -13,8 +14,9 @@ export function createCategories() {
   function render() {
     const { activeCategory } = getState();
 
-    const primary = categories.filter((cat) => primaryCategories.includes(cat.id));
-    const more = categories.filter((cat) => !primaryCategories.includes(cat.id));
+    const available = new Set(games.map((game) => game.category));
+    const primary = categories.filter((cat) => (cat.id === 'trending' || available.has(cat.id)) && primaryCategories.includes(cat.id));
+    const more = categories.filter((cat) => available.has(cat.id) && !primaryCategories.includes(cat.id));
     const isMoreActive = more.some((cat) => cat.id === activeCategory);
 
     row.innerHTML = primary

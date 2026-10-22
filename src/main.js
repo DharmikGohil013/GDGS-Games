@@ -57,6 +57,12 @@ function initApp() {
 }
 
 function renderPage() {
+  const legacyTarget = getLegacyHashRedirectTarget();
+  if (legacyTarget) {
+    window.location.replace(`${legacyTarget}${window.location.search}`);
+    return;
+  }
+
   destroyActiveGame();
   runUnmounts();
   app.innerHTML = '';
@@ -101,6 +107,32 @@ function renderPage() {
   app.appendChild(createFooter());
   window.scrollTo({ top: 0, behavior: 'instant' });
   animatePageEntrance();
+}
+
+// Fragment routes such as /#/play/foo never reach the hosting server, so they
+// cannot receive an HTTP 301. Replace them in the browser with the matching
+// crawlable route; this also removes the legacy URL from the address bar.
+function getLegacyHashRedirectTarget() {
+  if (window.location.pathname !== '/' || !window.location.hash) return null;
+
+  const route = window.location.hash.slice(1).replace(/^\/+/, '').split(/[?#]/, 1)[0].replace(/\/+$/, '');
+  const legacyPages = {
+    about: '/about/',
+    terms: '/terms/',
+    privacy: '/privacy/',
+    contact: '/contact/',
+    'infinite-world/privacy': '/games/infinite-world/privacy/',
+    'infinite-world/terms': '/games/infinite-world/terms/',
+    'infinite-world/support': '/games/infinite-world/support/',
+  };
+
+  if (legacyPages[route]) return legacyPages[route];
+
+  const playRoute = route.match(/^play\/([a-z0-9-]+)$/i);
+  if (!playRoute) return null;
+
+  const game = games.find((item) => item.id === playRoute[1] && item.isPlayable);
+  return game ? game.url || `/games/${encodeURIComponent(game.id)}/` : null;
 }
 
 function renderPlayPage(gameId) {
