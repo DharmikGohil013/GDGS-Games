@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { games } from '../src/data/games.js';
+import { getGuide } from '../src/data/gameGuides.js';
 import { PAGE_SEO, buildGameSEO } from '../src/utils/seo.js';
 import { IW_PAGE_SEO } from '../src/components/infiniteWorldPages.js';
 
@@ -46,7 +47,25 @@ function renderPage(html, seo) {
     const json = JSON.stringify(seo.jsonLd).replaceAll('<', '\\u003c');
     result = result.replace('</head>', `  <script id="page-jsonld" type="application/ld+json">${json}</script>\n</head>`);
   }
+  result = result.replace(/<noscript>[\s\S]*?<\/noscript>/i, `<noscript>${renderStaticContent(seo)}</noscript>`);
   return result;
+}
+
+function renderStaticContent(seo) {
+  const game = games.find((item) => item.isPlayable && seo.url === `/games/${item.id}/`);
+  if (game) {
+    const guide = getGuide(game);
+    const controls = guide.controls.map((control) => `<li><strong>${escapeHtml(control.key)}:</strong> ${escapeHtml(control.label)}</li>`).join('');
+    const tips = guide.tips.map((tip) => `<li>${escapeHtml(tip)}</li>`).join('');
+    return `<main><h1>${escapeHtml(game.title)}</h1><p>${escapeHtml(guide.description)}</p><h2>How to play ${escapeHtml(game.title)}</h2><ul>${controls}</ul>${tips ? `<h2>Tips</h2><ul>${tips}</ul>` : ''}<p><a href="/">Browse all free browser games</a></p></main>`;
+  }
+
+  if (seo.url === '/') {
+    const links = games.filter((item) => item.isPlayable).map((item) => `<li><a href="/games/${encodeURIComponent(item.id)}/">${escapeHtml(item.title)}</a> — ${escapeHtml(getGuide(item).description)}</li>`).join('');
+    return `<main><h1>Play free browser games online</h1><p>Playzy is a free browser games site. Explore arcade, puzzle, racing, runner, platform and multiplayer games. No app download is required.</p><h2>Games you can play</h2><ul>${links}</ul></main>`;
+  }
+
+  return `<main><h1>${escapeHtml(seo.title.split(' | ')[0].split(' — ')[0])}</h1><p>${escapeHtml(seo.description)}</p><p><a href="/">Browse free browser games</a></p></main>`;
 }
 
 const pages = [
