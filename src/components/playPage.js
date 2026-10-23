@@ -12,6 +12,7 @@ import { onUnmount } from '../core/lifecycle.js';
 
 // Lazy-load game modules so the homepage never pays for Phaser or Three.
 const gameModules = {
+  'voxelcraft': () => import('../games/voxelcraft.js'),
   'gravity-switch': () => import('../games/gravity-switch.js'),
   'hextris': () => import('../games/hextris.js'),
   'color-switch': () => import('../games/color-switch.js'),
@@ -250,6 +251,7 @@ export function createPlayPage(gameId) {
   paintSound();
   soundBtn.addEventListener('click', () => {
     toggleSound();
+    activeGameModule?.setSoundEnabled?.(isSoundOn());
     paintSound();
     if (isSoundOn()) sfx.ui();
   });
@@ -286,6 +288,7 @@ export function createPlayPage(gameId) {
       if (loadingEl) loadingEl.style.display = 'none';
       activeGameModule = module;
       module.initGame(viewport);
+      module.setSoundEnabled?.(isSoundOn());
     } catch (err) {
       console.error('Failed to load game module:', err);
       if (loadingEl) loadingEl.style.display = 'none';

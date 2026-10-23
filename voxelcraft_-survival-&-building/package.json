@@ -1,11 +1,12 @@
 {
-  "name": "react-example",
+  "name": "playzy-voxelcraft",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
+    "test": "tsx --test src/game/rules.test.ts",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit"

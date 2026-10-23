@@ -2,6 +2,26 @@
 // Used by the play page. Any id missing here falls back to generic text.
 
 export const GAME_GUIDES = {
+  'voxelcraft': {
+    tagline: 'Mine, craft, build, and survive your own voxel world.',
+    description: 'Explore a procedurally generated 3D block world in VoxelCraft: Survival & Building. Gather resources, craft tools, build a shelter, and face hostile mobs in Survival mode, or explore and build in Creative mode with flight. Choose a world seed before you start. Play with a keyboard and mouse on desktop; worlds last for the current session.',
+    controls: [
+      { key: 'WASD / Mouse', label: 'Move and look around; click the world to capture the mouse' },
+      { key: 'Space / Shift', label: 'Jump / sprint' },
+      { key: 'Left click', label: 'Hold to mine blocks or click to attack' },
+      { key: 'Right click', label: 'Place a block, eat food, or interact' },
+      { key: 'E / Esc', label: 'Open inventory / close inventory or pause' },
+      { key: '1–9 / Mouse wheel', label: 'Select a hotbar slot' },
+      { key: 'F', label: 'Toggle flight in Creative mode' },
+      { key: 'P / M', label: 'Pause or resume / toggle sound' },
+    ],
+    tips: [
+      'Gather wood and build a shelter before night brings hostile mobs.',
+      'Use the right pickaxe to mine stone faster and keep food in your hotbar.',
+      'Try Creative mode to explore and practice building without survival damage.',
+      'Use fullscreen for more room. Leaving or reloading the game starts a fresh world.',
+    ],
+  },
   'gravity-shift': {
     tagline: 'Jump between platforms and stay ahead of the hazards.',
     description: 'Gravity Shift is an arcade platform game where you jump between platforms, avoid hazards and try to survive as the game speeds up.',

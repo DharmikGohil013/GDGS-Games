@@ -1,6 +1,7 @@
 // Keep the public catalogue limited to games visitors can actually play.
 // Generated placeholder titles and invented popularity numbers undermine trust.
 export const games = [
+    { id: 'voxelcraft', title: 'VoxelCraft: Survival & Building', category: '3d', isPlayable: true, isNew: true, metaNote: 'Survival & creative sandbox', color: 'green', iconType: 'stack', engine: 'three', image: '/images/voxelcraft.svg' },
     { id: 'infinite-world', title: 'Infinite World', category: 'multiplayer', isPlayable: true, isNew: true, metaNote: 'Co-op city builder', color: 'blue', iconType: 'star', engine: 'three', isHot: true, image: '/images/infinite-world-city.jpg', legal: true },
     { id: 'gravity-switch', title: 'Gravity Switch', category: 'arcade', isPlayable: true, color: 'purple', iconType: 'runner', engine: 'canvas', isHot: true, isLightTheme: true, image: '/images/gravity-switch.jpg' },
     { id: 'hextris', title: 'Hextris Stack', category: 'puzzle', isPlayable: true, color: 'purple', iconType: 'puzzle', engine: 'canvas', isHot: true, image: '/images/hextris-stack.jpg' },

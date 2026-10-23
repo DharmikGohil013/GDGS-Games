@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" role="img" aria-labelledby="title desc">
+  <title id="title">VoxelCraft: Survival and Building</title>
+  <desc id="desc">A grassy block island with voxel trees floating beneath a bright sky.</desc>
+  <defs>
+    <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#123d50"/><stop offset="1" stop-color="#63bfa0"/></linearGradient>
+    <linearGradient id="shade" x2="0" y2="1"><stop stop-color="#071e23" stop-opacity="0"/><stop offset="1" stop-color="#071e23" stop-opacity=".9"/></linearGradient>
+    <g id="cube"><path d="M0 0 50-25 100 0 50 25Z" fill="#81d252"/><path d="m0 0 50 25v55L0 55Z" fill="#866341"/><path d="m50 25 50-25v55L50 80Z" fill="#594732"/><path d="m0 0 50 25v12L0 12Z" fill="#54a848"/><path d="m50 25 50-25v12L50 37Z" fill="#38833c"/></g>
+    <g id="tree"><path d="m-9 0 18 8v76l-18-8Z" fill="#7e5031"/><path d="m9 8 14-7v76L9 84Z" fill="#4b3725"/><path d="m-48-30 56-28 56 28L8-2Z" fill="#8acb4c"/><path d="m-48-30 56 28v54l-56-28Z" fill="#4e9e42"/><path d="m8-2 56-28v54L8 52Z" fill="#287447"/><path d="m-26-59 34-17 34 17L8-42Z" fill="#a9df64"/><path d="m-26-59 34 17v24l-34-17Z" fill="#6fba47"/><path d="m8-42 34-17v24L8-18Z" fill="#438f3b"/></g>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h800v480H0z"/>
+  <path fill="#e7efbb" d="M637 50h64v64h-64z"/>
+  <g fill="#d8f6e3" opacity=".45"><path d="M62 93h53V76h72v17h48v19H62z"/><path d="M470 64h40V50h55v14h30v15H470z"/><path d="M562 152h45v-15h67v15h60v16H562z"/></g>
+  <g transform="translate(200 170)"><use href="#cube" x="150"/><use href="#cube" x="250"/><use href="#cube" x="100" y="25"/><use href="#cube" x="200" y="25"/><use href="#cube" x="300" y="25"/><use href="#cube" x="50" y="50"/><use href="#cube" x="150" y="50"/><use href="#cube" x="250" y="50"/><use href="#cube" y="75"/><use href="#cube" x="100" y="75"/><use href="#cube" x="200" y="75"/><use href="#cube" x="50" y="100"/><use href="#cube" x="150" y="100"/></g>
+  <use href="#tree" x="456" y="113"/><use href="#tree" x="325" y="147"/>
+  <path fill="url(#shade)" d="M0 270h800v210H0z"/>
+  <text x="400" y="392" text-anchor="middle" font-family="monospace" font-size="64" font-weight="900" letter-spacing="4" fill="#e8ffd4" stroke="#153a29" stroke-width="6" paint-order="stroke">VOXELCRAFT</text>
+  <text x="400" y="432" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="600" letter-spacing="5" fill="#b6ecc7">SURVIVAL &amp; BUILDING</text>
+</svg>

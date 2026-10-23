@@ -3,6 +3,7 @@ import { getState, setState, subscribe } from '../store.js';
 
 // Lazy-load game modules
 const gameModules = {
+  'voxelcraft': () => import('../games/voxelcraft.js'),
   'color-switch': () => import('../games/color-switch.js'),
   'tower-stacker': () => import('../games/tower-stacker.js'),
   'neon-snake': () => import('../games/neon-snake.js'),
