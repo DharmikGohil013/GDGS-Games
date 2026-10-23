@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VoxelCraft: Survival & Building</title>
+    <meta name="description" content="A 3D voxel sandbox and survival game featuring procedural terrain generation, biomes, day/night cycles, block mining and building, 3x3 crafting, smelting, and hostile mob encounters." />
+    <meta property="og:title" content="VoxelCraft: Survival & Building" />
+    <meta property="og:description" content="A 3D voxel sandbox and survival game featuring procedural terrain generation, biomes, day/night cycles, block mining and building, 3x3 crafting, smelting, and hostile mob encounters." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <style>
+      /* Ensure crisp pixelated rendering where needed and no text selection during game */
+      body {
+        margin: 0;
+        overflow: hidden;
+        user-select: none;
+        -webkit-user-select: none;
+        background-color: #0b0f19;
+      }
+      .pixelated {
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

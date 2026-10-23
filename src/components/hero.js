@@ -85,7 +85,7 @@ const featuredGames = [
     category: 'arcade',
     isPlayable: true,
     engine: 'pixi',
-    image: '/images/neon-snake.webp',
+    image: '/images/neon-snake-gameplay.jpg',
     artSvg: `<svg viewBox="0 0 80 80" width="76" height="76" aria-hidden="true"><circle cx="40" cy="40" r="38" fill="rgba(255,255,255,0.16)"/><path d="M16 56 H34 V38 H52 V20 H66" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="66" cy="20" r="5" fill="white"/></svg>`
   },
   {
