@@ -5,10 +5,9 @@
   "description": "Playzy — free browser games you can play online",
   "type": "module",
   "scripts": {
-    "predev": "npm run build:voxelcraft",
     "dev": "vite",
-    "build:voxelcraft": "npm --prefix \"voxelcraft_-survival-&-building\" run build",
-    "build": "npm run build:voxelcraft && vite build && node scripts/generate-seo-pages.js",
+    "build:voxelcraft": "node voxelcraft_-survival-&-building/node_modules/vite/bin/vite.js build voxelcraft_-survival-&-building",
+    "build": "vite build && node scripts/generate-seo-pages.js",
     "preview": "vite preview"
   },
   "dependencies": {
