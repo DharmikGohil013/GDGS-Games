@@ -9,7 +9,7 @@ export const games = [
     { id: 'tower-stacker', title: 'Tower Stacker', category: 'arcade', isPlayable: true, color: 'coral', iconType: 'stack', engine: 'phaser', image: '/images/tower-stacker.webp' },
     { id: 'neon-snake', title: 'Neon Snake', category: 'arcade', isPlayable: true, color: 'green', iconType: 'snake', engine: 'canvas', image: '/images/neon-snake-gameplay.jpg' },
     { id: 'block-merge', title: 'Block Merge', category: 'puzzle', isPlayable: true, color: 'purple', iconType: 'puzzle', engine: 'html5', image: '/images/block-merge-gameplay.jpg' },
-    { id: 'turbo-drift', title: 'Turbo Drift', category: 'racing', isPlayable: true, color: 'blue', iconType: 'car', engine: 'three', image: '/images/turbo-drift.webp' },
+    { id: 'turbo-drift', title: 'Turbo Drift', category: 'racing', isPlayable: true, color: 'blue', iconType: 'car', engine: 'three', image: '/images/turbo-drift-gameplay.jpg' },
     { id: 'monsoon-rickshaw-rush', title: 'Monsoon Rickshaw Rush', category: 'racing', isPlayable: true, isNew: true, color: 'gold', iconType: 'car', engine: 'three', image: '/images/monsoon-rickshaw-rush.jpg' },
     { id: 'ball-drop', title: 'Ball Drop', category: 'arcade', isPlayable: true, color: 'coral', iconType: 'ball', engine: 'pixi', image: '/images/ball-drop.webp' },
     { id: 'city-sprint', title: 'City Sprint', category: 'runner', isPlayable: true, color: 'gold', iconType: 'runner', engine: 'canvas', isLightTheme: true, image: '/images/city-sprint.webp' },

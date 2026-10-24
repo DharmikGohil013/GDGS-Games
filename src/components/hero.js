@@ -71,7 +71,7 @@ const featuredGames = [
     category: 'racing',
     isPlayable: true,
     engine: 'three',
-    image: '/images/turbo-drift.webp',
+    image: '/images/turbo-drift-gameplay.jpg',
     artSvg: `<svg viewBox="0 0 80 80" width="76" height="76" aria-hidden="true"><circle cx="40" cy="40" r="38" fill="rgba(255,255,255,0.16)"/><path d="M20 56 L40 24 L60 56" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`
   },
   {
