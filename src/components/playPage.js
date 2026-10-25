@@ -12,6 +12,7 @@ import { onUnmount } from '../core/lifecycle.js';
 
 // Lazy-load game modules so the homepage never pays for Phaser or Three.
 const gameModules = {
+  'apex-velocity': () => import('../games/apex-velocity.js'),
   'voxelcraft': () => import('../games/voxelcraft.js'),
   'gravity-switch': () => import('../games/gravity-switch.js'),
   'hextris': () => import('../games/hextris.js'),

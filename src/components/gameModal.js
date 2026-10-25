@@ -3,6 +3,7 @@ import { getState, setState, subscribe } from '../store.js';
 
 // Lazy-load game modules
 const gameModules = {
+  'apex-velocity': () => import('../games/apex-velocity.js'),
   'voxelcraft': () => import('../games/voxelcraft.js'),
   'color-switch': () => import('../games/color-switch.js'),
   'tower-stacker': () => import('../games/tower-stacker.js'),
