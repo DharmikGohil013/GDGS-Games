@@ -1,0 +1,6 @@
+{
+  "name": "APEX VELOCITY · F1 Supercar Studio & Circuit Builder",
+  "description": "Open-world supercar driving simulator with realistic physics, custom track creator & curves studio, performance tuning, dynamic weather, day-night cycle, and F1 telemetry leaderboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
