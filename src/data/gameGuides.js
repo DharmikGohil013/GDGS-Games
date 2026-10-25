@@ -62,11 +62,13 @@ export const GAME_GUIDES = {
       { key: 'R', label: 'Rotate the building' },
       { key: 'X', label: 'Demolish' },
       { key: 'V', label: 'Drive through your city' },
+      { key: 'C (in Drive)', label: 'Switch camera: Near, Seat, Chase, Hood, Drone' },
     ],
     tips: [
       'The first 20 minutes are free — build big, then manage your coins.',
       'Tap Share to get an invite code: your partner builds with you instantly.',
       'Homes near roads, parks and services earn more rent.',
+      'Cars can drive directly into City Parking Lots and plazas — park in marked bays to rest!',
     ],
   },
   'gravity-switch': {
