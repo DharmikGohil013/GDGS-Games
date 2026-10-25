@@ -89,12 +89,16 @@ for (const seo of pages) {
 
 // The embedded game is also reachable as a standalone document. Canonicalize
 // it to the searchable game landing page while preserving its iframe URL.
-const embeddedGamePath = join(outputRoot, 'monsoon-rickshaw-rush', 'index.html');
-let embeddedGameHtml = await readFile(embeddedGamePath, 'utf8');
-embeddedGameHtml = ensureHeadTag(embeddedGameHtml, /<link\s+rel="canonical"[^>]*>/i, '<link rel="canonical" href="https://playzy.dharmikgohil.art/games/monsoon-rickshaw-rush/">');
-embeddedGameHtml = ensureHeadTag(embeddedGameHtml, /<meta\s+name="robots"[^>]*>/i, '<meta name="robots" content="max-image-preview:large">');
-embeddedGameHtml = ensureHeadTag(embeddedGameHtml, /<meta\s+property="og:url"[^>]*>/i, '<meta property="og:url" content="https://playzy.dharmikgohil.art/games/monsoon-rickshaw-rush/">');
-await writeFile(embeddedGamePath, embeddedGameHtml);
+for (const embeddedSlug of ['monsoon-rickshaw-rush', 'voxelcraft', 'apex-velocity']) {
+  const embeddedGamePath = join(outputRoot, embeddedSlug, 'index.html');
+  try {
+    let embeddedGameHtml = await readFile(embeddedGamePath, 'utf8');
+    embeddedGameHtml = ensureHeadTag(embeddedGameHtml, /<link\s+rel="canonical"[^>]*>/i, `<link rel="canonical" href="https://playzy.dharmikgohil.art/games/${embeddedSlug}/">`);
+    embeddedGameHtml = ensureHeadTag(embeddedGameHtml, /<meta\s+name="robots"[^>]*>/i, '<meta name="robots" content="max-image-preview:large">');
+    embeddedGameHtml = ensureHeadTag(embeddedGameHtml, /<meta\s+property="og:url"[^>]*>/i, `<meta property="og:url" content="https://playzy.dharmikgohil.art/games/${embeddedSlug}/">`);
+    await writeFile(embeddedGamePath, embeddedGameHtml);
+  } catch {}
+}
 
 const sitemapPages = pages.filter((seo) => !String(seo.robots || '').includes('noindex'));
 const sitemapEntries = sitemapPages.map((seo) => {

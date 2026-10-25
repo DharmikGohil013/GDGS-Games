@@ -2,6 +2,28 @@
 // Used by the play page. Any id missing here falls back to generic text.
 
 export const GAME_GUIDES = {
+  'apex-velocity': {
+    tagline: 'F1 supercar simulator with custom circuit curves studio and garage tuning.',
+    description: 'Apex Velocity is an open-world supercar driving simulator featuring realistic high-speed physics, custom spline track creator and curves studio, dynamic weather, day-night cycle, performance garage tuning, and real-time F1 telemetry. Race iconic tracks like Spa, Monza, Silverstone, and Suzuka or engineer and test your own circuits.',
+    controls: [
+      { key: 'W / Up Arrow', label: 'Throttle / accelerate' },
+      { key: 'S / Down Arrow', label: 'Brake / reverse' },
+      { key: 'A / D / Left / Right', label: 'Steer left / right' },
+      { key: 'Space', label: 'Handbrake / drift' },
+      { key: 'E / Shift', label: 'Toggle DRS (Drag Reduction System)' },
+      { key: 'C', label: 'Cycle camera view (Chase, Cockpit, Hood, Cinematic)' },
+      { key: 'R', label: 'Reset car onto track grid' },
+      { key: 'M', label: 'Toggle sound effects & engine audio' },
+      { key: 'H', label: 'Toggle bottom HUD control dock' },
+      { key: 'Esc', label: 'Pause / resume driving' },
+    ],
+    tips: [
+      'Activate DRS on long straights to reduce drag and reach top speeds above 350 km/h.',
+      'Brake early before tight corners and trail off the brake to hit the apex cleanly.',
+      'Head into the Garage to tune your car horsepower, downforce, brake bias, and tire compound.',
+      'Use the Curves Studio to design your own custom tracks with banked curves, elevation, and terrain.',
+    ],
+  },
   'voxelcraft': {
     tagline: 'Mine, craft, build, and survive your own voxel world.',
     description: 'Explore a procedurally generated 3D block world in VoxelCraft: Survival & Building. Gather resources, craft tools, build a shelter, and face hostile mobs in Survival mode, or explore and build in Creative mode with flight. Choose a world seed before you start. Play with a keyboard and mouse on desktop; worlds last for the current session.',
