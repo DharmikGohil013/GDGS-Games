@@ -1,133 +1,74 @@
-// ─── About Page ───
+import { games } from '../data/games.js';
+import '../styles/about.css';
 
 export function createAboutPage() {
-  const page = document.createElement('div');
-  page.className = 'page-content';
-  // Schema.org AboutPage microdata
+  const playable = games.filter((game) => game.isPlayable);
+  const featured = ['apex-velocity', 'hextris', 'voxelcraft'].map((id) => playable.find((game) => game.id === id)).filter(Boolean);
+  const page = document.createElement('main');
+  page.className = 'page-content about-page';
   page.setAttribute('itemscope', '');
   page.setAttribute('itemtype', 'https://schema.org/AboutPage');
-
   page.innerHTML = `
-    <div class="page-hero" role="banner">
-      <span class="page-badge" aria-label="Section: About Us">About Us</span>
-      <h1 class="page-title" itemprop="headline">We build games people love.</h1>
-      <p class="page-subtitle" itemprop="description">Playzy is a browser games platform built by Dharmik Gohil. Play selected arcade, puzzle, racing and other games online without downloading an app.</p>
-    </div>
-
-    <div class="page-section">
-      <div class="about-grid">
-        <div class="about-card">
-          <div class="about-icon" style="background:rgba(255,95,77,0.12);color:var(--coral)">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6 12h4a2 2 0 0 1 2 2v6H4v-6a2 2 0 0 1 2-2z"/>
-              <path d="M14 8h4a2 2 0 0 1 2 2v10h-8v-10a2 2 0 0 1 2-2z"/>
-              <path d="M10 2h4a2 2 0 0 1 2 2v16h-8V4a2 2 0 0 1 2-2z"/>
-            </svg>
-          </div>
-          <h3>Our Mission</h3>
-          <p>To make gaming accessible to everyone, everywhere. We believe that great games should load instantly in your browser — free, fast, and fun. No barriers, no waiting.</p>
-        </div>
-        <div class="about-card">
-          <div class="about-icon" style="background:rgba(62,107,255,0.12);color:var(--blue)">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="2" y1="12" x2="22" y2="12"/>
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-            </svg>
-          </div>
-          <h3>Play in Your Browser</h3>
-          <p>Open a game on desktop or mobile and play in your browser. Most games do not require an account; Infinite World uses an account to save and share multiplayer worlds.</p>
-        </div>
-        <div class="about-card">
-          <div class="about-icon" style="background:rgba(31,201,139,0.12);color:var(--green)">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-            </svg>
-          </div>
-          <h3>Quality Games</h3>
-          <p>Playzy includes a growing set of playable games across categories such as puzzles, racing, arcade, runners, and multiplayer. Cards marked “Coming soon” are catalogue previews and are not playable yet.</p>
-        </div>
+    <section class="page-hero about-intro" aria-labelledby="about-title">
+      <div class="about-intro-copy">
+        <span class="about-eyebrow"><span aria-hidden="true">✦</span> A little about Playzy</span>
+        <h1 id="about-title" itemprop="headline">Good games.<br>Great little<br><em>escapes.</em></h1>
+        <p itemprop="description">A quick break. A new high score. One more try. Playzy is a home for free browser games and the simple joy of playing.</p>
+        <div class="about-actions"><a class="about-button" href="/">Find your next game <span aria-hidden="true">↗</span></a><a class="about-text-link" href="#our-story">Meet Playzy <span aria-hidden="true">↓</span></a></div>
+        <span class="about-small-note">Free to play · No app download needed</span>
       </div>
-    </div>
-
-    <div class="page-section">
-      <h2 class="section-title">What We Do</h2>
-      <div class="about-text-block">
-        <p>Playzy is a next-generation gaming platform designed for the modern web. We develop, curate, and host browser-based games that run entirely in your browser using cutting-edge web technologies including <strong>HTML5 Canvas</strong>, <strong>WebGL</strong>, <strong>Phaser 3</strong>, <strong>PixiJS</strong>, and <strong>Three.js</strong>.</p>
-        <p>Most games run directly in the browser without an app download or sign-up. Infinite World is the exception: it requires an account to save worlds and play with others. The site works on desktop and mobile browsers.</p>
-        <p>Browse games by category, read each game's controls and tips, and open a game to play. The catalogue also includes preview cards for games that are still in development.</p>
+      <div class="about-showcase" aria-label="A few games from the Playzy collection">
+        <div class="about-showcase-label"><span class="about-status-dot" aria-hidden="true"></span> SMALL BREAK. BIG ADVENTURE.</div>
+        ${featured.map((game, index) => `<a class="about-game about-game-${index}" href="${game.url || `/games/${game.id}/`}"><img src="${game.image}" alt="" width="560" height="340"><div><span>${game.category === '3d' ? 'Build your own world' : game.category === 'racing' ? 'Find your next gear' : 'Get into the flow'}</span><strong>${game.title}</strong><b aria-hidden="true">↗</b></div></a>`).join('')}
+        <span class="about-play-sticker" aria-hidden="true">JUST<br>PLAY.</span>
       </div>
-    </div>
+    </section>
 
-    <div class="page-section">
-      <h2 class="section-title">Built by dharmikgohil.art</h2>
-      <div class="about-creator">
-        <div class="creator-avatar">
-          <svg viewBox="0 0 48 48" width="48" height="48" fill="none">
-            <circle cx="24" cy="24" r="23" fill="var(--coral)" opacity="0.15" stroke="var(--coral)" stroke-width="2"/>
-            <text x="24" y="30" text-anchor="middle" fill="var(--coral)" font-size="18" font-weight="700" font-family="Bungee, sans-serif">D</text>
-          </svg>
-        </div>
-        <div class="creator-info">
-          <h3><a href="https://dharmikgohil.art" target="_blank" rel="noopener noreferrer">dharmikgohil.art</a></h3>
-          <p>Playzy is designed and developed by <strong>dharmikgohil.art</strong>, which creates interactive web experiences, browser games, and web applications.</p>
-          <p>From concept to deployment, every aspect of Playzy — the game engine integration, visual design, user interface, animations, and the gaming experience itself — is built with meticulous attention to detail and a commitment to quality.</p>
-        </div>
-      </div>
-    </div>
+    <dl class="about-numbers page-section" aria-label="Playzy at a glance">
+      <div><dt>Playable games</dt><dd>${playable.length}<span> and counting</span></dd></div>
+      <div><dt>Ways to play</dt><dd>${new Set(playable.map((game) => game.category)).size}<span> categories</span></dd></div>
+      <div><dt>App downloads</dt><dd>Zero<span> just your browser</span></dd></div>
+      <div><dt>Made for</dt><dd>You<span> and your next break</span></dd></div>
+    </dl>
 
-    <div class="page-section">
-      <h2 class="section-title">Our Technology</h2>
-      <div class="tech-grid">
-        <div class="tech-item">
-          <span class="tech-label">Game Engines</span>
-          <span class="tech-value">Phaser 3, PixiJS, Three.js, Babylon.js, PlayCanvas</span>
-        </div>
-        <div class="tech-item">
-          <span class="tech-label">Animations</span>
-          <span class="tech-value">GSAP, Framer Motion, Lottie</span>
-        </div>
-        <div class="tech-item">
-          <span class="tech-label">Audio</span>
-          <span class="tech-value">Howler.js</span>
-        </div>
-        <div class="tech-item">
-          <span class="tech-label">Build System</span>
-          <span class="tech-value">Vite, Git, GitHub</span>
-        </div>
-        <div class="tech-item">
-          <span class="tech-label">Networking</span>
-          <span class="tech-value">Socket.IO, WebSockets</span>
-        </div>
-        <div class="tech-item">
-          <span class="tech-label">Deployment</span>
-          <span class="tech-value">Vercel, Cloudflare Pages</span>
-        </div>
-      </div>
-    </div>
+    <section class="page-section about-story" id="our-story" aria-labelledby="story-title">
+      <div><span class="about-eyebrow">01 / The idea</span><h2 id="story-title">Less setup.<br>More <em>“one more go.”</em></h2></div>
+      <div class="about-story-copy"><p>Playing a game should be the easy part. Playzy brings arcade challenges, puzzles, racing games, and worlds to build together into one place, right in your browser.</p><p>Pick something that catches your eye, learn the controls, and jump in. Whether you have five minutes or a whole afternoon, there’s a different kind of escape waiting for you.</p></div>
+    </section>
 
-    <div class="page-section">
-      <h2 class="section-title">Platform Highlights</h2>
-      <div class="highlights-grid">
-        <div class="highlight-item">
-          <b>14</b>
-          <span>Games currently playable</span>
-        </div>
-        <div class="highlight-item">
-          <b>6</b>
-          <span>Game categories</span>
-        </div>
-        <div class="highlight-item">
-          <b>Free</b>
-          <span>To play in your browser</span>
-        </div>
-        <div class="highlight-item">
-          <b>No</b>
-          <span>App download needed</span>
-        </div>
+    <section class="page-section" aria-labelledby="values-title">
+      <div class="about-section-heading"><span class="about-eyebrow">02 / What matters</span><h2 id="values-title">Built around the fun.</h2></div>
+      <div class="about-values">
+        <article><span class="about-value-icon" aria-hidden="true">↗</span><h3>Open. Pick. Play.</h3><p>No app installation to get in the way. Open a game in your browser and make a little time for yourself.</p></article>
+        <article><span class="about-value-icon" aria-hidden="true">✳</span><h3>Follow your mood.</h3><p>Chase a fast lap, solve a puzzle, or build something new. Explore different games at your own pace.</p></article>
+        <article><span class="about-value-icon" aria-hidden="true">♡</span><h3>Made with care.</h3><p>An independent project where the games, the details, and your feedback all help shape what comes next.</p></article>
       </div>
-    </div>
+    </section>
+
+    <section class="page-section about-maker" aria-labelledby="maker-title">
+      <div class="about-maker-mark" aria-hidden="true">dg<span>DESIGN × PLAY</span></div>
+      <div><span class="about-eyebrow">03 / Behind the screen</span><h2 id="maker-title">Hi, I’m Dharmik.</h2><p>I’m the designer and developer behind Playzy. This is where I bring together interactive web experiences and browser games, with room to experiment and keep building.</p><a class="about-text-link" href="https://dharmikgohil.art" target="_blank" rel="noopener noreferrer">Explore my work <span aria-hidden="true">↗</span><span class="about-sr-only"> (opens in a new tab)</span></a></div>
+    </section>
+
+    <section class="page-section about-faq" aria-labelledby="faq-title">
+      <div><span class="about-eyebrow">04 / Good to know</span><h2 id="faq-title">Before you<br>press play.</h2></div>
+      <div class="about-questions">
+        <details><summary>Are the games free to play?</summary><p>Yes. The games in the Playzy catalogue are free to play in your browser.</p></details>
+        <details><summary>Do I need an account?</summary><p>Most games can be played without signing up. Infinite World requires an account to save worlds and play with others.</p></details>
+        <details><summary>Can I play on my phone?</summary><p>Playzy works in desktop and mobile browsers. Controls and device support vary by game, so check the controls on each game’s page before playing.</p></details>
+        <details><summary>Have an idea or found a problem?</summary><p>Visit the <a href="/contact/">contact page</a> to find ways to get in touch. Include the game name and what happened if you’re reporting an issue.</p></details>
+      </div>
+    </section>
+
+    <section class="page-section about-outro" aria-labelledby="outro-title"><span class="about-eyebrow">Your next little escape</span><h2 id="outro-title">Enough about us.<br>Let’s play.</h2><a class="about-button" href="/">Explore the games <span aria-hidden="true">↗</span></a></section>
   `;
-
+  // Keep this section jump local; the app uses hashchange to render routes.
+  page.querySelector('a[href="#our-story"]').addEventListener('click', (event) => {
+    event.preventDefault();
+    const story = page.querySelector('#our-story');
+    story.setAttribute('tabindex', '-1');
+    story.focus({ preventScroll: true });
+    story.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  });
   return page;
 }
