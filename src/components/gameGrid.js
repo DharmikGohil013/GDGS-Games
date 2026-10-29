@@ -8,6 +8,14 @@ import { createGameCard } from './gameCard.js';
 import { getProfile } from '../core/progress.js';
 import { onUnmount } from '../core/lifecycle.js';
 
+// Editorial sizes stay attached to games, rather than changing on every render.
+const spotlightCards = {
+  'apex-velocity': { layout: 'spotlight', description: 'Build your circuit. Tune your supercar. Find your racing line.' },
+  voxelcraft: { layout: 'wide', description: 'A world to explore. A world to build.' },
+  'turbo-drift': { layout: 'spotlight', description: 'Chase the traffic. Hold the drift. Hit the nitro.' },
+  'mario-king': { layout: 'wide', description: 'Six kingdoms. One platforming adventure.' },
+};
+
 export function createGameGrid() {
   const container = document.createElement('div');
   container.id = 'game-grid-container';
@@ -94,9 +102,11 @@ export function createGameGrid() {
       section.appendChild(empty);
     } else {
       const grid = document.createElement('div');
-      grid.className = 'card-grid';
+      grid.className = isHome ? 'card-grid card-grid--discovery' : 'card-grid';
       grid.id = 'main-game-grid';
-      visible.forEach((game) => grid.appendChild(createGameCard(game)));
+      visible.forEach((game) => grid.appendChild(createGameCard(game,
+        isHome ? { discovery: true, ...spotlightCards[game.id] } : {}
+      )));
       section.appendChild(grid);
     }
 

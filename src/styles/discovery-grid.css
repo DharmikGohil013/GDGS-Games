@@ -1,0 +1,107 @@
+/* Curated home mosaic. DOM and keyboard order follow the catalogue. */
+.card-grid--discovery {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: 218px;
+  gap: 16px;
+}
+
+.card-grid--discovery .game-card {
+  min-width: 0;
+  isolation: isolate;
+  border-radius: 20px;
+  background: #111321;
+  border: 1px solid rgba(255, 255, 255, .12);
+  color: #fff;
+}
+.card-grid--discovery .game-card--spotlight { grid-column: span 2; grid-row: span 2; }
+.card-grid--discovery .game-card--wide { grid-column: span 2; }
+.card-grid--discovery .card-art { position: absolute; inset: 0; aspect-ratio: auto; }
+.card-grid--discovery .card-thumb-img { position: absolute; inset: 0; content-visibility: visible; }
+.card-grid--discovery .card-art::after {
+  background: linear-gradient(180deg, rgba(6, 8, 16, .12) 0%, rgba(6, 8, 16, .08) 25%, rgba(6, 8, 16, .74) 65%, #080b16 100%);
+}
+.card-grid--discovery .card-body {
+  position: relative;
+  z-index: 3;
+  flex: none;
+  margin-top: auto;
+  padding: 18px;
+  padding-right: 62px;
+  gap: 6px;
+  pointer-events: none;
+}
+.card-grid--discovery .card-tag {
+  padding: 0;
+  background: none !important;
+  color: #d7d6e8 !important;
+  font-size: 10px;
+  letter-spacing: .12em;
+}
+.card-grid--discovery .card-title { color: #fff; font-size: 18px; line-height: 1.18; }
+.card-grid--discovery .card-meta { display: none; }
+.card-grid--discovery .card-badge { top: 14px; font-size: 9px; padding: 5px 9px; backdrop-filter: blur(12px); }
+.card-grid--discovery .card-badge-hot { right: 14px; background: #6d45db; box-shadow: none; }
+.card-grid--discovery .card-badge-play { left: 14px; background: rgba(8, 11, 22, .65); color: #fff; border: 1px solid rgba(255, 255, 255, .24); }
+.card-grid--discovery .card-best { top: 48px; bottom: auto; left: 14px; }
+.card-grid--discovery .card-play { display: none; }
+.card-description { color: #ddddeb; font-size: 13px; line-height: 1.5; max-width: 34ch; }
+.card-launch {
+  position: absolute;
+  right: 16px;
+  bottom: 20px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .14);
+  border: 1px solid rgba(255, 255, 255, .28);
+  color: #fff;
+  transition: background .2s ease, color .2s ease;
+}
+.card-launch svg { width: 18px; height: 18px; flex-shrink: 0; }
+.card-launch > span { display: none; }
+.card-grid--discovery .game-card--spotlight .card-body { padding: 28px; gap: 10px; }
+.card-grid--discovery .game-card--spotlight .card-title { font-size: clamp(25px, 2.6vw, 36px); max-width: 18ch; }
+.game-card--spotlight .card-launch {
+  position: static;
+  width: fit-content;
+  height: 40px;
+  padding: 0 17px;
+  margin-top: 6px;
+  border-radius: 10px;
+  background: #fff;
+  color: #161322;
+  font-size: 12px;
+  font-weight: 800;
+}
+.game-card--spotlight .card-launch > span { display: inline; }
+.card-grid--discovery .game-card--wide .card-title { font-size: 23px; }
+.card-grid--discovery .game-card:is(:hover, :focus-visible) { border-color: #a78bfa; box-shadow: 0 12px 30px rgba(13, 9, 30, .23); }
+.card-grid--discovery .game-card:is(:hover, :focus-visible) .card-launch { background: #c4b5fd; color: #161322; }
+.card-grid--discovery .game-card:focus-visible .card-thumb-img { transform: scale(1.04); }
+
+@media (max-width: 900px) {
+  .card-grid--discovery { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: auto; gap: 14px; }
+  .card-grid--discovery .game-card { min-height: 220px; }
+  .card-grid--discovery .game-card--spotlight { grid-row: auto; min-height: 360px; }
+}
+@media (max-width: 560px) {
+  .card-grid--discovery { gap: 10px; }
+  .card-grid--discovery .game-card { min-height: 190px; border-radius: 15px; }
+  .card-grid--discovery .game-card--spotlight { min-height: 320px; }
+  .card-grid--discovery .game-card--wide { min-height: 210px; }
+  .card-grid--discovery .card-body { padding: 14px 12px; gap: 6px; }
+  .card-grid--discovery .card-title { font-size: 16px; }
+  .card-grid--discovery .card-tag { font-size: 9px; }
+  .card-grid--discovery .game-card--spotlight .card-body { padding: 22px; }
+  .card-grid--discovery .game-card--wide .card-body { padding-right: 56px; }
+  .card-grid--discovery .game-card--wide .card-title { font-size: 22px; }
+  .game-card--compact .card-launch { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-grid--discovery .card-thumb-img,
+  .card-grid--discovery .card-launch { transition: none; transform: none !important; }
+}

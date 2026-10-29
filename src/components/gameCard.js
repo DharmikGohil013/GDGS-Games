@@ -25,6 +25,7 @@ const PLAY_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" fill="current
 export function createGameCard(game, opts = {}) {
   const card = document.createElement('a');
   card.className = 'game-card';
+  if (opts.discovery) card.classList.add(`game-card--${opts.layout || 'compact'}`);
   card.href = game.url || (game.isPlayable ? `/games/${game.id}/` : `#/play/${game.id}`);
   card.setAttribute('data-game-id', game.id);
   card.setAttribute('data-accent', game.color || 'purple');
@@ -61,10 +62,12 @@ export function createGameCard(game, opts = {}) {
     <div class="card-body">
       <span class="card-tag" style="background:${tag.bg};color:${tag.text}">${categoryLabel}</span>
       <div class="card-title">${game.title}</div>
+      ${opts.description ? `<p class="card-description">${opts.description}</p>` : ''}
       <div class="card-meta">
         ${game.isNew ? `<span class="card-new">New</span><span>${game.metaNote || ''}</span>` :
           `<span>${game.isPlayable ? 'Playable now' : 'Coming soon'}</span>`}
       </div>
+      ${opts.discovery ? `<span class="card-launch" aria-hidden="true">${PLAY_ICON}<span>Play now</span></span>` : ''}
     </div>
   `;
 
