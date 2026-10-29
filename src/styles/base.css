@@ -114,9 +114,10 @@ img {
 
 /* ── Skip link ── */
 .skip-link {
-  position: absolute;
-  top: -60px;
+  position: fixed;
+  top: 0;
   left: 16px;
+  transform: translateY(-150%);
   background: var(--accent);
   color: var(--on-accent);
   padding: 10px 18px;
@@ -124,9 +125,9 @@ img {
   font-weight: 700;
   font-size: 14px;
   z-index: 9999;
-  transition: top 0.2s ease;
+  transition: transform 0.2s ease;
 }
-.skip-link:focus { top: 0; outline: 2px solid #fff; outline-offset: 2px; }
+.skip-link:focus { transform: translateY(0); outline: 2px solid #fff; outline-offset: 2px; }
 
 /* ── Shared atoms ── */
 .u-glass {
