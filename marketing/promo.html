@@ -1,0 +1,600 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Playzy Promo</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=block" rel="stylesheet">
+<style>
+:root{
+  --bg:#08090F; --elev:#121523; --line:rgba(255,255,255,.09);
+  --purple:#8B5CF6; --violet:#A78BFA; --cyan:#22D3EE; --coral:#FF5F4D; --gold:#FFC93C;
+  --ink:#F4F5FA; --mute:#9CA3BD;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1080px;overflow:hidden;background:var(--bg)}
+body{font-family:'Space Grotesk',sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+#stage{position:relative;width:1080px;height:1080px;overflow:hidden;background:var(--bg)}
+.layer{position:absolute;inset:0;pointer-events:none}
+.scene{position:absolute;inset:0;visibility:hidden;transform-origin:50% 50%}
+
+/* ---------- background ---------- */
+.blob{position:absolute;border-radius:50%;filter:blur(40px)}
+.b1{width:900px;height:900px;background:radial-gradient(circle,rgba(139,92,246,.42),rgba(139,92,246,0) 65%)}
+.b2{width:820px;height:820px;background:radial-gradient(circle,rgba(34,211,238,.26),rgba(34,211,238,0) 65%)}
+.b3{width:520px;height:520px;background:radial-gradient(circle,rgba(255,95,77,.20),rgba(255,95,77,0) 65%)}
+#grid{background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:72px 72px;
+  -webkit-mask-image:radial-gradient(circle at 50% 50%,#000 0%,transparent 70%);mask-image:radial-gradient(circle at 50% 50%,#000 0%,transparent 70%)}
+#vignette{background:radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0) 55%,rgba(0,0,0,.6) 100%)}
+#grain{width:1080px;height:1080px;opacity:.055}
+#fade{background:#000}
+
+/* ---------- type ---------- */
+.display{font-family:'Outfit',sans-serif;font-weight:800;letter-spacing:-.04em;line-height:.95}
+.mask{display:block;overflow:hidden;padding:.02em 0 .1em}
+.mask>span{display:inline-block;will-change:transform}
+.grad{background:linear-gradient(115deg,#C4B5FD 0%,#8B5CF6 38%,#22D3EE 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:20px;letter-spacing:.28em;text-transform:uppercase;color:var(--mute);display:flex;align-items:center;gap:14px}
+.eyebrow i{display:inline-block;width:34px;height:2px;background:linear-gradient(90deg,var(--purple),var(--cyan))}
+.sub{font-size:34px;font-weight:500;color:var(--mute);letter-spacing:-.01em}
+.col{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+
+/* ---------- swipe transition ---------- */
+#swipe{overflow:hidden}
+#swipe .bar{position:absolute;top:-200px;height:1480px;transform-origin:0 0}
+#swipe .main{width:1700px;background:linear-gradient(100deg,#7C3AED 0%,#8B5CF6 35%,#22D3EE 100%)}
+#swipe .edge{width:90px;background:var(--coral)}
+#swipe .trail{width:1700px;background:#0E1020}
+
+/* ---------- S1 intro ---------- */
+#s1logo svg,#s14logo svg{width:190px;height:auto;display:block}
+#s14logo svg{width:150px;margin-bottom:6px}
+.wordmark{font-size:200px;display:flex;overflow:hidden;padding:0 .04em .1em}
+.wordmark span{display:inline-block}
+#s1line{width:0;height:2px;margin:18px 0 30px;background:linear-gradient(90deg,transparent,var(--purple),var(--cyan),transparent)}
+
+/* ---------- S2 kinetic ---------- */
+#s2 .block{position:absolute;left:96px;top:50%;transform:translateY(-50%)}
+#s2 .display{font-size:128px}
+#s2 .eyebrow{margin-bottom:34px}
+
+/* ---------- S3 / S4 counters ---------- */
+.counter{font-size:330px;line-height:.9;display:flex;align-items:flex-start;font-variant-numeric:tabular-nums}
+.counter .plus{font-size:.55em;margin-top:.12em;margin-left:.02em}
+.orbit{position:absolute;left:540px;top:540px}
+.orbit img{position:absolute;width:150px;height:150px;object-fit:cover;border-radius:28px;border:1px solid var(--line);box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.marquee{position:absolute;left:0;white-space:nowrap;font-family:'Outfit';font-weight:800;font-size:150px;letter-spacing:-.03em;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.075)}
+
+/* ---------- games ---------- */
+.card{position:absolute;inset:0}
+.frame{position:absolute;left:80px;top:84px;width:920px;height:572px;border-radius:30px;overflow:hidden;background:#111;border:1px solid var(--line);box-shadow:0 40px 90px rgba(0,0,0,.55)}
+.frame img{position:absolute;left:-6%;top:-6%;width:112%;height:112%;object-fit:cover}
+.frame .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,9,15,0) 55%,rgba(8,9,15,.55) 100%)}
+.chip{position:absolute;left:28px;top:28px;display:flex;align-items:center;gap:10px;padding:12px 20px;border-radius:999px;background:rgba(8,9,15,.72);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.14);font-family:'JetBrains Mono';font-weight:600;font-size:17px;letter-spacing:.2em}
+.chip b{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+.num{position:absolute;left:84px;top:694px;font-family:'JetBrains Mono';font-weight:600;font-size:19px;letter-spacing:.24em;color:var(--mute)}
+.num em{font-style:normal;color:var(--ink)}
+.ctitle{position:absolute;left:80px;top:728px;width:920px;font-size:96px;white-space:nowrap}
+.hook{position:absolute;left:84px;top:858px;font-size:31px;color:var(--mute);font-weight:500}
+.playpill{position:absolute;right:84px;top:684px;display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:999px;border:1px solid rgba(139,92,246,.55);background:rgba(139,92,246,.12);font-weight:600;font-size:18px;letter-spacing:.04em}
+.playpill svg{width:14px;height:14px}
+#prog{position:absolute;left:84px;top:984px;width:912px;display:flex;gap:10px}
+#prog div{flex:1;height:4px;border-radius:4px;background:rgba(255,255,255,.1);overflow:hidden}
+#prog div span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--purple),var(--cyan))}
+
+/* ---------- mosaic ---------- */
+#mgrid{position:absolute;left:50%;top:50%;width:1056px;height:1056px;margin:-528px 0 0 -528px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+#mgrid div{border-radius:26px;overflow:hidden;border:1px solid var(--line);background:#111}
+#mgrid img{width:100%;height:100%;object-fit:cover;display:block}
+#s11 .veil{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(8,9,15,.92) 0%,rgba(8,9,15,.78) 32%,rgba(8,9,15,.15) 75%)}
+#s11 .display{font-size:132px}
+.tags{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:34px;max-width:860px}
+.tags span{padding:11px 22px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(18,21,35,.85);font-weight:600;font-size:22px}
+
+/* ---------- devices ---------- */
+#s12 .head{position:absolute;top:92px;left:0;right:0;display:flex;flex-direction:column;align-items:center}
+#s12 .display{font-size:116px;margin-top:22px}
+.laptop{position:absolute;left:70px;top:372px;width:700px}
+.lid{width:700px;height:440px;border-radius:24px;background:#0B0D16;border:2px solid #2A2F45;padding:16px;box-shadow:0 40px 90px rgba(0,0,0,.6)}
+.screen{position:relative;width:100%;height:100%;border-radius:10px;overflow:hidden;background:#000}
+.screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.base{width:820px;height:26px;margin-left:-60px;border-radius:0 0 22px 22px;background:linear-gradient(180deg,#30354D,#151826)}
+.phone{position:absolute;left:720px;top:342px;width:262px;height:530px;border-radius:46px;background:#0B0D16;border:2px solid #2A2F45;padding:12px;box-shadow:0 40px 90px rgba(0,0,0,.65)}
+.phone .screen{border-radius:34px}
+.island{position:absolute;left:50%;top:22px;width:84px;height:24px;margin-left:-42px;border-radius:20px;background:#000;z-index:2}
+.dlabel{position:absolute;top:930px;font-family:'JetBrains Mono';font-weight:600;font-size:18px;letter-spacing:.26em;color:var(--mute)}
+
+/* ---------- features ---------- */
+#s13 .head{position:absolute;left:84px;top:128px}
+#s13 .display{font-size:92px;margin-top:22px}
+.feat{position:absolute;left:84px;width:912px;height:150px;border-radius:26px;background:rgba(255,255,255,.035);border:1px solid var(--line);display:flex;align-items:center;gap:34px;padding:0 36px}
+.feat .ic{width:86px;height:86px;border-radius:24px;flex:none;display:grid;place-items:center;background:linear-gradient(135deg,rgba(139,92,246,.9),rgba(34,211,238,.9))}
+.feat .ic svg{width:42px;height:42px}
+.feat h3{font-family:'Outfit';font-weight:700;font-size:48px;letter-spacing:-.02em}
+.feat p{font-size:25px;color:var(--mute);margin-top:4px}
+.feat .idx{margin-left:auto;font-family:'JetBrains Mono';font-size:18px;color:rgba(255,255,255,.3);letter-spacing:.2em}
+
+/* ---------- outro ---------- */
+#s14 .wordmark{font-size:180px}
+.cta{margin-top:44px;padding:3px;border-radius:999px;background:linear-gradient(100deg,var(--purple),var(--cyan))}
+.cta div{display:flex;align-items:center;gap:16px;padding:24px 44px;border-radius:999px;background:#0C0E19;font-weight:700;font-size:34px}
+.cta svg{width:22px;height:22px}
+.meta{margin-top:40px;display:flex;gap:26px;font-family:'JetBrains Mono';font-weight:600;font-size:18px;letter-spacing:.2em;color:var(--mute)}
+.meta b{color:rgba(255,255,255,.25);font-weight:600}
+</style>
+</head>
+<body>
+<div id="stage">
+  <!-- background -->
+  <div class="layer" id="bg">
+    <div class="blob b1" id="b1"></div><div class="blob b2" id="b2"></div><div class="blob b3" id="b3"></div>
+  </div>
+  <div class="layer" id="grid"></div>
+
+  <!-- S1: logo intro -->
+  <div class="scene" id="s1">
+    <div class="col">
+      <div id="s1logo"></div>
+      <div class="display wordmark" id="s1word"></div>
+      <div id="s1line"></div>
+      <div class="sub" id="s1tag">Pick a game. Jump right in.</div>
+    </div>
+  </div>
+
+  <!-- S2: kinetic statement -->
+  <div class="scene" id="s2">
+    <div class="block">
+      <div class="eyebrow" id="s2eb"><i></i>Playzy · Browser games</div>
+      <div class="display mask"><span id="s2a">Free games.</span></div>
+      <div class="display mask"><span id="s2b">No downloads.</span></div>
+      <div class="display mask"><span id="s2c" class="grad">Just play.</span></div>
+    </div>
+  </div>
+
+  <!-- S3: 20+ -->
+  <div class="scene" id="s3">
+    <div class="orbit" id="orbit"></div>
+    <div class="col">
+      <div class="eyebrow" id="s3eb"><i></i>Available now<i></i></div>
+      <div class="display counter grad" id="s3num"><span id="n20">0</span><span class="plus">+</span></div>
+      <div class="sub" id="s3sub">games ready to play. Free, instantly.</div>
+    </div>
+  </div>
+
+  <!-- S4: 1,000+ -->
+  <div class="scene" id="s4">
+    <div class="marquee" id="mq1" style="top:70px">PUZZLE · RACING · ARCADE · RUNNER · 3D · MULTIPLAYER · PLATFORMER · PUZZLE · RACING · ARCADE ·</div>
+    <div class="marquee" id="mq2" style="top:820px">ARCADE · RUNNER · PLATFORMER · 3D · RACING · PUZZLE · MULTIPLAYER · ARCADE · RUNNER · 3D ·</div>
+    <div class="col">
+      <div class="eyebrow" id="s4eb"><i></i>And we're just getting started<i></i></div>
+      <div class="display counter" id="s4num" style="font-size:250px"><span id="n1000">20</span><span class="plus grad">+</span></div>
+      <div class="sub" id="s4sub">games on the way.</div>
+    </div>
+  </div>
+
+  <!-- S5–S10: featured games -->
+  <div class="scene" id="games">
+    <div id="cards"></div>
+    <div id="prog"></div>
+  </div>
+
+  <!-- S11: mosaic -->
+  <div class="scene" id="s11">
+    <div id="mgrid"></div>
+    <div class="veil"></div>
+    <div class="col">
+      <div class="eyebrow" id="s11eb"><i></i>One library<i></i></div>
+      <div class="display mask" style="margin-top:20px"><span id="s11t">Every genre.</span></div>
+      <div class="tags" id="tags"></div>
+    </div>
+  </div>
+
+  <!-- S12: devices -->
+  <div class="scene" id="s12">
+    <div class="head">
+      <div class="eyebrow" id="s12eb"><i></i>PC &amp; Mobile<i></i></div>
+      <div class="display mask"><span id="s12t">Play <span class="grad">anywhere.</span></span></div>
+    </div>
+    <div class="laptop" id="laptop"><div class="lid"><div class="screen" id="lscreen"></div></div><div class="base"></div></div>
+    <div class="phone" id="phone"><div class="island"></div><div class="screen" id="pscreen"></div></div>
+    <div class="dlabel" id="dl1" style="left:330px">DESKTOP</div>
+    <div class="dlabel" id="dl2" style="left:790px">MOBILE</div>
+  </div>
+
+  <!-- S13: features -->
+  <div class="scene" id="s13">
+    <div class="head">
+      <div class="eyebrow" id="s13eb"><i></i>Why Playzy</div>
+      <div class="display mask"><span id="s13t">Made for instant play.</span></div>
+    </div>
+    <div id="feats"></div>
+  </div>
+
+  <!-- S14: outro -->
+  <div class="scene" id="s14">
+    <div class="col">
+      <div id="s14logo"></div>
+      <div class="display wordmark" id="s14word"></div>
+      <div class="sub" id="s14tag">Pick a game. Jump right in.</div>
+      <div class="cta" id="cta"><div>Play free at playzyy.me
+        <svg viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div></div>
+      <div class="meta" id="meta">20+ GAMES <b>/</b> PC &amp; MOBILE <b>/</b> NO DOWNLOADS</div>
+    </div>
+  </div>
+
+  <div class="layer" id="swipe"><div class="bar trail"></div><div class="bar main"></div><div class="bar edge"></div></div>
+  <div class="layer" id="vignette"></div>
+  <canvas class="layer" id="grain" width="540" height="540"></canvas>
+  <div class="layer" id="fade"></div>
+</div>
+
+<script>
+// ---------------------------------------------------------------- data
+const LOGO = `<svg viewBox="0 0 32 32"><rect x="2" y="8" width="28" height="16" rx="8" fill="#FF5F4D"/>
+  <circle cx="11" cy="16" r="2.2" fill="#08090F"/><circle cx="21" cy="13.5" r="1.8" fill="#08090F"/><circle cx="24" cy="18.5" r="1.8" fill="#08090F"/></svg>`;
+
+const GAMES = [
+  { title: 'Gravity Switch',        cat: 'ARCADE',      hook: 'Flip gravity. Defy limits.',               img: 'gravity-switch.jpg' },
+  { title: 'Apex Velocity',         cat: 'RACING',      hook: 'Build your circuit. Find your racing line.', img: 'apex-velocity.png' },
+  { title: 'Infinite World',        cat: 'MULTIPLAYER', hook: 'One open world. Endless roads.',           img: 'infinite-world-city.jpg' },
+  { title: 'Hextris Stack',         cat: 'PUZZLE',      hook: 'Stack fast. Think faster.',                img: 'hextris-stack.jpg' },
+  { title: 'Monsoon Rickshaw Rush', cat: 'RACING',      hook: 'Dodge the rain. Rule the streets.',        img: 'monsoon-rickshaw-rush.jpg' },
+  { title: 'City Sprint',           cat: 'RUNNER',      hook: 'Run the city. Never look back.',           img: 'city-sprint.webp' },
+];
+const GAME_START = 16, GAME_LEN = 4;
+
+const MOSAIC = ['color-switch.jpg','turbo-drift.webp','infinite-world.jpg','block-merge.webp',
+  'neon-snake-gameplay.jpg','gravity-switch.jpg','apex-velocity.png','tower-stacker.webp',
+  'hextris-stack.jpg','monsoon-rickshaw-rush.jpg','city-sprint.webp','ball-drop.webp',
+  'infinite-runner.jpg','turbo-drift-gameplay.jpg','neon-snake.webp','block-merge-gameplay.jpg'];
+const ORBIT = ['color-switch.jpg','turbo-drift.webp','hextris-stack.jpg','neon-snake.webp','infinite-runner.jpg',
+  'tower-stacker.webp','apex-velocity.png','ball-drop.webp','gravity-switch.jpg','block-merge.webp'];
+const LAPTOP = ['apex-velocity.png','infinite-world-city.jpg','turbo-drift-gameplay.jpg','block-merge-gameplay.jpg','monsoon-rickshaw-rush.jpg','neon-snake-gameplay.jpg'];
+const PHONE  = ['color-switch.jpg','gravity-switch.jpg','hextris-stack.jpg','infinite-runner.jpg','infinite-world.jpg','color-switch.jpg'];
+const TAGS = ['Puzzle','Racing','Arcade','Runner','3D','Multiplayer','Platformer'];
+const FEATS = [
+  { h: '100% free',     p: 'Every game. No paywalls, no catch.',  ic: '<path d="M20 12v9H4v-9M2 7h20v5H2zM12 21V7M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7z"/>' },
+  { h: 'No downloads',  p: 'Runs instantly in your browser.',     ic: '<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>' },
+  { h: 'Any device',    p: 'PC, tablet and mobile. Same game.',   ic: '<rect x="2" y="4" width="14" height="11" rx="2"/><path d="M6 19h6"/><rect x="17" y="8" width="5" height="12" rx="1.2"/>' },
+];
+
+// Scene cut times (seconds) and the transition that enters each cut.
+const SWIPES = [8, 16, 40, 44, 54];
+
+// ---------------------------------------------------------------- helpers
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, p) => a + (b - a) * p;
+const E = {
+  outExpo: p => p >= 1 ? 1 : 1 - Math.pow(2, -10 * p),
+  outCubic: p => 1 - Math.pow(1 - p, 3),
+  outQuint: p => 1 - Math.pow(1 - p, 5),
+  inOutCubic: p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2,
+  inOutQuart: p => p < .5 ? 8 * p ** 4 : 1 - Math.pow(-2 * p + 2, 4) / 2,
+  outBack: p => { const c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); },
+};
+// display (not visibility): a child set to visibility:visible would leak through a hidden parent.
+const vis = (el, on) => { el.style.visibility = 'visible'; el.style.display = on ? '' : 'none'; };
+
+// Masked line rising into place.
+function rise(el, t, a, d = .7) {
+  const p = E.outExpo(seg(t, a, a + d));
+  el.style.transform = `translateY(${(1 - p) * 115}%)`;
+}
+// Fade + lift.
+function fadeUp(el, t, a, d = .7, dy = 28) {
+  const p = E.outCubic(seg(t, a, a + d));
+  el.style.opacity = p;
+  el.style.transform = `translateY(${(1 - p) * dy}px)`;
+}
+// Scene-level zoom-blur in/out. Returns nothing; writes transform/filter/opacity on el.
+function zoomXf(el, t, start, end, { zin = true, zout = true } = {}) {
+  let s = 1, b = 0, o = 1;
+  if (zin) {
+    const p = E.outCubic(seg(t, start - .05, start + .5));
+    s *= lerp(.86, 1, p); b += (1 - p) * 14; o *= clamp(p * 1.6);
+  }
+  if (zout) {
+    const q = E.inOutCubic(seg(t, end - .32, end + .12));
+    s *= lerp(1, 1.28, q); b += q * 18; o *= 1 - q;
+  }
+  el.style.transform = `scale(${s})`;
+  el.style.filter = b > .05 ? `blur(${b}px)` : 'none';
+  el.style.opacity = o;
+}
+// Slight settle after a hard (swipe) cut.
+function settle(el, t, start) {
+  const p = E.outCubic(seg(t, start, start + .7));
+  el.style.transform = `scale(${lerp(1.07, 1, p)})`;
+}
+function wordmark(container, text) {
+  container.innerHTML = [...text].map(c => `<span>${c}</span>`).join('');
+  return [...container.children];
+}
+function letters(spans, t, a, stagger = .05, d = .75) {
+  spans.forEach((s, i) => {
+    const p = E.outExpo(seg(t, a + i * stagger, a + i * stagger + d));
+    s.style.transform = `translateY(${(1 - p) * 110}%) rotate(${(1 - p) * 8}deg)`;
+  });
+}
+function fitText(el, maxW) {
+  let size = parseFloat(getComputedStyle(el).fontSize);
+  while (el.scrollWidth > maxW && size > 20) { size -= 2; el.style.fontSize = size + 'px'; }
+}
+function countEase(t, a, d) { return E.outExpo(seg(t, a, a + d)); }
+
+// Small rhythmic push on every beat (120 BPM => 0.5 s per beat).
+// Returned value is added to the background glow scale in renderBg (0 = no pulse, ~0.08 = clearly visible).
+function beatPulse(t) {
+  // TODO(human): return a 0..~0.08 pulse that peaks on each kick and decays before the next beat.
+  // Kicks play at every beat from 6–44 s and 50–54 s (see drums_on in music.py); stay at 0 elsewhere.
+  return 0;
+}
+
+// ---------------------------------------------------------------- build DOM
+$('s1logo').innerHTML = LOGO;
+$('s14logo').innerHTML = LOGO;
+const s1letters = wordmark($('s1word'), 'Playzy');
+const s14letters = wordmark($('s14word'), 'Playzy');
+
+const orbitEls = ORBIT.map(src => { const im = new Image(); im.src = 'assets/' + src; $('orbit').appendChild(im); return im; });
+
+const cardEls = GAMES.map((g, i) => {
+  const c = document.createElement('div');
+  c.className = 'card';
+  c.innerHTML = `
+    <div class="frame"><img src="assets/${g.img}"><div class="shade"></div><div class="chip"><b></b>${g.cat}</div></div>
+    <div class="num"><em>0${i + 1}</em> / 0${GAMES.length} &nbsp;·&nbsp; FEATURED</div>
+    <div class="playpill"><svg viewBox="0 0 24 24" fill="#C4B5FD"><path d="M6 4l14 8-14 8z"/></svg>Play free</div>
+    <div class="display ctitle mask"><span>${g.title}</span></div>
+    <div class="hook">${g.hook}</div>`;
+  $('cards').appendChild(c);
+  return { root: c, frame: c.querySelector('.frame'), img: c.querySelector('img'), chip: c.querySelector('.chip'),
+    num: c.querySelector('.num'), pill: c.querySelector('.playpill'), title: c.querySelector('.ctitle'),
+    titleIn: c.querySelector('.ctitle span'), hook: c.querySelector('.hook') };
+});
+const progEls = GAMES.map(() => { const d = document.createElement('div'); d.innerHTML = '<span></span>'; $('prog').appendChild(d); return d.firstChild; });
+
+const tileEls = MOSAIC.map(src => { const d = document.createElement('div'); d.innerHTML = `<img src="assets/${src}">`; $('mgrid').appendChild(d); return d; });
+const tagEls = TAGS.map(t => { const s = document.createElement('span'); s.textContent = t; $('tags').appendChild(s); return s; });
+
+const lapEls = LAPTOP.map(src => { const im = new Image(); im.src = 'assets/' + src; $('lscreen').appendChild(im); return im; });
+const phEls = PHONE.map(src => { const im = new Image(); im.src = 'assets/' + src; $('pscreen').appendChild(im); return im; });
+
+const featEls = FEATS.map((f, i) => {
+  const d = document.createElement('div');
+  d.className = 'feat';
+  d.style.top = (372 + i * 184) + 'px';
+  d.innerHTML = `<div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${f.ic}</svg></div>
+    <div><h3>${f.h}</h3><p>${f.p}</p></div><div class="idx">0${i + 1}</div>`;
+  $('feats').appendChild(d);
+  return d;
+});
+
+// Film grain frames
+const gctx = $('grain').getContext('2d');
+const grainFrames = Array.from({ length: 8 }, () => {
+  const im = gctx.createImageData(540, 540);
+  for (let i = 0; i < im.data.length; i += 4) {
+    const v = Math.random() * 255;
+    im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255;
+  }
+  return im;
+});
+
+// ---------------------------------------------------------------- render
+function renderBg(t) {
+  const pulse = beatPulse(t);
+  $('b1').style.transform = `translate(${-180 + Math.sin(t * .35) * 160}px, ${-220 + Math.cos(t * .27) * 120}px) scale(${1 + pulse})`;
+  $('b2').style.transform = `translate(${420 + Math.cos(t * .3) * 170}px, ${380 + Math.sin(t * .22) * 140}px) scale(${1 + pulse * .6})`;
+  $('b3').style.transform = `translate(${560 + Math.sin(t * .41 + 1) * 220}px, ${-60 + Math.cos(t * .33) * 160}px)`;
+  $('grid').style.transform = `translateY(${-(t * 12) % 72}px)`;
+}
+
+function renderSwipe(t) {
+  const [trail, main, edge] = $('swipe').children;
+  let active = false;
+  for (const c of SWIPES) {
+    const p = seg(t, c - .42, c + .42);
+    if (p <= 0 || p >= 1) continue;
+    active = true;
+    const e = E.inOutQuart(p);
+    const x = lerp(1240, -2100, e);
+    main.style.transform = `translateX(${x}px) skewX(-14deg)`;
+    edge.style.transform = `translateX(${x - 60}px) skewX(-14deg)`;
+    const e2 = E.inOutQuart(clamp(p * 1.08 - .04));
+    trail.style.transform = `translateX(${lerp(1240, -2100, e2) + 120}px) skewX(-14deg)`;
+  }
+  $('swipe').style.visibility = active ? 'visible' : 'hidden';
+}
+
+function S1(t) {
+  const el = $('s1'); const on = t < 4.15; vis(el, on); if (!on) return;
+  zoomXf(el, t, 0, 4, { zin: false });
+  const lp = E.outBack(seg(t, .25, .95));
+  $('s1logo').style.transform = `scale(${lp}) rotate(${(1 - lp) * -12}deg)`;
+  $('s1logo').style.opacity = clamp(lp * 2);
+  letters(s1letters, t, .75, .06);
+  $('s1line').style.width = E.outExpo(seg(t, 1.35, 2.2)) * 520 + 'px';
+  fadeUp($('s1tag'), t, 1.6, .8);
+}
+
+function S2(t) {
+  const el = $('s2'); const on = t > 3.85 && t < 8.05; vis(el, on); if (!on) return;
+  zoomXf(el, t, 4, 8, { zout: false });
+  fadeUp($('s2eb'), t, 4.1, .6, 14);
+  rise($('s2a'), t, 4.15); rise($('s2b'), t, 5.0); rise($('s2c'), t, 6.0);
+  el.querySelector('.block').style.transform = `translate(${-t * 6 + 24}px, -50%)`;
+}
+
+function S3(t) {
+  const el = $('s3'); const on = t > 7.95 && t < 12.15; vis(el, on); if (!on) return;
+  zoomXf(el, t, 8, 12, { zin: false });
+  if (t < 8.8) settle(el, t, 8);
+  fadeUp($('s3eb'), t, 8.15, .6, 14);
+  const p = countEase(t, 8.3, 1.2);
+  $('n20').textContent = Math.round(p * 20);
+  const np = E.outBack(seg(t, 8.15, 8.8));
+  $('s3num').style.transform = `scale(${lerp(.7, 1, np)})`;
+  $('s3num').style.opacity = clamp(np * 2);
+  $('s3num').querySelector('.plus').style.opacity = E.outCubic(seg(t, 9.3, 9.7));
+  fadeUp($('s3sub'), t, 9.2, .7);
+  const lt = t - 8;
+  orbitEls.forEach((im, i) => {
+    const a = (i / orbitEls.length) * Math.PI * 2 + lt * .22;
+    const r = 420 + Math.sin(i * 1.7) * 30;
+    const ip = E.outCubic(seg(t, 8.2 + i * .06, 8.9 + i * .06));
+    const z = (Math.sin(a) + 1) / 2;
+    im.style.transform = `translate(${Math.cos(a) * r - 75}px, ${Math.sin(a) * r * .9 - 75}px) scale(${(.75 + z * .35) * ip}) rotate(${Math.cos(a) * 8}deg)`;
+    im.style.opacity = (.22 + z * .25) * ip;
+  });
+}
+
+function S4(t) {
+  const el = $('s4'); const on = t > 11.85 && t < 16.05; vis(el, on); if (!on) return;
+  zoomXf(el, t, 12, 16, { zout: false });
+  fadeUp($('s4eb'), t, 12.15, .6, 14);
+  const p = countEase(t, 12.3, 1.7);
+  $('n1000').textContent = Math.round(20 + p * 980).toLocaleString('en-US');
+  fadeUp($('s4num'), t, 12.05, .5, 40);
+  fadeUp($('s4sub'), t, 13.6, .7);
+  const lt = t - 12;
+  $('mq1').style.transform = `translateX(${-200 - lt * 70}px)`;
+  $('mq2').style.transform = `translateX(${-900 + lt * 70}px)`;
+  $('mq1').style.opacity = $('mq2').style.opacity = E.outCubic(seg(t, 12, 12.8));
+}
+
+function Games(t) {
+  const el = $('games'); const end = GAME_START + GAMES.length * GAME_LEN;
+  const on = t > GAME_START - .02 && t < end + .02; vis(el, on); if (!on) return;
+  if (t < GAME_START + 1) settle(el, t, GAME_START); else el.style.transform = 'none';
+  cardEls.forEach((c, i) => {
+    const s = GAME_START + i * GAME_LEN, e = s + GAME_LEN;
+    // push transition: incoming slides in from the right over [s-.3, s+.3]; first card enters on the swipe.
+    const pin = i === 0 ? 1 : E.inOutQuart(seg(t, s - .32, s + .32));
+    const pout = i === GAMES.length - 1 ? 0 : E.inOutQuart(seg(t, e - .32, e + .32));
+    const visible = pin > 0 && pout < 1;
+    vis(c.root, visible); if (!visible) return;
+    const x = (1 - pin) * 1080 - pout * 1080;
+    const moving = Math.sin(Math.PI * (i === 0 ? pout : (pin < 1 ? pin : pout)));
+    c.frame.style.transform = `translateX(${x}px)`;
+    c.frame.style.filter = moving > .02 ? `blur(${moving * 6}px)` : 'none';
+    // Ken Burns + parallax on the image
+    const lt = clamp((t - s + .3) / (GAME_LEN + .6));
+    c.img.style.transform = `translateX(${(1 - pin) * -220 + pout * 220}px) scale(${1 + lt * .09}) translateY(${(i % 2 ? -1 : 1) * lt * 14}px)`;
+    // text block moves a touch faster than the frame for depth
+    const tx = (1 - pin) * 1250 - pout * 1250;
+    [c.num, c.pill, c.title, c.hook].forEach(n => n.style.translate = `${tx}px 0`);
+    rise(c.titleIn, t, s + .05, .8);
+    fadeUp(c.hook, t, s + .3, .7, 20);
+    fadeUp(c.num, t, s + .1, .6, 10);
+    fadeUp(c.pill, t, s + .2, .6, 10);
+    const cp = E.outBack(seg(t, s + .25, s + .75));
+    c.chip.style.transform = `scale(${cp})`; c.chip.style.transformOrigin = '0 50%';
+  });
+  progEls.forEach((p, i) => {
+    const s = GAME_START + i * GAME_LEN;
+    p.style.width = clamp((t - s) / GAME_LEN) * 100 + '%';
+  });
+  $('prog').style.opacity = E.outCubic(seg(t, GAME_START + .2, GAME_START + .8));
+}
+
+function S11(t) {
+  const el = $('s11'); const on = t > 39.98 && t < 44.02; vis(el, on); if (!on) return;
+  const lt = t - 40;
+  $('mgrid').style.transform = `rotate(-9deg) scale(${1.22 + lt * .035}) translate(${-lt * 10}px, ${lt * 6}px)`;
+  const beat = Math.floor(lt * 2);
+  tileEls.forEach((d, i) => {
+    const r = Math.floor(i / 4), c = i % 4;
+    const delay = (r + c) * .055;
+    const p = E.outBack(seg(t, 40 + delay, 40.5 + delay));
+    const hot = (beat * 5 + 3) % 16 === i;
+    d.style.transform = `scale(${p * (hot ? 1.04 : 1)})`;
+    d.style.opacity = clamp(p * 1.5) * (hot ? 1 : .7);
+  });
+  fadeUp($('s11eb'), t, 40.2, .6, 14);
+  rise($('s11t'), t, 40.3, .8);
+  tagEls.forEach((s, i) => fadeUp(s, t, 40.9 + i * .125, .5, 16));
+}
+
+function S12(t) {
+  const el = $('s12'); const on = t > 43.98 && t < 50.15; vis(el, on); if (!on) return;
+  zoomXf(el, t, 44, 50, { zin: false });
+  if (t < 44.8) el.style.transform = `scale(${lerp(1.07, 1, E.outCubic(seg(t, 44, 44.7)))})`;
+  fadeUp($('s12eb'), t, 44.15, .6, 14);
+  rise($('s12t'), t, 44.25, .8);
+  const lp = E.outQuint(seg(t, 44.4, 45.3));
+  const lt = t - 44;
+  $('laptop').style.transform = `translateY(${(1 - lp) * 160 + Math.sin(lt * 1.3) * 5}px)`;
+  $('laptop').style.opacity = lp;
+  const pp = E.outQuint(seg(t, 44.75, 45.6));
+  $('phone').style.transform = `translate(${(1 - pp) * 220}px, ${Math.sin(lt * 1.3 + 1.4) * 7}px) rotate(${(1 - pp) * 10 + 2}deg)`;
+  $('phone').style.opacity = pp;
+  fadeUp($('dl1'), t, 45.3, .6, 10); fadeUp($('dl2'), t, 45.5, .6, 10);
+  // screens change on the bar (every 1 s), cross-fading over 0.25 s
+  const swap = (els, offset) => els.forEach((im, i) => {
+    const k = Math.floor(lt + offset);
+    const f = seg(lt + offset - Math.floor(lt + offset), 0, .25);
+    const cur = ((k % els.length) + els.length) % els.length;
+    const prev = (cur - 1 + els.length) % els.length;
+    im.style.opacity = i === cur ? f : i === prev ? 1 : 0;
+    im.style.zIndex = i === cur ? 2 : 1;
+    im.style.transform = `scale(${1.04 + ((lt + offset) % 1) * .04})`;
+  });
+  swap(lapEls, 0); swap(phEls, .5);
+}
+
+function S13(t) {
+  const el = $('s13'); const on = t > 49.85 && t < 54.02; vis(el, on); if (!on) return;
+  zoomXf(el, t, 50, 54, { zout: false });
+  fadeUp($('s13eb'), t, 50.1, .6, 14);
+  rise($('s13t'), t, 50.15, .8);
+  featEls.forEach((f, i) => {
+    const a = 50.5 + i * .5;
+    const p = E.outQuint(seg(t, a, a + .8));
+    f.style.transform = `translateX(${(1 - p) * -120}px)`;
+    f.style.opacity = p;
+    const ic = f.querySelector('.ic');
+    const ip = E.outBack(seg(t, a + .15, a + .65));
+    ic.style.transform = `scale(${ip}) rotate(${(1 - ip) * -30}deg)`;
+  });
+}
+
+function S14(t) {
+  const el = $('s14'); const on = t > 53.98; vis(el, on); if (!on) return;
+  settle(el, t, 54);
+  const lp = E.outBack(seg(t, 54.2, 54.9));
+  $('s14logo').style.transform = `scale(${lp * 1.1})`;
+  $('s14logo').style.opacity = clamp(lp * 2);
+  letters(s14letters, t, 54.5, .06);
+  fadeUp($('s14tag'), t, 55.3, .7);
+  const cp = E.outBack(seg(t, 55.8, 56.5));
+  $('cta').style.transform = `scale(${lerp(.8, 1, cp)})`;
+  $('cta').style.opacity = clamp(cp * 1.5);
+  const glow = .35 + Math.sin((t - 56) * Math.PI) * .15;
+  $('cta').style.boxShadow = `0 0 ${60 + glow * 60}px rgba(139,92,246,${glow})`;
+  fadeUp($('meta'), t, 56.4, .7, 12);
+}
+
+function renderFrame(t) {
+  renderBg(t);
+  S1(t); S2(t); S3(t); S4(t); Games(t); S11(t); S12(t); S13(t); S14(t);
+  renderSwipe(t);
+  // fade from / to black
+  $('fade').style.opacity = Math.max(1 - seg(t, 0, .45), E.inOutCubic(seg(t, 59.1, 60)));
+  gctx.putImageData(grainFrames[Math.floor(t * 30) % grainFrames.length], 0, 0);
+}
+window.renderFrame = renderFrame;
+
+// ---------------------------------------------------------------- boot
+(async () => {
+  await document.fonts.ready;
+  await Promise.all([...document.images].map(im => im.decode().catch(() => {})));
+  cardEls.forEach(c => fitText(c.title, 920));
+  fitText($('s2b'), 900);
+  renderFrame(0);
+  window.__ready = true;
+})();
+</script>
+</body>
+</html>
