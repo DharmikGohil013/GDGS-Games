@@ -2,8 +2,8 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { games } from '../src/data/games.js';
 import { getGuide } from '../src/data/gameGuides.js';
-import { PAGE_SEO, buildGameSEO, normalizeGoogleStructuredData } from '../src/utils/seo.js';
-import { IW_PAGE_SEO } from '../src/components/infiniteWorldPages.js';
+import { PAGE_SEO, buildGameSEO, buildGameSubpageSEO, normalizeGoogleStructuredData } from '../src/utils/seo.js';
+import { SUBPAGE_TYPES, getSubpageData } from '../src/data/gameSubpagesData.js';
 
 const outputRoot = join(process.cwd(), 'dist');
 const sourceHtml = await readFile(join(outputRoot, 'index.html'), 'utf8');
@@ -57,6 +57,50 @@ function renderPage(html, seo) {
 }
 
 function renderStaticContent(seo) {
+  // Check game subpages first: /games/:id/:subpage/
+  const subpageMatch = seo.url.match(/^\/games\/([^/]+)\/([^/]+)\/$/);
+  if (subpageMatch) {
+    const game = games.find((g) => g.id === subpageMatch[1]);
+    const subpageType = subpageMatch[2];
+    if (game) {
+      const data = getSubpageData(game, subpageType);
+      const gameUrl = `/games/${game.id}/`;
+      const navLinks = SUBPAGE_TYPES.map((t) => `<a href="/games/${game.id}/${t.id}/">${escapeHtml(t.label)}</a>`).join(' | ');
+      let detailHtml = '';
+
+      if (subpageType === 'what-is') {
+        const feats = (data.coreFeatures || []).map((f) => `<li><strong>${escapeHtml(f.title)}:</strong> ${escapeHtml(f.desc)}</li>`).join('');
+        const why = (data.whyPlay || []).map((w) => `<li>${escapeHtml(w)}</li>`).join('');
+        detailHtml = `<h2>Key Features</h2><ul>${feats}</ul>${why ? `<h2>Why Play</h2><ul>${why}</ul>` : ''}`;
+      } else if (subpageType === 'about') {
+        detailHtml = `<h2>Lore & Setting</h2><p>${escapeHtml(data.lore || '')}</p><h2>Mechanics & Technology</h2><p>${escapeHtml(data.mechanics || '')}</p><p>${escapeHtml(data.tech || '')}</p>`;
+      } else if (subpageType === 'tutorial') {
+        const steps = (data.quickStart || []).map((s) => `<li><strong>Step ${escapeHtml(s.step)} — ${escapeHtml(s.title)}:</strong> ${escapeHtml(s.desc)}</li>`).join('');
+        const controls = (data.controls || []).map((c) => `<li><strong>${escapeHtml(c.key)}:</strong> ${escapeHtml(c.action)} (${escapeHtml(c.tip || '')})</li>`).join('');
+        const tips = (data.proTips || []).map((t) => `<li>${escapeHtml(t)}</li>`).join('');
+        detailHtml = `<h2>Quick Start Guide</h2><ol>${steps}</ol><h2>Controls</h2><ul>${controls}</ul>${tips ? `<h2>Pro Tips</h2><ul>${tips}</ul>` : ''}`;
+      } else if (subpageType === 'support') {
+        const faqs = (data.faqs || []).map((f) => `<h3>${escapeHtml(f.q)}</h3><p>${escapeHtml(f.a)}</p>`).join('');
+        detailHtml = `<h2>Frequently Asked Questions</h2>${faqs}`;
+      } else if (subpageType === 'terms' || subpageType === 'privacy') {
+        const secs = (data.sections || []).map((s) => `<h2>${escapeHtml(s.title)}</h2><p>${escapeHtml(s.content)}</p>`).join('');
+        detailHtml = secs;
+      }
+
+      return `<article aria-label="${escapeHtml(game.title)} ${escapeHtml(subpageType)}">
+        <header>
+          <p><a href="/">Playzy Home</a> &gt; <a href="${gameUrl}">${escapeHtml(game.title)}</a> &gt; ${escapeHtml(subpageType)}</p>
+          <h1>${escapeHtml(data.headline || seo.title)}</h1>
+          <p>${escapeHtml(data.summary || seo.description)}</p>
+          <nav aria-label="Game Pages">${navLinks} | <a href="${gameUrl}">Play ${escapeHtml(game.title)}</a></nav>
+        </header>
+        ${detailHtml}
+        <p><a href="${gameUrl}">Play ${escapeHtml(game.title)} Now in Browser</a></p>
+      </article>`;
+    }
+  }
+
+  // Check main game page: /games/:id/
   const game = games.find((item) => item.isPlayable && seo.url === `/games/${item.id}/`);
   if (game) {
     const guide = getGuide(game);
@@ -73,11 +117,19 @@ function renderStaticContent(seo) {
   return `<section aria-label="${escapeHtml(seo.title)}"><h1>${escapeHtml(seo.title.split(' | ')[0].split(' — ')[0])}</h1><p>${escapeHtml(seo.description)}</p><p><a href="/">Browse free browser games</a></p></section>`;
 }
 
+// Build complete list of all pages (Home, Info, Play, and all 6 subpages for all games)
+const gameSubpages = [];
+for (const game of games.filter((g) => g.isPlayable)) {
+  for (const type of SUBPAGE_TYPES) {
+    gameSubpages.push(buildGameSubpageSEO(game, type.id));
+  }
+}
+
 const pages = [
   PAGE_SEO.home,
   ...['about', 'terms', 'privacy', 'contact'].map((key) => PAGE_SEO[key]),
   ...games.filter((game) => game.isPlayable && !game.url).map(buildGameSEO),
-  ...Object.values(IW_PAGE_SEO),
+  ...gameSubpages,
 ];
 
 for (const seo of pages) {

@@ -34,6 +34,7 @@ function canonicalPath(url = '/') {
     const route = legacy[1];
     if (route.startsWith('play/')) return `/games/${route.slice(5).replace(/\/?$/, '/')}`;
     if (route === 'about' || route === 'terms' || route === 'privacy' || route === 'contact') return `/${route}/`;
+    if (route.startsWith('games/')) return `/${route.replace(/\/?$/, '/')}`;
     if (route.startsWith('infinite-world/')) return `/games/${route.replace(/\/?$/, '/')}`;
   }
   return pathOnly.endsWith('/') ? pathOnly : `${pathOnly}/`;
@@ -261,5 +262,76 @@ export function buildGameSEO(game) {
         }
       ]
     } : null
+  };
+}
+
+export function buildGameSubpageSEO(game, subpageType) {
+  const gameName = game.title || game.id.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+  const category = (game.category || 'arcade').charAt(0).toUpperCase() + (game.category || 'arcade').slice(1);
+  const subpagePath = `/games/${game.id}/${subpageType}/`;
+  const gameUrl = `${BASE_URL}/games/${game.id}/`;
+  const subpageUrl = `${BASE_URL}${subpagePath}`;
+
+  const titles = {
+    'what-is': `What is ${gameName}? Game Concept, Overview & Features | Playzy`,
+    about: `About ${gameName} — Deep Lore, Mechanics & Engine Details | Playzy`,
+    tutorial: `How to Play ${gameName} — Walkthrough, Controls & Tips | Playzy`,
+    support: `${gameName} Support, Help Center & FAQs | Playzy`,
+    terms: `${gameName} Terms & Conditions — Rules of Play | Playzy`,
+    privacy: `${gameName} Privacy Policy & Data Usage | Playzy`,
+  };
+
+  const descriptions = {
+    'what-is': `Discover what ${gameName} is all about. Explore core gameplay features, tech specifications, and why you should play this free ${category.toLowerCase()} browser game on Playzy.`,
+    about: `Learn about the design, lore, technology stack, and game mechanics behind ${gameName}, a free ${category.toLowerCase()} game on Playzy.`,
+    tutorial: `Master ${gameName} with our complete beginner tutorial, keyboard and touch control mappings, combo secrets, and expert survival strategies.`,
+    support: `Need help with ${gameName}? Read troubleshooting guides, browser compatibility advice, and frequently asked questions or contact developer support.`,
+    terms: `Terms and conditions for playing ${gameName} on Playzy. Understand fair play rules, virtual progression policies, and licensing terms.`,
+    privacy: `Privacy policy for ${gameName}. Read about local storage data, zero third-party tracking, and family-friendly COPPA/GDPR compliance.`,
+  };
+
+  const schemaTypes = {
+    'what-is': 'ItemPage',
+    about: 'AboutPage',
+    tutorial: 'TechArticle',
+    support: 'ContactPage',
+    terms: 'WebPage',
+    privacy: 'WebPage',
+  };
+
+  const labels = {
+    'what-is': 'What is this game?',
+    about: 'About this game',
+    tutorial: 'Tutorial & Guide',
+    support: 'Support & FAQs',
+    terms: 'Terms & Conditions',
+    privacy: 'Privacy Policy',
+  };
+
+  const pageTitle = titles[subpageType] || `${gameName} — ${subpageType} | Playzy`;
+  const pageDesc = descriptions[subpageType] || `Documentation and guides for ${gameName} on Playzy.`;
+
+  return {
+    title: pageTitle,
+    description: pageDesc,
+    url: subpagePath,
+    robots: 'max-image-preview:large',
+    image: game.image || null,
+    type: 'website',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': schemaTypes[subpageType] || 'WebPage',
+      name: pageTitle,
+      description: pageDesc,
+      url: subpageUrl,
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${BASE_URL}/` },
+          { '@type': 'ListItem', position: 2, name: gameName, item: gameUrl },
+          { '@type': 'ListItem', position: 3, name: labels[subpageType] || subpageType, item: subpageUrl },
+        ],
+      },
+    },
   };
 }

@@ -7,11 +7,13 @@ import './styles/discovery-grid.css';
 import './styles/animations.css';
 import './styles/pages.css';
 import './styles/game-ui.css';
+import './styles/game-subpages.css';
 
 import gsap from 'gsap';
 
-import { updateSEO, PAGE_SEO, buildGameSEO } from './utils/seo.js';
+import { updateSEO, PAGE_SEO, buildGameSEO, buildGameSubpageSEO } from './utils/seo.js';
 import { games } from './data/games.js';
+import { SUBPAGE_TYPES, SUBPAGE_ALIASES } from './data/gameSubpagesData.js';
 
 import { initTheme } from './core/theme.js';
 import { runUnmounts } from './core/lifecycle.js';
@@ -29,7 +31,7 @@ import { createAboutPage } from './components/aboutPage.js';
 import { createTermsPage } from './components/termsPage.js';
 import { createPrivacyPage } from './components/privacyPage.js';
 import { createContactPage } from './components/contactPage.js';
-import { createIWPrivacyPage, createIWTermsPage, createIWSupportPage, IW_PAGE_SEO } from './components/infiniteWorldPages.js';
+import { createGameSubpage } from './components/gameSubpage.js';
 import { createPlayPage, destroyActiveGame, siteToast } from './components/playPage.js';
 
 window.gsap = gsap;
@@ -68,37 +70,67 @@ function renderPage() {
   runUnmounts();
   app.innerHTML = '';
 
-  const pathname = window.location.pathname.replace(/^\/+|\/+$/g, '');
-  const hash = pathname
-    ? pathname.startsWith('games/infinite-world/')
-      ? pathname.slice('games/'.length)
-      : pathname.startsWith('games/')
-        ? `play/${pathname.slice('games/'.length)}`
-        : pathname
-    : (window.location.hash || '#/').replace('#', '');
+  const cleanPath = (window.location.pathname || '').replace(/^\/+|\/+$/g, '');
+  const cleanHash = (window.location.hash || '').replace(/^#\/?/, '').replace(/\/+$/, '');
+  const route = cleanPath || cleanHash || '';
 
-  if (hash.startsWith('/play/') || hash.startsWith('play/')) {
-    renderPlayPage(hash.replace(/^\/?play\//, ''));
+  // Check for game routes: games/:gameId or games/:gameId/:subpage or play/:gameId
+  if (route.startsWith('games/') || route.startsWith('play/')) {
+    const rawSegments = route.replace(/^(games|play)\//, '').split('/');
+    const gameId = rawSegments[0];
+    const subpageRaw = rawSegments[1] ? rawSegments[1].toLowerCase() : null;
+
+    if (subpageRaw) {
+      const normalizedSubpage = SUBPAGE_ALIASES[subpageRaw] || subpageRaw;
+      const isValidSubpage = SUBPAGE_TYPES.some((t) => t.id === normalizedSubpage);
+      const game = games.find((g) => g.id === gameId);
+
+      if (game && isValidSubpage) {
+        app.appendChild(createNavbar());
+        const seo = buildGameSubpageSEO(game, normalizedSubpage);
+        updateSEO(seo);
+        renderSubPage(createGameSubpage(game, normalizedSubpage), seo.title);
+        app.appendChild(createFooter());
+        window.scrollTo({ top: 0, behavior: 'instant' });
+        animatePageEntrance();
+        return;
+      }
+    }
+
+    // Otherwise render game play page
+    renderPlayPage(gameId);
     return;
+  }
+
+  // Check for legacy infinite-world subpage hash (e.g. infinite-world/privacy)
+  if (route.startsWith('infinite-world/')) {
+    const subpageRaw = route.split('/')[1];
+    const normalizedSubpage = SUBPAGE_ALIASES[subpageRaw] || subpageRaw;
+    const game = games.find((g) => g.id === 'infinite-world');
+    if (game && SUBPAGE_TYPES.some((t) => t.id === normalizedSubpage)) {
+      app.appendChild(createNavbar());
+      const seo = buildGameSubpageSEO(game, normalizedSubpage);
+      updateSEO(seo);
+      renderSubPage(createGameSubpage(game, normalizedSubpage), seo.title);
+      app.appendChild(createFooter());
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      animatePageEntrance();
+      return;
+    }
   }
 
   app.appendChild(createNavbar());
 
-  if (hash === 'about') {
+  if (route === 'about') {
     updateSEO(PAGE_SEO.about);
     renderSubPage(createAboutPage(), PAGE_SEO.about.title);
-  } else if (hash === 'terms') {
+  } else if (route === 'terms') {
     updateSEO(PAGE_SEO.terms);
     renderSubPage(createTermsPage(), PAGE_SEO.terms.title);
-  } else if (hash === 'privacy') {
+  } else if (route === 'privacy') {
     updateSEO(PAGE_SEO.privacy);
     renderSubPage(createPrivacyPage(), PAGE_SEO.privacy.title);
-  } else if (hash.startsWith('infinite-world/') && IW_PAGE_SEO[hash.split('/')[1]]) {
-    const kind = hash.split('/')[1];
-    const create = { privacy: createIWPrivacyPage, terms: createIWTermsPage, support: createIWSupportPage }[kind];
-    updateSEO(IW_PAGE_SEO[kind]);
-    renderSubPage(create(), IW_PAGE_SEO[kind].title);
-  } else if (hash === 'contact') {
+  } else if (route === 'contact') {
     updateSEO(PAGE_SEO.contact);
     renderSubPage(createContactPage(), PAGE_SEO.contact.title);
   } else {
@@ -129,7 +161,14 @@ function getLegacyHashRedirectTarget() {
 
   if (legacyPages[route]) return legacyPages[route];
 
-  const playRoute = route.match(/^play\/([a-z0-9-]+)$/i);
+  // Game subpage hash: games/:gameId/:subpage
+  const gameSubRoute = route.match(/^games\/([a-z0-9-]+)\/([a-z0-9-]+)$/i);
+  if (gameSubRoute) {
+    const subpage = SUBPAGE_ALIASES[gameSubRoute[2]] || gameSubRoute[2];
+    return `/games/${gameSubRoute[1]}/${subpage}/`;
+  }
+
+  const playRoute = route.match(/^(?:play|games)\/([a-z0-9-]+)$/i);
   if (!playRoute) return null;
 
   const game = games.find((item) => item.id === playRoute[1] && item.isPlayable);
@@ -227,8 +266,8 @@ function animatePageEntrance() {
       observer.observe(statsOuter);
     }
   } else if (currentPage === 'sub') {
-    gsap.from('.page-hero', { y: 26, opacity: 0, duration: 0.6, delay: 0.1, ease: 'power3.out' });
-    gsap.from('.page-section', { y: 18, opacity: 0, duration: 0.5, stagger: 0.09, delay: 0.25, ease: 'power2.out' });
+    gsap.from('.page-hero, .game-subpage-hero', { y: 26, opacity: 0, duration: 0.6, delay: 0.1, ease: 'power3.out' });
+    gsap.from('.page-section, .game-subpage-content, .game-subnav', { y: 18, opacity: 0, duration: 0.5, stagger: 0.09, delay: 0.2, ease: 'power2.out' });
   }
 }
 

@@ -149,12 +149,17 @@ export function createPlayPage(gameId) {
             </ul>` : ''}
 
           <meta itemprop="tool" content="Web Browser">
-          ${game.legal ? `
-            <p class="play-legal-links">
-              <a href="/games/infinite-world/privacy/">Privacy</a> ·
-              <a href="/games/infinite-world/terms/">Terms</a> ·
-              <a href="/games/infinite-world/support/">Support</a>
-            </p>` : ''}
+          <div class="play-game-guides-nav">
+            <span class="play-guides-label">Game Guides & Documentation:</span>
+            <div class="play-guides-links">
+              <a href="/games/${game.id}/what-is/">What is ${gameName}?</a>
+              <a href="/games/${game.id}/about/">About</a>
+              <a href="/games/${game.id}/tutorial/">Tutorial & Controls</a>
+              <a href="/games/${game.id}/support/">Support & FAQs</a>
+              <a href="/games/${game.id}/terms/">Terms</a>
+              <a href="/games/${game.id}/privacy/">Privacy Policy</a>
+            </div>
+          </div>
           <meta itemprop="supply" content="Free to play — no download required">
         </article>
 
