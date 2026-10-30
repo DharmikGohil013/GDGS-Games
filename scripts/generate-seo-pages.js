@@ -100,6 +100,14 @@ for (const embeddedSlug of ['monsoon-rickshaw-rush', 'voxelcraft', 'apex-velocit
   } catch {}
 }
 
+for (const embeddedSlug of ['among-us-pixel-outpost', 'bloom-loop', 'cash-tycoon', 'flappy-bird-3d', 'pixels-farm-craft', 'shop-tycoon']) {
+  const embeddedGamePath = join(outputRoot, 'embedded', embeddedSlug, 'index.html');
+  let embeddedGameHtml = await readFile(embeddedGamePath, 'utf8');
+  embeddedGameHtml = ensureHeadTag(embeddedGameHtml, /<link\s+rel="canonical"[^>]*>/i, `<link rel="canonical" href="${baseUrl}/games/${embeddedSlug}/">`);
+  embeddedGameHtml = ensureHeadTag(embeddedGameHtml, /<meta\s+name="robots"[^>]*>/i, '<meta name="robots" content="max-image-preview:large">');
+  await writeFile(embeddedGamePath, embeddedGameHtml);
+}
+
 const sitemapPages = pages.filter((seo) => !String(seo.robots || '').includes('noindex'));
 const sitemapEntries = sitemapPages.map((seo) => {
   const location = new URL(seo.url, `${baseUrl}/`).href;

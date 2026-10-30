@@ -2,6 +2,42 @@
 // Used by the play page. Any id missing here falls back to generic text.
 
 export const GAME_GUIDES = {
+  'among-us-pixel-outpost': {
+    tagline: 'Solve a pixel space mystery with AI crewmates.',
+    description: 'Explore a pixel space outpost, complete crew tasks, watch for sabotage, and vote in meetings against computer-controlled crewmates.',
+    controls: [{ key: 'Keyboard / Mouse', label: 'Move, interact, and choose meeting actions' }],
+    tips: ['Finish tasks while keeping track of suspicious crew behaviour.'],
+  },
+  'bloom-loop': {
+    tagline: 'Guide bees through a colourful garden puzzle.',
+    description: 'Direct bee drones around a vine loop and match colours to clear flower tiles with pollen bursts.',
+    controls: [{ key: 'Mouse / Tap', label: 'Choose bees and garden actions' }],
+    tips: ['Plan each bee route around the flower colours ahead.'],
+  },
+  'cash-tycoon': {
+    tagline: 'Grow a business tower into a fortune.',
+    description: 'Open businesses, hire managers, collect profits, and expand your tower in a colourful idle tycoon game.',
+    controls: [{ key: 'Mouse / Tap', label: 'Manage businesses and upgrades' }],
+    tips: ['Reinvest early profits to grow your income.'],
+  },
+  'flappy-bird-3d': {
+    tagline: 'Fly through a colourful 3D obstacle course.',
+    description: 'Guide a bird through a 3D world, time each flap, and pass between obstacles to build a high score.',
+    controls: [{ key: 'Space / Click / Tap', label: 'Flap and stay airborne' }],
+    tips: ['Use short, steady taps to keep your height under control.'],
+  },
+  'pixels-farm-craft': {
+    tagline: 'Farm, craft, and explore a pixel world.',
+    description: 'Grow crops, gather resources, craft supplies, and complete quests in a retro pixel adventure.',
+    controls: [{ key: 'Keyboard / Mouse', label: 'Move, interact, and manage your farm' }],
+    tips: ['Watch your energy while planning crop and crafting tasks.'],
+  },
+  'shop-tycoon': {
+    tagline: 'Build and manage your own market.',
+    description: 'Place shop fixtures, stock products, set prices, and manage staff in an isometric store simulation.',
+    controls: [{ key: 'Mouse / Tap', label: 'Build, stock, and manage your shop' }],
+    tips: ['Keep popular products stocked as your shop expands.'],
+  },
   'apex-velocity': {
     tagline: 'F1 supercar simulator with custom circuit curves studio and garage tuning.',
     description: 'Apex Velocity is an open-world supercar driving simulator featuring realistic high-speed physics, custom spline track creator and curves studio, dynamic weather, day-night cycle, performance garage tuning, and real-time F1 telemetry. Race iconic tracks like Spa, Monza, Silverstone, and Suzuka or engineer and test your own circuits.',

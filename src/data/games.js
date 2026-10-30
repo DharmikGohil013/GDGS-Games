@@ -9,6 +9,12 @@ const capturedGames = new Set([
 ]);
 
 export const games = [
+    { id: 'among-us-pixel-outpost', title: 'Among Us: Pixel Outpost', category: 'strategy', isPlayable: true, isNew: true, metaNote: 'Pixel mystery with AI crewmates', color: 'coral', iconType: 'star', engine: 'html5', image: '/images/among-us-pixel-outpost.svg' },
+    { id: 'bloom-loop', title: 'Bloom Loop: Garden Colour Flow', category: 'puzzle', isPlayable: true, isNew: true, metaNote: 'Garden colour puzzle', color: 'green', iconType: 'puzzle', engine: 'html5', image: '/images/bloom-loop.svg' },
+    { id: 'cash-tycoon', title: 'Cash Tycoon: Fame & Fortune', category: 'simulation', isPlayable: true, isNew: true, metaNote: 'Build a business tower', color: 'gold', iconType: 'stack', engine: 'html5', image: '/images/cash-tycoon.svg' },
+    { id: 'flappy-bird-3d', title: 'Flappy Bird 3D', category: 'arcade', isPlayable: true, isNew: true, metaNote: 'Colourful 3D flying arcade', color: 'blue', iconType: 'ball', engine: 'three', image: '/images/flappy-bird-3d.svg' },
+    { id: 'pixels-farm-craft', title: 'Pixels: Farm, Craft & Adventure', category: 'simulation', isPlayable: true, isNew: true, metaNote: 'Farm and explore a pixel world', color: 'green', iconType: 'platform', engine: 'html5', image: '/images/pixels-farm-craft.svg' },
+    { id: 'shop-tycoon', title: 'Shop Tycoon: Market Empire', category: 'simulation', isPlayable: true, isNew: true, metaNote: 'Run your own market', color: 'purple', iconType: 'stack', engine: 'html5', image: '/images/shop-tycoon.svg' },
     { id: 'apex-velocity', title: 'Apex Velocity: F1 Supercar Studio', category: 'racing', isPlayable: true, isNew: true, isHot: true, metaNote: 'F1 supercar simulator & circuit builder', color: 'coral', iconType: 'car', engine: 'three', image: '/images/apex-velocity.png' },
     { id: 'voxelcraft', title: 'VoxelCraft: Survival & Building', category: '3d', isPlayable: true, isNew: true, metaNote: 'Survival & creative sandbox', color: 'green', iconType: 'stack', engine: 'three', image: '/images/voxelcraft.svg' },
     { id: 'infinite-world', title: 'Infinite World', category: 'multiplayer', isPlayable: true, isNew: true, metaNote: 'Co-op city builder', color: 'blue', iconType: 'star', engine: 'three', isHot: true, image: '/images/infinite-world-city.jpg', legal: true },

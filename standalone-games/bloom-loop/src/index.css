@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Fredoka', 'Outfit', sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    background-color: #264627;
+    overflow-x: hidden;
+  }
+}
+
+@keyframes wing-flutter-left {
+  0%, 100% { transform: rotate(-5deg) scaleX(1); }
+  50% { transform: rotate(18deg) scaleX(0.75); }
+}
+
+@keyframes wing-flutter-right {
+  0%, 100% { transform: rotate(5deg) scaleX(1); }
+  50% { transform: rotate(-18deg) scaleX(0.75); }
+}
+
+@keyframes gentle-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.6); opacity: 1; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+@keyframes ray-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-wing-left {
+  animation: wing-flutter-left 0.15s ease-in-out infinite;
+  transform-origin: bottom right;
+}
+
+.animate-wing-right {
+  animation: wing-flutter-right 0.15s ease-in-out infinite;
+  transform-origin: bottom left;
+}
+
+.animate-gentle-bob {
+  animation: gentle-bob 2.2s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: ray-spin 20s linear infinite;
+}
+
+/* Clay button press feeling */
+.clay-button {
+  transition: transform 0.08s ease, filter 0.08s ease, box-shadow 0.08s ease;
+  box-shadow: 0 4px 0 #1b381c, 0 8px 16px rgba(0,0,0,0.25);
+}
+
+.clay-button:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #1b381c, 0 4px 8px rgba(0,0,0,0.2);
+}

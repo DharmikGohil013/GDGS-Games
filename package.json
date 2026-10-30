@@ -5,25 +5,33 @@
   "description": "Playzy — free browser games you can play online",
   "type": "module",
   "scripts": {
+    "predev": "npm run build:standalone",
     "dev": "vite",
     "build:voxelcraft": "node voxelcraft_-survival-&-building/node_modules/vite/bin/vite.js build voxelcraft_-survival-&-building",
     "build:apex-velocity": "node \"apex-velocity-·-f1-supercar-studio-&-circuit-builder/node_modules/vite/bin/vite.js\" build \"apex-velocity-·-f1-supercar-studio-&-circuit-builder\"",
-    "build": "vite build && node scripts/generate-seo-pages.js",
+    "build:standalone": "node scripts/build-standalone-games.js",
+    "build": "npm run build:standalone && vite build && node scripts/generate-seo-pages.js",
     "preview": "vite preview"
   },
   "dependencies": {
     "axios": "^1.7.9",
+    "canvas-confetti": "^1.9.4",
     "gsap": "^3.12.5",
     "howler": "^2.2.4",
     "lucide": "^0.460.0",
+    "lucide-react": "^0.546.0",
     "phaser": "^3.80.1",
     "pixi.js": "^7.4.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
     "socket.io-client": "^4.8.1",
     "three": "^0.170.0",
     "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@phaserjs/editor-mcp-server": "^1.0.6",
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-react": "^4.7.0",
     "vite": "^6.0.7"
   }
 }

@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@layer base {
+  * {
+    image-rendering: pixelated;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  body {
+    font-family: 'Press Start 2P', monospace, system-ui;
+    touch-action: manipulation;
+    background-color: #0d131a;
+  }
+}
+
+.pixel-font {
+  font-family: 'Press Start 2P', monospace;
+}
+
+.pixel-sub {
+  font-family: 'VT323', monospace;
+}
+
+/* Custom retro RPG borders for Pixels aesthetic */
+.pixels-box {
+  background: #2b1f1d;
+  border: 4px solid #5a3921;
+  box-shadow: inset -2px -2px 0px #1a110e, inset 2px 2px 0px #825835, 0 4px 12px rgba(0,0,0,0.6);
+}
+
+.pixels-box-light {
+  background: #d8c39e;
+  border: 4px solid #8c6747;
+  color: #2e1d11;
+  box-shadow: inset -2px -2px 0px #634329, inset 2px 2px 0px #faebcf, 0 4px 10px rgba(0,0,0,0.4);
+}
+
+.pixels-btn {
+  background: #e6a72e;
+  border: 3px solid #6b4009;
+  box-shadow: inset -2px -2px 0px #b07412, inset 2px 2px 0px #ffd966, 0 2px 4px rgba(0,0,0,0.4);
+  color: #2b1500;
+  transition: transform 0.05s active;
+}
+
+.pixels-btn:hover {
+  background: #f8b83e;
+}
+
+.pixels-btn:active {
+  transform: translateY(2px);
+  box-shadow: inset 2px 2px 0px #b07412, 0 0px 0px rgba(0,0,0,0.4);
+}
+
+.pixels-slot {
+  background: #3c2922;
+  border: 2px solid #201410;
+  box-shadow: inset 2px 2px 0px #140b08, inset -1px -1px 0px #5c3e34;
+}
+
+.pixels-slot.active {
+  border-color: #f7d046;
+  box-shadow: 0 0 8px #f7d046, inset 2px 2px 0px #140b08;
+}

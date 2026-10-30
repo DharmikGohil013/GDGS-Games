@@ -12,6 +12,12 @@ import { onUnmount } from '../core/lifecycle.js';
 
 // Lazy-load game modules so the homepage never pays for Phaser or Three.
 const gameModules = {
+  'among-us-pixel-outpost': () => import('../games/standalone.js'),
+  'bloom-loop': () => import('../games/standalone.js'),
+  'cash-tycoon': () => import('../games/standalone.js'),
+  'flappy-bird-3d': () => import('../games/standalone.js'),
+  'pixels-farm-craft': () => import('../games/standalone.js'),
+  'shop-tycoon': () => import('../games/standalone.js'),
   'apex-velocity': () => import('../games/apex-velocity.js'),
   'voxelcraft': () => import('../games/voxelcraft.js'),
   'gravity-switch': () => import('../games/gravity-switch.js'),
@@ -288,7 +294,7 @@ export function createPlayPage(gameId) {
       const module = await gameModules[game.id]();
       if (loadingEl) loadingEl.style.display = 'none';
       activeGameModule = module;
-      module.initGame(viewport);
+      module.initGame(viewport, game);
       module.setSoundEnabled?.(isSoundOn());
     } catch (err) {
       console.error('Failed to load game module:', err);

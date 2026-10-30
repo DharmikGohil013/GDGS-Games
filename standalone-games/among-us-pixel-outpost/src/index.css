@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .font-pixel {
+    font-family: 'Press Start 2P', ui-monospace, 'Courier New', monospace;
+    letter-spacing: -0.05em;
+  }
+  .font-retro {
+    font-family: 'Silkscreen', ui-monospace, monospace;
+  }
+  .pixelated {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Custom scrollbars for retro chat */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #111827;
+}
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 0px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
+}
