@@ -9,7 +9,7 @@
     "dev": "vite",
     "build:voxelcraft": "node voxelcraft_-survival-&-building/node_modules/vite/bin/vite.js build voxelcraft_-survival-&-building",
     "build:apex-velocity": "node \"apex-velocity-·-f1-supercar-studio-&-circuit-builder/node_modules/vite/bin/vite.js\" build \"apex-velocity-·-f1-supercar-studio-&-circuit-builder\"",
-    "build:standalone": "node scripts/build-standalone-games.js",
+    "build:standalone": "node --max-old-space-size=4096 scripts/build-standalone-games.js",
     "build": "npm run build:standalone && vite build && node scripts/generate-seo-pages.js",
     "preview": "vite preview"
   },

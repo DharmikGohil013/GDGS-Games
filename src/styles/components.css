@@ -455,8 +455,8 @@
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(185px, 16vw, 230px), 1fr));
+  gap: clamp(12px, 1.4vw, 18px);
 }
 
 /* ─────────────── Game card ─────────────── */
@@ -1581,7 +1581,7 @@
 .section-head { align-items: center; margin-bottom: 16px; }
 .section-head h2 { font-size: clamp(20px, 2.4vw, 24px); letter-spacing: -0.035em; }
 .game-count { font-size: 12px; }
-.card-grid { grid-template-columns: repeat(auto-fill, minmax(204px, 1fr)); gap: 14px; }
+.card-grid { grid-template-columns: repeat(auto-fill, minmax(clamp(185px, 16vw, 230px), 1fr)); gap: clamp(12px, 1.3vw, 16px); }
 .game-card {
   border-radius: 13px;
   box-shadow: none;
