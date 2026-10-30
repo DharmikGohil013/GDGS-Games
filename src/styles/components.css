@@ -455,7 +455,7 @@
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(clamp(185px, 16vw, 230px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 225px), 1fr));
   gap: clamp(12px, 1.4vw, 18px);
 }
 
@@ -1391,7 +1391,7 @@
   .search-kbd { display: none; }
   .nav-chip-label { display: none; }
   .nav-chip { padding: 0 11px; }
-  .card-grid { grid-template-columns: repeat(auto-fill, minmax(156px, 1fr)); gap: 13px; }
+  .card-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 225px), 1fr)); gap: 13px; }
   .hero { padding: 24px; margin-bottom: 30px; }
   .section { margin-bottom: 36px; }
   .ns-dpad { grid-template-columns: repeat(3, 42px); grid-template-rows: repeat(3, 42px); }
@@ -1402,7 +1402,7 @@
   .search-bar { order: 3; flex-basis: 100%; max-width: none; height: 40px; }
   .nav-spacer { display: none; }
   .nav-actions { margin-left: auto; }
-  .card-grid { grid-template-columns: repeat(2, 1fr); gap: 11px; }
+  .card-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 11px; }
   .card-body { padding: 10px 11px 12px; }
   .card-title { font-size: 13.5px; }
   .hero { padding: 20px; border-radius: var(--radius-lg); }
@@ -1581,7 +1581,7 @@
 .section-head { align-items: center; margin-bottom: 16px; }
 .section-head h2 { font-size: clamp(20px, 2.4vw, 24px); letter-spacing: -0.035em; }
 .game-count { font-size: 12px; }
-.card-grid { grid-template-columns: repeat(auto-fill, minmax(clamp(185px, 16vw, 230px), 1fr)); gap: clamp(12px, 1.3vw, 16px); }
+.card-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 225px), 1fr)); gap: clamp(12px, 1.3vw, 16px); }
 .game-card {
   border-radius: 13px;
   box-shadow: none;
@@ -1610,7 +1610,7 @@
   .hero-copy > div { gap: 12px !important; }
   .hero-controls-row { gap: 9px; }
   .cat-row { margin-bottom: 26px; }
-  .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .card-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 10px; }
   .card-body { padding: 10px 10px 12px; }
   .card-tag { font-size: 9px; padding: 3px 8px; }
   .card-title { font-size: 13px; }
