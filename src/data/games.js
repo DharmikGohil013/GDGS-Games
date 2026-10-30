@@ -1,5 +1,13 @@
 // Keep the public catalogue limited to games visitors can actually play.
 // Generated placeholder titles and invented popularity numbers undermine trust.
+// These previews were captured from the running games, not generated art.
+const capturedGames = new Set([
+    'apex-velocity', 'voxelcraft', 'gravity-switch', 'hextris',
+    'color-switch', 'tower-stacker', 'neon-snake', 'block-merge',
+    'turbo-drift', 'monsoon-rickshaw-rush', 'ball-drop', 'city-sprint',
+    'infinite-runner', 'mario-king', 'gravity-shift',
+]);
+
 export const games = [
     { id: 'apex-velocity', title: 'Apex Velocity: F1 Supercar Studio', category: 'racing', isPlayable: true, isNew: true, isHot: true, metaNote: 'F1 supercar simulator & circuit builder', color: 'coral', iconType: 'car', engine: 'three', image: '/images/apex-velocity.png' },
     { id: 'voxelcraft', title: 'VoxelCraft: Survival & Building', category: '3d', isPlayable: true, isNew: true, metaNote: 'Survival & creative sandbox', color: 'green', iconType: 'stack', engine: 'three', image: '/images/voxelcraft.svg' },
@@ -17,6 +25,11 @@ export const games = [
     { id: 'infinite-runner', title: 'Infinite Runner', category: 'runner', isPlayable: true, color: 'blue', iconType: 'runner', engine: 'phaser', image: '/images/infinite-runner.jpg' },
     { id: 'mario-king', title: 'Mario King', category: 'platformer', isPlayable: true, color: 'gold', iconType: 'platform', engine: 'canvas', isHot: true, image: '/images/mario-king.webp' },
     { id: 'gravity-shift', title: 'Gravity Shift', category: 'arcade', isPlayable: true, url: '/gravity-shift.html', color: 'blue', iconType: 'runner', engine: 'canvas', image: '/images/gravity-switch.jpg' }
-];
+].map((game) => ({
+    ...game,
+    ...(capturedGames.has(game.id) && {
+        previewFrames: [1, 2, 3].map((frame) => `/images/gameplay/${game.id}/${frame}.png`),
+    }),
+}));
 
 export default games;

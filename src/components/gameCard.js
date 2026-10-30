@@ -56,6 +56,7 @@ export function createGameCard(game, opts = {}) {
     <div class="card-art" style="background:${bg}" role="img" aria-hidden="true">
       ${badges.join('')}
       ${artContent}
+      ${game.previewFrames?.length ? `<span class="card-preview-count" aria-hidden="true">+${game.previewFrames.length} gameplay views</span>` : ''}
       ${bestRibbon}
       <span class="card-play"><span>${PLAY_ICON}</span></span>
     </div>
@@ -76,6 +77,47 @@ export function createGameCard(game, opts = {}) {
     if (game.isPlayable) window.location.assign(game.url || `/games/${game.id}/`);
     else window.location.hash = `#/play/${game.id}`;
   });
+
+  // Only capture-backed galleries opt in. Preload after intent and keep the
+  // original thumbnail in place until the next frame has loaded successfully.
+  if (game.image && game.previewFrames?.length) {
+    const thumb = card.querySelector('.card-thumb-img');
+    const frames = [game.image, ...game.previewFrames];
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let timer = null;
+    let frameIndex = 0;
+    let active = false;
+
+    const showFrame = (index) => {
+      const next = new Image();
+      next.onload = () => {
+        if (active && frameIndex === index) thumb.src = frames[index];
+      };
+      next.src = frames[index];
+    };
+    const startPreview = () => {
+      if (active || reducedMotion.matches) return;
+      active = true;
+      frameIndex = 1;
+      showFrame(frameIndex);
+      timer = window.setInterval(() => {
+        if (!card.isConnected) { stopPreview(); return; }
+        frameIndex = (frameIndex + 1) % frames.length;
+        showFrame(frameIndex);
+      }, 1500);
+    };
+    const stopPreview = () => {
+      active = false;
+      window.clearInterval(timer);
+      timer = null;
+      frameIndex = 0;
+      thumb.src = game.image;
+    };
+    card.addEventListener('pointerenter', startPreview);
+    card.addEventListener('pointerleave', stopPreview);
+    card.addEventListener('focus', startPreview);
+    card.addEventListener('blur', stopPreview);
+  }
 
   return card;
 }

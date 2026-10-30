@@ -44,6 +44,22 @@
 .card-grid--discovery .card-badge-play { left: 14px; background: rgba(8, 11, 22, .65); color: #fff; border: 1px solid rgba(255, 255, 255, .24); }
 .card-grid--discovery .card-best { top: 48px; bottom: auto; left: 14px; }
 .card-grid--discovery .card-play { display: none; }
+.card-preview-count {
+  position: absolute;
+  z-index: 3;
+  top: 13px;
+  left: 13px;
+  padding: 5px 9px;
+  border: 1px solid rgba(255, 255, 255, .3);
+  border-radius: 999px;
+  background: rgba(8, 11, 22, .7);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  backdrop-filter: blur(8px);
+}
+.card-badge-play + .card-thumb-img + .card-preview-count { top: 46px; }
+.card-grid--discovery .card-badge-hot + .card-thumb-img + .card-preview-count { top: 13px; }
 .card-description { color: #ddddeb; font-size: 13px; line-height: 1.5; max-width: 34ch; }
 .card-launch {
   position: absolute;
