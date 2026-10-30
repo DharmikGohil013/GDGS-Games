@@ -42,12 +42,15 @@ export function createGameSubpage(game, pageType) {
         <span>${game.title} Gameplay Previews</span>
       </div>
       <div class="game-screenshots-grid">
-        ${screenshots.map((src, i) => `
-          <div class="game-screenshot-card">
-            <img src="${src}" alt="${game.title} screenshot ${i + 1}" loading="lazy" width="640" height="360" />
-            <div class="game-screenshot-caption">In-Game Capture — Frame ${i + 1}</div>
-          </div>
-        `).join('')}
+        ${screenshots.map((src, i) => {
+          const caption = (data.screenshotCaptions && data.screenshotCaptions[i]) || `In-Game Capture — Frame ${i + 1}`;
+          return `
+            <div class="game-screenshot-card">
+              <img src="${src}" alt="${game.title} screenshot ${i + 1}" loading="lazy" width="640" height="360" />
+              <div class="game-screenshot-caption">${caption}</div>
+            </div>
+          `;
+        }).join('')}
       </div>
     </div>
   ` : '';
@@ -115,6 +118,13 @@ export function createGameSubpage(game, pageType) {
         <p>${data.tech || ''}</p>
       </section>
 
+      ${data.audio ? `
+        <section class="game-legal-block">
+          <h2>Audio Architecture & Sound Design</h2>
+          <p>${data.audio}</p>
+        </section>
+      ` : ''}
+
       <section class="game-legal-block">
         <h2>Creator & Development Notes</h2>
         <p>${data.developmentNotes || ''}</p>
@@ -162,6 +172,37 @@ export function createGameSubpage(game, pageType) {
           </tbody>
         </table>
       </section>
+
+      ${data.kingdomGuide && data.kingdomGuide.length ? `
+        <section class="game-kingdoms-section" style="margin:30px 0">
+          <h2>Kingdom-by-Kingdom Tactical Guide</h2>
+          <div class="game-features-grid">
+            ${data.kingdomGuide.map((k) => `
+              <article class="game-feature-card">
+                <h3><span>👑</span> ${k.name}</h3>
+                <p><strong>Terrain:</strong> ${k.terrain}</p>
+                <p><strong>Hazards & Enemies:</strong> ${k.hazards}</p>
+                <p><strong>Strategy:</strong> ${k.strategy}</p>
+              </article>
+            `).join('')}
+          </div>
+        </section>
+      ` : ''}
+
+      ${data.bossTactics ? `
+        <section class="game-boss-section" style="margin:30px 0">
+          <h2>Boss Battle Masterclass: Defeating The King</h2>
+          <div class="game-callout tip">
+            <h4>${data.bossTactics.title || 'Boss Battle Guide'}</h4>
+            <p>${data.bossTactics.overview || ''}</p>
+            <ul style="margin-top:12px">
+              ${(data.bossTactics.phases || []).map((p) => `
+                <li><strong>${p.phase}:</strong> ${p.desc}</li>
+              `).join('')}
+            </ul>
+          </div>
+        </section>
+      ` : ''}
 
       ${data.scoring ? `
         <section class="game-legal-block">

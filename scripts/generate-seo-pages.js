@@ -71,17 +71,22 @@ function renderStaticContent(seo) {
       if (subpageType === 'what-is') {
         const feats = (data.coreFeatures || []).map((f) => `<li><strong>${escapeHtml(f.title)}:</strong> ${escapeHtml(f.desc)}</li>`).join('');
         const why = (data.whyPlay || []).map((w) => `<li>${escapeHtml(w)}</li>`).join('');
-        detailHtml = `<h2>Key Features</h2><ul>${feats}</ul>${why ? `<h2>Why Play</h2><ul>${why}</ul>` : ''}`;
+        const specs = data.specs ? Object.entries(data.specs).map(([k, v]) => `<tr><th>${escapeHtml(k)}</th><td>${escapeHtml(v)}</td></tr>`).join('') : '';
+        detailHtml = `<h2>Key Features</h2><ul>${feats}</ul>${specs ? `<h2>Specifications</h2><table>${specs}</table>` : ''}${why ? `<h2>Why Play</h2><ul>${why}</ul>` : ''}`;
       } else if (subpageType === 'about') {
-        detailHtml = `<h2>Lore & Setting</h2><p>${escapeHtml(data.lore || '')}</p><h2>Mechanics & Technology</h2><p>${escapeHtml(data.mechanics || '')}</p><p>${escapeHtml(data.tech || '')}</p>`;
+        detailHtml = `<h2>Lore &amp; Setting</h2><p>${escapeHtml(data.lore || '')}</p><h2>Mechanics &amp; Systems</h2><p>${escapeHtml(data.mechanics || '')}</p><h2>Technology &amp; Engine</h2><p>${escapeHtml(data.tech || '')}</p>${data.audio ? `<h2>Audio Architecture</h2><p>${escapeHtml(data.audio)}</p>` : ''}${data.developmentNotes ? `<h2>Developer Notes</h2><p>${escapeHtml(data.developmentNotes)}</p>` : ''}`;
       } else if (subpageType === 'tutorial') {
         const steps = (data.quickStart || []).map((s) => `<li><strong>Step ${escapeHtml(s.step)} — ${escapeHtml(s.title)}:</strong> ${escapeHtml(s.desc)}</li>`).join('');
         const controls = (data.controls || []).map((c) => `<li><strong>${escapeHtml(c.key)}:</strong> ${escapeHtml(c.action)} (${escapeHtml(c.tip || '')})</li>`).join('');
+        const kingdoms = (data.kingdomGuide || []).map((k) => `<li><strong>${escapeHtml(k.name)}:</strong> ${escapeHtml(k.terrain)} ${escapeHtml(k.hazards)} Strategy: ${escapeHtml(k.strategy)}</li>`).join('');
+        const bossPhases = (data.bossTactics?.phases || []).map((p) => `<li><strong>${escapeHtml(p.phase)}:</strong> ${escapeHtml(p.desc)}</li>`).join('');
         const tips = (data.proTips || []).map((t) => `<li>${escapeHtml(t)}</li>`).join('');
-        detailHtml = `<h2>Quick Start Guide</h2><ol>${steps}</ol><h2>Controls</h2><ul>${controls}</ul>${tips ? `<h2>Pro Tips</h2><ul>${tips}</ul>` : ''}`;
+        const mistakes = (data.mistakes || []).map((m) => `<li><strong>Mistake:</strong> ${escapeHtml(m.mistake)} — <strong>Fix:</strong> ${escapeHtml(m.fix)}</li>`).join('');
+        detailHtml = `<h2>Quick Start Guide</h2><ol>${steps}</ol><h2>Controls</h2><ul>${controls}</ul>${kingdoms ? `<h2>Kingdom-by-Kingdom Walkthrough</h2><ul>${kingdoms}</ul>` : ''}${bossPhases ? `<h2>Boss Tactics: The King</h2><ul>${bossPhases}</ul>` : ''}${data.scoring ? `<h2>Scoring Rules</h2><p>${escapeHtml(data.scoring)}</p>` : ''}${tips ? `<h2>Pro Tips</h2><ul>${tips}</ul>` : ''}${mistakes ? `<h2>Common Mistakes</h2><ul>${mistakes}</ul>` : ''}`;
       } else if (subpageType === 'support') {
         const faqs = (data.faqs || []).map((f) => `<h3>${escapeHtml(f.q)}</h3><p>${escapeHtml(f.a)}</p>`).join('');
-        detailHtml = `<h2>Frequently Asked Questions</h2>${faqs}`;
+        const troubleshooting = (data.troubleshooting || []).map((t) => `<li><strong>Issue:</strong> ${escapeHtml(t.issue)} — <strong>Solution:</strong> ${escapeHtml(t.fix)}</li>`).join('');
+        detailHtml = `<h2>Frequently Asked Questions</h2>${faqs}${troubleshooting ? `<h2>Troubleshooting &amp; Diagnostics</h2><ul>${troubleshooting}</ul>` : ''}`;
       } else if (subpageType === 'terms' || subpageType === 'privacy') {
         const secs = (data.sections || []).map((s) => `<h2>${escapeHtml(s.title)}</h2><p>${escapeHtml(s.content)}</p>`).join('');
         detailHtml = secs;
