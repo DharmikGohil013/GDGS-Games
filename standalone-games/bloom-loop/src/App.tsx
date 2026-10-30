@@ -128,6 +128,14 @@ export default function App() {
     setShowPauseSettings(false);
   }, []);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('autostart') === '1') {
+      if (params.get('skiptutorial') === '1') setShowTutorial(false);
+      startLevel(1);
+    }
+  }, [startLevel]);
+
   // Dispatch bee from dock
   const handleDispatchBee = useCallback((dockIndex: number) => {
     if (gameState.status !== 'playing') return;
