@@ -70,6 +70,11 @@ export interface WholesaleOrder {
 
 export type StaffRole = 'cashier' | 'restocker' | 'cleaner';
 
+export interface GridPoint {
+  x: number;
+  y: number;
+}
+
 export interface StaffMember {
   id: string;
   name: string;
@@ -81,9 +86,29 @@ export interface StaffMember {
   y: number;
   targetX?: number;
   targetY?: number;
+  path?: GridPoint[]; // remaining tiles to walk through, around fixtures
   state: 'idle' | 'walking' | 'working' | 'carrying_box';
   carriedProductId?: string | null;
   carriedAmount?: number;
+  targetLitterId?: string | null;
+  workTimer?: number;
+}
+
+// Wrappers and spills dropped by shoppers. Each one on the floor costs reputation until cleaned.
+export interface Litter {
+  id: string;
+  x: number;
+  y: number;
+  kind: 'wrapper' | 'spill';
+}
+
+export interface DailyGoal {
+  description: string;
+  metric: 'served' | 'revenue' | 'satisfaction';
+  target: number;
+  rewardCash: number;
+  rewardXp: number;
+  completed: boolean;
 }
 
 export type CustomerState = 
@@ -118,10 +143,13 @@ export interface Customer {
   patience: number; // 0 to 100
   budget: number;
   currentThought: string;
-  thoughtTimer: number;
+  thoughtTimer: number; // seconds since currentThought last changed
   walkTimer: number;
+  serviceTimer: number; // seconds spent being served at the front of a checkout queue
+  path?: GridPoint[];
   targetFixtureId?: string | null;
   assignedCheckoutId?: string | null;
+  hasLittered?: boolean;
 }
 
 export interface FloatingNotification {
@@ -144,6 +172,7 @@ export interface DailyLedger {
   customersLost: number;
   satisfactionScore: number; // 1 to 5 stars
   topSellingProduct?: string;
+  goal?: DailyGoal;
 }
 
 export interface StoreUpgrade {

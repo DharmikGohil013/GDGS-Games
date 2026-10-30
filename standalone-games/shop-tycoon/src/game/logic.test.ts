@@ -12,9 +12,11 @@ import {
   calculatePricingElasticity,
   restockShelfFromWarehouse,
   calculateDailySummary,
-  GridBounds
-} from './logic';
-import { PlacedFixture } from './types';
+  findPath,
+  smoothPath,
+  type GridBounds
+} from './logic.ts';
+import type { PlacedFixture } from './types.ts';
 
 test('getRotatedDimensions swaps width and height correctly at 90 and 270 degrees', () => {
   assert.deepEqual(getRotatedDimensions(2, 1, 0), { w: 2, h: 1 });
@@ -63,6 +65,32 @@ test('canPlaceFixture validates boundaries, entrance area, and collisions', () =
   // Illegal: blocking entrance door (x: 6-7, y: 11)
   const blockDoor = canPlaceFixture(bounds, existing, 6, 11, 2, 1);
   assert.equal(blockDoor.allowed, false);
+
+  // Illegal: the tile just inside the door stays clear too
+  const blockEntry = canPlaceFixture(bounds, existing, 7, 10, 1, 1);
+  assert.equal(blockEntry.allowed, false);
+
+  // The door keeps its place when the floor is wider
+  const widened: GridBounds = { ...bounds, width: 18, doorX: 7 };
+  assert.equal(canPlaceFixture(widened, existing, 8, 11, 1, 1).allowed, true);
+  assert.equal(canPlaceFixture(widened, existing, 6, 11, 1, 1).allowed, false);
+});
+
+test('findPath walks around fixtures and smoothPath trims the staircase', () => {
+  // A one-tile-wide shelf standing across rows 0-3 of column 2
+  const blocked = (x: number, y: number) => x >= 2 && x < 3 && y >= 0 && y < 4;
+  const route = findPath({ x: 0, y: 1 }, { x: 4, y: 1 }, 6, 6, blocked);
+  assert.ok(route, 'a route exists around the shelf');
+  assert.ok(route!.every(p => !blocked(p.x, p.y)), 'never steps onto the shelf');
+  assert.deepEqual(route![route!.length - 1], { x: 4, y: 1 });
+  assert.ok(route!.some(p => p.y >= 4), 'goes below the shelf');
+
+  const smoothed = smoothPath({ x: 0, y: 1 }, route!, blocked);
+  assert.ok(smoothed.length < route!.length);
+  assert.deepEqual(smoothed[smoothed.length - 1], { x: 4, y: 1 });
+
+  // Unreachable targets report null
+  assert.equal(findPath({ x: 0, y: 0 }, { x: 2, y: 1 }, 6, 6, blocked), null);
 });
 
 test('calculatePricingElasticity reacts appropriately to price margins', () => {
@@ -130,7 +158,7 @@ test('calculateDailySummary aggregates financials and customer ratings', () => {
 });
 
 test('GameEngine initializes with default store, allows building and wholesale ordering', async () => {
-  const { GameEngine } = await import('./engine');
+  const { GameEngine } = await import('./engine.ts');
   const engine = new GameEngine();
   
   assert.ok(engine.cash >= 2000);

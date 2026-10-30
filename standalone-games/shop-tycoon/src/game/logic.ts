@@ -3,14 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { PlacedFixture, WholesaleOrder, DailyLedger } from './types';
+import type { PlacedFixture, DailyLedger, GridPoint } from './types.ts';
 
 export interface GridBounds {
   width: number;
   height: number;
   minX: number;
   minY: number;
+  // Right-hand tile of the two-tile entrance on the bottom row. Defaults to the centre.
+  doorX?: number;
 }
+
+/** The entrance never moves, even when the floor is expanded sideways. */
+export const DOOR_X = 7;
 
 /**
  * Calculates effective width and height after rotation (0, 90, 180, 270 degrees).
@@ -59,10 +64,11 @@ export function canPlaceFixture(
     return { allowed: false, reason: 'Exceeds shop boundary' };
   }
 
-  // Entrance door zone protection: entrance is at bottom-center (e.g., x: 7-8, y: gridBounds.height - 1)
-  const doorZoneX = Math.floor(gridBounds.width / 2) - 1;
-  const doorZoneY = gridBounds.height - 1;
-  if (doBoxesOverlap(x, y, w, h, doorZoneX, doorZoneY, 2, 1)) {
+  // Entrance door zone protection: the two tiles left of and at doorX on the bottom row,
+  // plus the tile in front of them so shoppers can always walk in
+  const doorZoneX = (gridBounds.doorX ?? Math.floor(gridBounds.width / 2)) - 1;
+  const doorZoneY = gridBounds.height - 2;
+  if (doBoxesOverlap(x, y, w, h, doorZoneX, doorZoneY, 2, 2)) {
     return { allowed: false, reason: 'Cannot block main entrance door' };
   }
 
@@ -77,6 +83,96 @@ export function canPlaceFixture(
   }
 
   return { allowed: true };
+}
+
+/** True when a floor tile is covered by any fixture. */
+export function isTileBlocked(fixtures: PlacedFixture[], x: number, y: number): boolean {
+  return fixtures.some(f => x >= f.x && x < f.x + f.width && y >= f.y && y < f.y + f.height);
+}
+
+/**
+ * Shortest 4-way walking route between two floor tiles that steps around blocked tiles.
+ * Returns the tiles to visit after `from` (ending at `to`), or null when `to` is unreachable.
+ * The start tile itself may be blocked, so people caught inside new furniture can walk out.
+ */
+export function findPath(
+  from: GridPoint,
+  to: GridPoint,
+  gridWidth: number,
+  gridHeight: number,
+  isBlocked: (x: number, y: number) => boolean
+): GridPoint[] | null {
+  const inBounds = (x: number, y: number) => x >= 0 && y >= 0 && x < gridWidth && y < gridHeight;
+  if (!inBounds(to.x, to.y) || isBlocked(to.x, to.y)) return null;
+  if (from.x === to.x && from.y === to.y) return [];
+
+  const key = (x: number, y: number) => y * gridWidth + x;
+  const cameFrom = new Map<number, number>([[key(from.x, from.y), -1]]);
+  const queue: GridPoint[] = [from];
+  const steps = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+    if (current.x === to.x && current.y === to.y) {
+      const route: GridPoint[] = [];
+      let k = key(to.x, to.y);
+      while (k !== key(from.x, from.y)) {
+        route.unshift({ x: k % gridWidth, y: Math.floor(k / gridWidth) });
+        k = cameFrom.get(k)!;
+      }
+      return route;
+    }
+    for (const [dx, dy] of steps) {
+      const nx = current.x + dx;
+      const ny = current.y + dy;
+      if (!inBounds(nx, ny) || isBlocked(nx, ny) || cameFrom.has(key(nx, ny))) continue;
+      cameFrom.set(key(nx, ny), key(current.x, current.y));
+      queue.push({ x: nx, y: ny });
+    }
+  }
+  return null;
+}
+
+/**
+ * Drops waypoints that can be skipped by walking straight, so routes look natural
+ * instead of following the tile staircase. Keeps a body-width clearance from fixtures.
+ */
+export function smoothPath(
+  start: GridPoint,
+  route: GridPoint[],
+  isBlocked: (x: number, y: number) => boolean
+): GridPoint[] {
+  const clear = (a: GridPoint, b: GridPoint) => {
+    const distance = Math.hypot(b.x - a.x, b.y - a.y);
+    const samples = Math.max(1, Math.ceil(distance / 0.2));
+    for (let i = 0; i <= samples; i++) {
+      const px = a.x + ((b.x - a.x) * i) / samples;
+      const py = a.y + ((b.y - a.y) * i) / samples;
+      for (const ox of [-0.3, 0.3]) {
+        for (const oy of [-0.3, 0.3]) {
+          if (isBlocked(Math.round(px + ox), Math.round(py + oy))) return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  const smoothed: GridPoint[] = [];
+  let anchor = start;
+  let i = 0;
+  while (i < route.length) {
+    let furthest = i;
+    for (let j = route.length - 1; j > i; j--) {
+      if (clear(anchor, route[j])) {
+        furthest = j;
+        break;
+      }
+    }
+    smoothed.push(route[furthest]);
+    anchor = route[furthest];
+    i = furthest + 1;
+  }
+  return smoothed;
 }
 
 export type PricingReaction = 'bargain' | 'fair' | 'pricey' | 'ripoff';

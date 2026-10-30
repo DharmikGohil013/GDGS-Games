@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { FixtureDef } from './types';
+import type { FixtureDef } from './types.ts';
 
 export const FIXTURE_CATALOG: FixtureDef[] = [
   // Shelves & Displays

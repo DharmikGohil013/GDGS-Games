@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Product } from './types';
+import type { Product } from './types.ts';
 
 export const INITIAL_PRODUCTS: Product[] = [
   // Produce
@@ -198,5 +198,91 @@ export const INITIAL_PRODUCTS: Product[] = [
     deliveryLeadTime: 16,
     unlockLevel: 5,
     description: 'Ultrasonic ceramic aromatherapy system with essential oil blends.'
+  },
+
+  // Later unlocks: one more line per department
+  {
+    id: 'prod_strawberries',
+    name: 'Garden Strawberries',
+    category: 'produce',
+    icon: '🍓',
+    color: '#f43f5e',
+    unitCost: 2.00,
+    suggestedPrice: 4.50,
+    currentPrice: 4.50,
+    boxSize: 20,
+    deliveryLeadTime: 7,
+    unlockLevel: 3,
+    description: 'Sun-ripened summer berries that sell out on warm afternoons.'
+  },
+  {
+    id: 'prod_cake',
+    name: 'Celebration Cake Slice',
+    category: 'bakery',
+    icon: '🍰',
+    color: '#fda4af',
+    unitCost: 2.80,
+    suggestedPrice: 6.50,
+    currentPrice: 6.50,
+    boxSize: 12,
+    deliveryLeadTime: 8,
+    unlockLevel: 3,
+    description: 'Layered sponge with whipped cream, a favourite treat for weekend shoppers.'
+  },
+  {
+    id: 'prod_juice',
+    name: 'Fresh Orange Juice',
+    category: 'beverages',
+    icon: '🧃',
+    color: '#fb923c',
+    unitCost: 1.60,
+    suggestedPrice: 3.80,
+    currentPrice: 3.80,
+    boxSize: 20,
+    deliveryLeadTime: 7,
+    unlockLevel: 3,
+    description: 'Cold-pressed juice cartons, popular with the breakfast crowd.'
+  },
+  {
+    id: 'prod_cheese',
+    name: 'Aged Cheddar Wedge',
+    category: 'groceries',
+    icon: '🧀',
+    color: '#facc15',
+    unitCost: 3.50,
+    suggestedPrice: 7.90,
+    currentPrice: 7.90,
+    boxSize: 12,
+    deliveryLeadTime: 9,
+    unlockLevel: 4,
+    description: 'Twelve-month matured cheddar with a sharp, nutty bite.'
+  },
+  {
+    id: 'prod_controller',
+    name: 'Wireless Game Controller',
+    category: 'electronics',
+    icon: '🎮',
+    color: '#22d3ee',
+    unitCost: 24.00,
+    suggestedPrice: 59.00,
+    currentPrice: 59.00,
+    boxSize: 8,
+    deliveryLeadTime: 13,
+    unlockLevel: 5,
+    description: 'Low-latency controller that gamers grab on their way home.'
+  },
+  {
+    id: 'prod_scarf',
+    name: 'Silk Designer Scarf',
+    category: 'luxury',
+    icon: '🧣',
+    color: '#e11d48',
+    unitCost: 22.00,
+    suggestedPrice: 65.00,
+    currentPrice: 65.00,
+    boxSize: 8,
+    deliveryLeadTime: 14,
+    unlockLevel: 6,
+    description: 'Hand-finished silk scarf with a limited seasonal print.'
   }
 ];

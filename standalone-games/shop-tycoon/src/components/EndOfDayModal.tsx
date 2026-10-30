@@ -11,12 +11,14 @@ import { sound } from '../game/audio';
 interface EndOfDayModalProps {
   ledger: DailyLedger;
   currentCash: number;
+  reputation: number;
   onNextDay: () => void;
 }
 
 export const EndOfDayModal: React.FC<EndOfDayModalProps> = ({
   ledger,
   currentCash,
+  reputation,
   onNextDay
 }) => {
   return (
@@ -92,11 +94,35 @@ export const EndOfDayModal: React.FC<EndOfDayModalProps> = ({
           </div>
         </div>
 
+        {/* Daily goal outcome */}
+        {ledger.goal && (
+          <div className={`w-full text-xs p-2.5 rounded-lg mb-2 border flex items-center justify-between gap-2 ${
+            ledger.goal.completed
+              ? 'bg-emerald-950/50 border-emerald-500/40 text-emerald-300'
+              : 'bg-slate-800/40 border-slate-700/40 text-slate-400'
+          }`}>
+            <span className="text-left">🎯 {ledger.goal.description}</span>
+            <span className="font-bold font-mono-numbers shrink-0">
+              {ledger.goal.completed ? `+$${ledger.goal.rewardCash}` : 'Missed'}
+            </span>
+          </div>
+        )}
+
         {/* Top Seller Banner */}
-        <div className="w-full text-xs text-slate-300 p-2 rounded-lg bg-slate-800/40 border border-slate-700/40 mb-6 flex items-center justify-between">
+        <div className="w-full text-xs text-slate-300 p-2 rounded-lg bg-slate-800/40 border border-slate-700/40 mb-2 flex items-center justify-between">
           <span className="text-slate-400 font-sans">Top Item Today:</span>
           <span className="font-bold text-amber-300">{ledger.topSellingProduct}</span>
         </div>
+        <div className="w-full text-xs text-slate-300 p-2 rounded-lg bg-slate-800/40 border border-slate-700/40 mb-6 flex items-center justify-between">
+          <span className="text-slate-400 font-sans">Store Reputation:</span>
+          <span className="font-bold text-amber-300 font-mono-numbers">{reputation.toFixed(2)} ★</span>
+        </div>
+
+        {currentCash < 0 && (
+          <div className="w-full text-xs text-rose-200 p-2.5 rounded-lg bg-rose-950/60 border border-rose-500/50 -mt-4 mb-5 text-left">
+            You are in debt. Sell unused fixtures, trim staff, or raise margins before stock runs out.
+          </div>
+        )}
 
         {/* Next Day Primary CTA with data-start="true" */}
         <button

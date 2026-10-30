@@ -8,12 +8,14 @@ import { Play, Volume2, VolumeX, Sparkles } from 'lucide-react';
 import { sound } from '../game/audio';
 
 interface TitleScreenProps {
-  onStart: () => void;
+  savedDay: number | null;
+  onNewGame: () => void;
+  onContinue: () => void;
   isMuted: boolean;
   onToggleMute: () => void;
 }
 
-export const TitleScreen: React.FC<TitleScreenProps> = ({ onStart, isMuted, onToggleMute }) => {
+export const TitleScreen: React.FC<TitleScreenProps> = ({ savedDay, onNewGame, onContinue, isMuted, onToggleMute }) => {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-between pointer-events-auto bg-gradient-to-b from-slate-950/80 via-slate-950/60 to-slate-950/90 text-white p-6 sm:p-10 select-none">
       {/* Top Bar with sound toggle */}
@@ -70,18 +72,30 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ onStart, isMuted, onTo
           Design your custom supermarket layout, curate wholesale inventory, set smart profit margins, and manage bustling customer checkouts.
         </p>
 
-        {/* Primary Start CTA */}
+        {/* Primary Start CTA: continue a saved store, or open a new one */}
         <button
           data-start="true"
           onClick={() => {
             sound.playClick();
-            onStart();
+            if (savedDay !== null) onContinue();
+            else onNewGame();
           }}
           className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-sky-500 to-emerald-500 text-slate-950 font-bold text-lg hover:from-sky-400 hover:to-emerald-400 active:scale-95 transition-all shadow-xl shadow-sky-500/20 cursor-pointer border border-sky-300/40"
         >
           <Play className="w-5 h-5 fill-slate-950 transition-transform group-hover:scale-110" />
-          <span>OPEN YOUR STORE</span>
+          <span>{savedDay !== null ? `CONTINUE · DAY ${savedDay}` : 'OPEN YOUR STORE'}</span>
         </button>
+        {savedDay !== null && (
+          <button
+            onClick={() => {
+              sound.playClick();
+              if (window.confirm('Start a brand new store? Your saved progress will be replaced.')) onNewGame();
+            }}
+            className="mt-3 text-xs font-semibold text-slate-400 hover:text-white underline underline-offset-4 cursor-pointer"
+          >
+            Start a new store instead
+          </button>
+        )}
 
         {/* Feature Highlights Pills */}
         <div className="grid grid-cols-3 gap-3 sm:gap-6 mt-10 w-full text-center">
@@ -106,7 +120,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({ onStart, isMuted, onTo
       {/* Single Flat Control-Hint Line */}
       <div className="w-full text-center pb-2">
         <p className="text-xs text-slate-400 font-mono-numbers tracking-wider">
-          WASD / Drag Pan · Scroll Zoom · R Rotate · Space Pause · Click Shelves to Restock
+          WASD / Drag Pan · Scroll Zoom · R Rotate · Esc Pause · Click Shelves to Restock · Tap Litter to Clean
         </p>
       </div>
     </div>

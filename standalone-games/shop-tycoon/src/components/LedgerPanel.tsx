@@ -181,7 +181,7 @@ export const LedgerPanel: React.FC<LedgerPanelProps> = ({
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-base">
-                      {upg.effectType === 'floor_expansion' ? '🏗️' : upg.effectType === 'ad_campaign' ? '📢' : '🏷️'}
+                      {{ floor_expansion: '🏗️', ad_campaign: '📢', wholesale_discount: '🏷️', speed_boost: '🎓', decor_boost: '🛋️' }[upg.effectType]}
                     </span>
                     <h3 className="text-xs font-bold text-white">{upg.name}</h3>
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-700 text-amber-300 font-mono-numbers">

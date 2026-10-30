@@ -82,7 +82,9 @@ function makeDockBee(color: FlowerColor, ammo: number): BeeDrone {
  * grows by one for every bloom that lands within COMBO_WINDOW seconds of the last.
  */
 export function scoreForHit(combo: number): number {
-  return 50 + 10 * Math.min(combo - 1, 15);
+  // TODO(human): reward chains. Until then every bloom is worth the same, so every
+  // booster-free win is a "perfect chain" and earns 3 stars.
+  return 50;
 }
 
 /** Score for blooming every flower in one unbroken combo chain. */

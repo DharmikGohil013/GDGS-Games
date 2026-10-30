@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { PlacedFixture, Customer, StaffMember, FloatingNotification, Product } from './types';
-import { getFixtureDef } from './furnitureCatalog';
-import { getRotatedDimensions } from './logic';
+import type { PlacedFixture, Customer, StaffMember, FloatingNotification, Product, Litter } from './types.ts';
+import { getFixtureDef } from './furnitureCatalog.ts';
+import { getRotatedDimensions } from './logic.ts';
 
 export interface CameraState {
   x: number;
@@ -16,11 +16,14 @@ export interface CameraState {
 export interface RenderState {
   gridWidth: number;
   gridHeight: number;
+  doorX: number;
   fixtures: PlacedFixture[];
   customers: Customer[];
   staff: StaffMember[];
   products: Product[];
+  litter: Litter[];
   notifications: FloatingNotification[];
+  warehouseFill: number; // 0..1 share of storage space in use
   hoverTile: { x: number; y: number } | null;
   selectedFixtureId: string | null;
   buildGhost: {
@@ -32,28 +35,43 @@ export interface RenderState {
   timeOfDay: number; // 8.0 to 20.0
 }
 
+// Thought bubbles show for a few seconds after a shopper's mood changes, then fade away
+const THOUGHT_SECONDS = 3;
+// Back-room floor markings stay where the store started, even after expansions
+const WAREHOUSE_ZONE = { minX: 9, maxX: 13, maxY: 2 };
+
 export class IsoRenderer {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   public tileWidth = 64;
   public tileHeight = 32;
+  // Backing-store pixels per CSS pixel; drawing and hit-testing happen in CSS pixels
+  public pixelRatio = 1;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d')!;
   }
 
+  private get viewWidth() {
+    return this.canvas.width / this.pixelRatio;
+  }
+
+  private get viewHeight() {
+    return this.canvas.height / this.pixelRatio;
+  }
+
   public toScreen(gx: number, gy: number, camera: CameraState): { x: number; y: number } {
     const isoX = (gx - gy) * (this.tileWidth / 2);
     const isoY = (gx + gy) * (this.tileHeight / 2);
-    const x = this.canvas.width / 2 + (isoX - camera.x) * camera.zoom;
-    const y = this.canvas.height / 2 + (isoY - camera.y) * camera.zoom;
+    const x = this.viewWidth / 2 + (isoX - camera.x) * camera.zoom;
+    const y = this.viewHeight / 2 + (isoY - camera.y) * camera.zoom;
     return { x, y };
   }
 
   public toGrid(sx: number, sy: number, camera: CameraState): { x: number; y: number } {
-    const isoX = (sx - this.canvas.width / 2) / camera.zoom + camera.x;
-    const isoY = (sy - this.canvas.height / 2) / camera.zoom + camera.y;
+    const isoX = (sx - this.viewWidth / 2) / camera.zoom + camera.x;
+    const isoY = (sy - this.viewHeight / 2) / camera.zoom + camera.y;
 
     const gx = (isoX / (this.tileWidth / 2) + isoY / (this.tileHeight / 2)) / 2;
     const gy = (isoY / (this.tileHeight / 2) - isoX / (this.tileWidth / 2)) / 2;
@@ -61,11 +79,27 @@ export class IsoRenderer {
     return { x: Math.floor(gx), y: Math.floor(gy) };
   }
 
+  /** Camera that frames the whole store floor in the current viewport. */
+  public fitCamera(gridWidth: number, gridHeight: number): CameraState {
+    const halfW = this.tileWidth / 2;
+    const halfH = this.tileHeight / 2;
+    const storeWidth = (gridWidth + gridHeight) * halfW;
+    const storeHeight = (gridWidth + gridHeight) * halfH + 60;
+    // Leave room for the HUD bars above and below the floor
+    const zoom = Math.max(0.55, Math.min(1.6, (this.viewWidth * 0.94) / storeWidth, (this.viewHeight * 0.68) / storeHeight));
+    return {
+      x: ((gridWidth - gridHeight) / 2) * halfW,
+      y: ((gridWidth + gridHeight) / 2) * halfH - 20,
+      zoom
+    };
+  }
+
   public render(state: RenderState, camera: CameraState) {
     const ctx = this.ctx;
-    const width = this.canvas.width;
-    const height = this.canvas.height;
+    const width = this.viewWidth;
+    const height = this.viewHeight;
 
+    ctx.setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0);
     ctx.clearRect(0, 0, width, height);
 
     // Ambient background gradient matching game world (deep modern slate navy)
@@ -80,8 +114,9 @@ export class IsoRenderer {
 
     ctx.save();
 
-    // 1. Draw floor tiles
+    // 1. Draw floor tiles and anything lying on them
     this.drawFloor(state, camera);
+    this.drawLitter(state.litter, camera);
 
     // 2. Collect all renderable entities for depth sorting (Y-sort)
     type DepthItem = 
@@ -100,11 +135,13 @@ export class IsoRenderer {
       });
     });
 
+    // People are drawn at their tile centre (x + 0.5, y + 0.5), so sort them by that point too;
+    // otherwise a shopper standing in front of a shelf is painted behind it
     state.customers.forEach(c => {
       items.push({
         type: 'customer',
         item: c,
-        depth: c.x + c.y
+        depth: c.x + c.y + 1
       });
     });
 
@@ -112,7 +149,7 @@ export class IsoRenderer {
       items.push({
         type: 'staff',
         item: s,
-        depth: s.x + s.y
+        depth: s.x + s.y + 1
       });
     });
 
@@ -138,7 +175,47 @@ export class IsoRenderer {
     // 4. Draw Floating Notifications (coins, XP, popups)
     this.drawNotifications(state.notifications, camera);
 
+    // 5. Late-afternoon light: warm from 4 PM, dusky violet as closing time nears
+    this.drawEveningTint(state.timeOfDay, width, height);
+
     ctx.restore();
+  }
+
+  private drawEveningTint(timeOfDay: number, width: number, height: number) {
+    if (timeOfDay < 16) return;
+    const ctx = this.ctx;
+    const t = Math.min(1, (timeOfDay - 16) / 4);
+    ctx.save();
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = t < 0.5 ? `rgba(251, 146, 60, ${0.1 * t})` : `rgba(91, 33, 182, ${0.06 + 0.12 * (t - 0.5)})`;
+    ctx.fillRect(0, 0, width, height);
+    ctx.restore();
+  }
+
+  private drawLitter(litter: Litter[], camera: CameraState) {
+    const ctx = this.ctx;
+    const z = camera.zoom;
+    for (const spot of litter) {
+      const { x, y } = this.toScreen(spot.x + 0.5, spot.y + 0.5, camera);
+      ctx.save();
+      if (spot.kind === 'spill') {
+        ctx.beginPath();
+        ctx.ellipse(x, y, 13 * z, 6 * z, 0, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.45)';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(186, 230, 253, 0.7)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      } else {
+        ctx.translate(x, y - 2 * z);
+        ctx.rotate(0.4);
+        ctx.fillStyle = '#f59e0b';
+        ctx.fillRect(-6 * z, -3 * z, 12 * z, 6 * z);
+        ctx.fillStyle = '#fef3c7';
+        ctx.fillRect(-2 * z, -3 * z, 4 * z, 6 * z);
+      }
+      ctx.restore();
+    }
   }
 
   private drawFloor(state: RenderState, camera: CameraState) {
@@ -154,9 +231,9 @@ export class IsoRenderer {
         const p4 = this.toScreen(x, y + 1, camera);
 
         // Entrance zone styling
-        const isDoorZone = (y === gridHeight - 1 && (x === Math.floor(gridWidth / 2) - 1 || x === Math.floor(gridWidth / 2)));
+        const isDoorZone = (y === gridHeight - 1 && (x === state.doorX - 1 || x === state.doorX));
         // Backroom warehouse zone
-        const isWarehouseZone = (y <= 2 && x >= gridWidth - 5);
+        const isWarehouseZone = (y <= WAREHOUSE_ZONE.maxY && x >= WAREHOUSE_ZONE.minX && x <= WAREHOUSE_ZONE.maxX);
 
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
@@ -237,9 +314,7 @@ export class IsoRenderer {
     }
 
     // Entrance Glass Door Sign at bottom
-    const doorX = Math.floor(gridWidth / 2) - 1;
-    const doorY = gridHeight - 1;
-    const dp = this.toScreen(doorX + 1, doorY + 1, camera);
+    const dp = this.toScreen(state.doorX, gridHeight, camera);
 
     ctx.save();
     ctx.translate(dp.x, dp.y);
@@ -365,12 +440,20 @@ export class IsoRenderer {
       }
       ctx.restore();
     } else if (def.category === 'storage') {
-      // Cardboard box stacks
+      // Cardboard box stacks, plus how full the back room is overall
       ctx.save();
       ctx.font = `${Math.max(14, Math.floor(20 * camera.zoom))}px system-ui`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText('📦', centerTopX, centerTopY - 2 * camera.zoom);
+
+      const barW = 34 * camera.zoom;
+      const barH = 5 * camera.zoom;
+      const fill = Math.max(0, Math.min(1, state.warehouseFill));
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+      ctx.fillRect(centerTopX - barW / 2, centerTopY + 10 * camera.zoom, barW, barH);
+      ctx.fillStyle = fill > 0.9 ? '#ef4444' : fill > 0.7 ? '#f59e0b' : '#38bdf8';
+      ctx.fillRect(centerTopX - barW / 2, centerTopY + 10 * camera.zoom, barW * fill, barH);
       ctx.restore();
     } else if (def.type === 'decor_plant') {
       // Plant foliage
@@ -402,47 +485,82 @@ export class IsoRenderer {
     }
   }
 
-  private drawCustomer(customer: Customer, camera: CameraState) {
+  /** A small standing figure: legs, torso, head. Returns the y of the top of the head. */
+  private drawPerson(x: number, y: number, z: number, body: string, skin: string, outline: string, bob: number, stride: number): number {
     const ctx = this.ctx;
-    const { x, y } = this.toScreen(customer.x + 0.5, customer.y + 0.5, camera);
-    const z = camera.zoom;
 
     // Soft drop shadow
     ctx.beginPath();
-    ctx.ellipse(x, y + 2 * z, 8 * z, 4 * z, 0, 0, Math.PI * 2);
+    ctx.ellipse(x, y + 2 * z, 10 * z, 5 * z, 0, 0, Math.PI * 2);
     ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
     ctx.fill();
 
-    // Walk bobbing animation
-    const bob = Math.sin(customer.walkTimer * 10) * (customer.state === 'browsing' || customer.state === 'entering' ? 2 * z : 0);
-
-    // Body (Shirt)
+    // Legs, swinging while walking
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 3 * z;
+    ctx.lineCap = 'round';
     ctx.beginPath();
-    ctx.arc(x, y - 8 * z - bob, 5 * z, 0, Math.PI * 2);
-    ctx.fillStyle = customer.shirtColor;
+    ctx.moveTo(x - 2.5 * z, y - 10 * z - bob);
+    ctx.lineTo(x - 2.5 * z + stride * z, y - 1 * z);
+    ctx.moveTo(x + 2.5 * z, y - 10 * z - bob);
+    ctx.lineTo(x + 2.5 * z - stride * z, y - 1 * z);
+    ctx.stroke();
+
+    // Torso
+    ctx.beginPath();
+    ctx.roundRect(x - 6.5 * z, y - 22 * z - bob, 13 * z, 13 * z, 4 * z);
+    ctx.fillStyle = body;
     ctx.fill();
-    ctx.strokeStyle = '#0f172a';
+    ctx.strokeStyle = outline;
     ctx.lineWidth = 1;
     ctx.stroke();
 
     // Head
     ctx.beginPath();
-    ctx.arc(x, y - 16 * z - bob, 4.5 * z, 0, Math.PI * 2);
-    ctx.fillStyle = customer.skinTone;
+    ctx.arc(x, y - 27 * z - bob, 5.5 * z, 0, Math.PI * 2);
+    ctx.fillStyle = skin;
     ctx.fill();
     ctx.stroke();
 
+    return y - 33 * z - bob;
+  }
+
+  private drawCustomer(customer: Customer, camera: CameraState) {
+    const ctx = this.ctx;
+    const { x, y } = this.toScreen(customer.x + 0.5, customer.y + 0.5, camera);
+    const z = camera.zoom;
+
+    const walking = customer.path !== undefined && customer.path.length > 0;
+    const bob = walking ? Math.abs(Math.sin(customer.walkTimer * 10)) * 1.5 * z : 0;
+    const stride = walking ? Math.sin(customer.walkTimer * 10) * 2.5 : 0;
+    const headTop = this.drawPerson(x, y, z, customer.shirtColor, customer.skinTone, '#0f172a', bob, stride);
+
     // Shopping basket if has cart items
     if (customer.cart.length > 0) {
-      ctx.beginPath();
-      ctx.arc(x + 5 * z, y - 6 * z - bob, 3 * z, 0, Math.PI);
       ctx.fillStyle = '#ef4444';
-      ctx.fill();
+      ctx.fillRect(x + 5 * z, y - 15 * z - bob, 7 * z, 5 * z);
+      ctx.strokeStyle = '#7f1d1d';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x + 5 * z, y - 15 * z - bob, 7 * z, 5 * z);
     }
 
-    // Emote / Thought Bubble
-    if (customer.currentThought) {
-      this.drawThoughtBubble(x, y - 26 * z - bob, customer.currentThought, z);
+    // Running out of patience
+    const leaving = customer.state === 'leaving_happy' || customer.state === 'leaving_unhappy';
+    if (!leaving && customer.patience < 30) {
+      ctx.save();
+      ctx.font = `bold ${Math.max(11, Math.floor(13 * z))}px system-ui`;
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#f87171';
+      ctx.fillText('!', x - 9 * z, headTop + 4 * z);
+      ctx.restore();
+    }
+
+    // Emote / Thought Bubble, only while the thought is fresh
+    if (customer.currentThought && customer.thoughtTimer < THOUGHT_SECONDS) {
+      ctx.save();
+      ctx.globalAlpha = Math.min(1, (THOUGHT_SECONDS - customer.thoughtTimer) * 2);
+      this.drawThoughtBubble(x, headTop - 9 * z, customer.currentThought, z);
+      ctx.restore();
     }
   }
 
@@ -451,48 +569,29 @@ export class IsoRenderer {
     const { x, y } = this.toScreen(staff.x + 0.5, staff.y + 0.5, camera);
     const z = camera.zoom;
 
-    // Drop shadow
-    ctx.beginPath();
-    ctx.ellipse(x, y + 2 * z, 8 * z, 4 * z, 0, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-    ctx.fill();
-
     // Staff Vest / Apron color (Cashier: Royal Blue, Restocker: Emerald Green, Cleaner: Amber)
     const vestColor = staff.role === 'cashier' ? '#2563eb' : staff.role === 'restocker' ? '#059669' : '#d97706';
-
-    // Body
-    ctx.beginPath();
-    ctx.arc(x, y - 8 * z, 5.5 * z, 0, Math.PI * 2);
-    ctx.fillStyle = vestColor;
-    ctx.fill();
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    // Head
-    ctx.beginPath();
-    ctx.arc(x, y - 16 * z, 4.5 * z, 0, Math.PI * 2);
-    ctx.fillStyle = '#fed7aa';
-    ctx.fill();
-    ctx.stroke();
+    const walking = staff.path !== undefined && staff.path.length > 0;
+    const stride = walking ? Math.sin(performance.now() / 70) * 2.5 : 0;
+    const headTop = this.drawPerson(x, y, z, vestColor, '#fed7aa', '#ffffff', 0, stride);
 
     // Carried carton box if restocking
     if (staff.state === 'carrying_box') {
       ctx.save();
       ctx.fillStyle = '#b45309';
-      ctx.fillRect(x - 5 * z, y - 12 * z, 10 * z, 8 * z);
+      ctx.fillRect(x - 6 * z, y - 24 * z, 12 * z, 9 * z);
       ctx.strokeStyle = '#78350f';
-      ctx.strokeRect(x - 5 * z, y - 12 * z, 10 * z, 8 * z);
+      ctx.strokeRect(x - 6 * z, y - 24 * z, 12 * z, 9 * z);
       ctx.restore();
     }
 
     // Role badge above head
     ctx.save();
-    ctx.font = `bold ${Math.max(9, Math.floor(10 * z))}px 'Plus Jakarta Sans'`;
+    ctx.font = `bold ${Math.max(11, Math.floor(13 * z))}px 'Plus Jakarta Sans'`;
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'center';
     const roleIcon = staff.role === 'cashier' ? '💳' : staff.role === 'restocker' ? '📦' : '🧹';
-    ctx.fillText(roleIcon, x, y - 22 * z);
+    ctx.fillText(staff.state === 'working' && staff.role === 'cleaner' ? '✨' : roleIcon, x, headTop - 2 * z);
     ctx.restore();
   }
 

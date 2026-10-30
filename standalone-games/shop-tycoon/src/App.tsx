@@ -17,10 +17,10 @@ import { LedgerPanel } from './components/LedgerPanel';
 import { ShelfInspector } from './components/ShelfInspector';
 import { PauseModal } from './components/PauseModal';
 import { EndOfDayModal } from './components/EndOfDayModal';
-import { getFixtureDef } from './game/furnitureCatalog';
-import { canPlaceFixture, getRotatedDimensions } from './game/logic';
 
 type GameState = 'title' | 'playing' | 'paused' | 'gameover';
+
+const AUTOSAVE_SECONDS = 10;
 
 export default function App() {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -54,6 +54,9 @@ export default function App() {
   // Keyboard held inputs
   const keysHeld = useRef<Set<string>>(new Set());
 
+  // A saved store from an earlier visit can be continued from the title screen
+  const [savedDay, setSavedDay] = useState<number | null>(() => GameEngine.savedDay());
+
   // Initialize Engine
   if (!engineRef.current) {
     engineRef.current = new GameEngine();
@@ -65,6 +68,24 @@ export default function App() {
     document.body.dataset.state = state;
   }, []);
 
+  const fitCamera = useCallback(() => {
+    if (rendererRef.current && engineRef.current) {
+      cameraRef.current = rendererRef.current.fitCamera(engineRef.current.gridWidth, engineRef.current.gridHeight);
+    }
+  }, []);
+
+  // Swap in a different store (new game, continue, restart) and reset every bit of UI state
+  const switchEngine = useCallback((engine: GameEngine) => {
+    engineRef.current = engine;
+    setSnapshot(engine.getSnapshot());
+    setActivePanel(null);
+    setInspectedFixtureId(null);
+    setSelectedBuildTool(null);
+    setIsDemolishMode(false);
+    fitCamera();
+    updateGameState(engine.isDayFinished ? 'gameover' : 'playing');
+  }, [fitCamera, updateGameState]);
+
   // Check ?autostart=1
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -75,30 +96,61 @@ export default function App() {
     }
   }, [updateGameState]);
 
+  // Autosave while the shop is open, and whenever the page is hidden or closed
+  useEffect(() => {
+    const saveNow = () => {
+      if (document.body.dataset.state !== 'title') engineRef.current?.save();
+    };
+    const timer = window.setInterval(() => {
+      if (document.body.dataset.state === 'playing') saveNow();
+    }, AUTOSAVE_SECONDS * 1000);
+    const onHide = () => {
+      if (document.visibilityState === 'hidden') saveNow();
+    };
+    document.addEventListener('visibilitychange', onHide);
+    window.addEventListener('pagehide', saveNow);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', onHide);
+      window.removeEventListener('pagehide', saveNow);
+    };
+  }, []);
+
   // Main Canvas Setup & 60 FPS Render Loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const engine = engineRef.current!;
     const renderer = new IsoRenderer(canvas);
+    const firstSetup = rendererRef.current === null;
     rendererRef.current = renderer;
 
+    // Render at the screen's real pixel density so the store stays crisp on phones and retina displays
     const handleResize = () => {
       if (!canvas) return;
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(window.innerWidth * ratio);
+      canvas.height = Math.round(window.innerHeight * ratio);
+      renderer.pixelRatio = ratio;
     };
     handleResize();
-    window.addEventListener('resize', handleResize);
+    if (firstSetup) fitCamera();
+    const handleWindowResize = () => {
+      handleResize();
+      fitCamera();
+    };
+    window.addEventListener('resize', handleWindowResize);
 
     let lastTime = performance.now();
     let lastRenderTime = performance.now();
     let animId: number;
     let throttleTimer = 0;
+    let lastGridWidth = engineRef.current!.gridWidth;
     const targetFrameInterval = 1000 / 60; // 60 FPS cap
 
     const gameLoop = (currentTime: number) => {
+      // Always drive the current engine: Restart and Continue replace it
+      const engine = engineRef.current!;
       animId = requestAnimationFrame(gameLoop);
 
       const elapsed = currentTime - lastRenderTime;
@@ -130,38 +182,37 @@ export default function App() {
         engine.update(rawDt);
       }
 
-      // Check for build ghost validity
+      // Re-frame the store after a floor expansion
+      if (engine.gridWidth !== lastGridWidth) {
+        lastGridWidth = engine.gridWidth;
+        fitCamera();
+      }
+
+      // Check for build ghost validity (same rules as actually building)
       let buildGhost = null;
       if (selectedBuildTool && hoverTileRef.current) {
-        const def = getFixtureDef(selectedBuildTool);
-        if (def) {
-          const { w, h } = getRotatedDimensions(def.width, def.height, buildRotation);
-          const check = canPlaceFixture(
-            { width: engine.gridWidth, height: engine.gridHeight, minX: 1, minY: 1 },
-            engine.fixtures,
-            hoverTileRef.current.x,
-            hoverTileRef.current.y,
-            w,
-            h
-          );
-          buildGhost = {
-            type: selectedBuildTool,
-            rotation: buildRotation,
-            isValid: check.allowed
-          };
-        }
+        const check = engine.canPlace(selectedBuildTool, hoverTileRef.current.x, hoverTileRef.current.y, buildRotation);
+        buildGhost = {
+          type: selectedBuildTool,
+          rotation: buildRotation,
+          isValid: check.allowed
+        };
       }
 
       // Render isometric view
+      const capacity = engine.getWarehouseCapacity();
       renderer.render(
         {
           gridWidth: engine.gridWidth,
           gridHeight: engine.gridHeight,
+          doorX: engine.doorX,
           fixtures: engine.fixtures,
           customers: engine.customers,
           staff: engine.staff,
           products: engine.products,
+          litter: engine.litter,
           notifications: engine.notifications,
+          warehouseFill: capacity > 0 ? engine.getWarehouseUsed() / capacity : 1,
           hoverTile: hoverTileRef.current,
           selectedFixtureId: inspectedFixtureId,
           buildGhost,
@@ -188,9 +239,9 @@ export default function App() {
 
     return () => {
       cancelAnimationFrame(animId);
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleWindowResize);
     };
-  }, [selectedBuildTool, buildRotation, inspectedFixtureId, updateGameState]);
+  }, [selectedBuildTool, buildRotation, inspectedFixtureId, updateGameState, fitCamera]);
 
   // Global Keyboard Controls
   useEffect(() => {
@@ -202,11 +253,12 @@ export default function App() {
 
       keysHeld.current.add(e.code);
 
-      // Title screen Enter / Space to start
+      // Title screen Enter / Space to start (continuing a saved store when there is one)
       if (gameState === 'title' && (e.code === 'Enter' || e.code === 'Space')) {
         e.preventDefault();
         sound.playClick();
-        updateGameState('playing');
+        if (GameEngine.savedDay() !== null) handleContinue();
+        else handleRestart();
         return;
       }
 
@@ -315,7 +367,13 @@ export default function App() {
         return;
       }
 
-      // 3. Normal Click: Inspect Fixture (checks both ground tile and elevated top face)
+      // 3. Tapping litter sweeps it up by hand
+      if (engine.cleanLitterAt(tile.x, tile.y)) {
+        setSnapshot(engine.getSnapshot());
+        return;
+      }
+
+      // 4. Normal Click: Inspect Fixture (checks both ground tile and elevated top face)
       const tileElevated = rendererRef.current.toGrid(e.clientX, e.clientY + 28 * cameraRef.current.zoom, cameraRef.current);
       const clickedFixture = engine.fixtures.find(f =>
         (tile.x >= f.x && tile.x < f.x + f.width && tile.y >= f.y && tile.y < f.y + f.height) ||
@@ -366,13 +424,20 @@ export default function App() {
   };
 
   const handleRestart = () => {
-    engineRef.current = new GameEngine();
-    setSnapshot(engineRef.current.getSnapshot());
-    setActivePanel(null);
-    setInspectedFixtureId(null);
-    setSelectedBuildTool(null);
-    setIsDemolishMode(false);
-    updateGameState('playing');
+    GameEngine.clearSave();
+    setSavedDay(null);
+    switchEngine(new GameEngine());
+  };
+
+  const handleContinue = () => {
+    const saved = GameEngine.load();
+    switchEngine(saved ?? new GameEngine());
+  };
+
+  const handleBackToTitle = () => {
+    engineRef.current?.save();
+    setSavedDay(GameEngine.savedDay());
+    updateGameState('title');
   };
 
   const inspectedFixture = engineRef.current?.fixtures.find(f => f.id === inspectedFixtureId);
@@ -393,7 +458,9 @@ export default function App() {
       {/* Title Screen Overlay */}
       {gameState === 'title' && (
         <TitleScreen
-          onStart={() => updateGameState('playing')}
+          savedDay={savedDay}
+          onNewGame={handleRestart}
+          onContinue={handleContinue}
           isMuted={isMuted}
           onToggleMute={handleToggleMute}
         />
@@ -415,6 +482,13 @@ export default function App() {
             isMuted={isMuted}
             activePanel={activePanel}
             customersCount={snapshot.customersCount}
+            litterCount={snapshot.litterCount}
+            dailyGoal={snapshot.dailyGoal}
+            goalProgress={
+              snapshot.dailyGoal.metric === 'served' ? snapshot.dailyStats.served :
+              snapshot.dailyGoal.metric === 'revenue' ? snapshot.dailyStats.revenue : null
+            }
+            trendingCategory={snapshot.trendingCategory}
             onToggleStoreOpen={handleToggleStoreOpen}
             onSetGameSpeed={handleSetGameSpeed}
             onToggleMute={handleToggleMute}
@@ -450,8 +524,12 @@ export default function App() {
           {activePanel === 'inventory' && (
             <InventoryPanel
               cash={snapshot.cash}
+              level={snapshot.level}
               products={snapshot.products}
               warehouseStock={snapshot.warehouseStock}
+              warehouseUsed={snapshot.warehouseUsed}
+              warehouseCapacity={snapshot.warehouseCapacity}
+              wholesaleDiscount={snapshot.wholesaleDiscount}
               activeOrders={snapshot.wholesaleOrders}
               onPlaceOrder={(prodId, qty) => {
                 const res = engineRef.current!.placeWholesaleOrder(prodId, qty);
@@ -515,7 +593,7 @@ export default function App() {
           {inspectedFixture && (
             <ShelfInspector
               fixture={inspectedFixture}
-              products={snapshot.products}
+              products={snapshot.products.filter(p => p.unlockLevel <= snapshot.level)}
               warehouseStock={snapshot.warehouseStock}
               onAssignProduct={(fId, pId) => {
                 engineRef.current!.assignProductToShelf(fId, pId);
@@ -541,7 +619,7 @@ export default function App() {
         <PauseModal
           onResume={() => updateGameState('playing')}
           onRestart={handleRestart}
-          onTitle={() => updateGameState('title')}
+          onTitle={handleBackToTitle}
           isMuted={isMuted}
           onToggleMute={handleToggleMute}
           day={snapshot.day}
@@ -555,6 +633,7 @@ export default function App() {
         <EndOfDayModal
           ledger={snapshot.latestLedger}
           currentCash={snapshot.cash}
+          reputation={snapshot.reputation}
           onNextDay={handleNextDay}
         />
       )}

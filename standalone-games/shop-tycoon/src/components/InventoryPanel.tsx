@@ -10,8 +10,12 @@ import { sound } from '../game/audio';
 
 interface InventoryPanelProps {
   cash: number;
+  level: number;
   products: Product[];
   warehouseStock: Record<string, number>;
+  warehouseUsed: number; // stored plus in transit
+  warehouseCapacity: number;
+  wholesaleDiscount: number;
   activeOrders: WholesaleOrder[];
   onPlaceOrder: (productId: string, quantityBoxes: number) => { success: boolean; message: string };
   onClose: () => void;
@@ -19,8 +23,12 @@ interface InventoryPanelProps {
 
 export const InventoryPanel: React.FC<InventoryPanelProps> = ({
   cash,
+  level,
   products,
   warehouseStock,
+  warehouseUsed,
+  warehouseCapacity,
+  wholesaleDiscount,
   activeOrders,
   onPlaceOrder,
   onClose
@@ -30,17 +38,18 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
   const [statusMsg, setStatusMsg] = useState<{ text: string; isError: boolean } | null>(null);
 
   const unitsTotal = quantityBoxes * selectedProduct.boxSize;
-  const totalCost = Number((unitsTotal * selectedProduct.unitCost).toFixed(2));
+  const totalCost = Number((unitsTotal * selectedProduct.unitCost * (1 - wholesaleDiscount)).toFixed(2));
   const potentialRevenue = Number((unitsTotal * selectedProduct.currentPrice).toFixed(2));
   const estimatedProfit = Number((potentialRevenue - totalCost).toFixed(2));
+  const isLocked = selectedProduct.unlockLevel > level;
+  const fits = warehouseUsed + unitsTotal <= warehouseCapacity;
+  const canOrder = !isLocked && fits && cash >= totalCost;
 
   const handleOrder = () => {
     const res = onPlaceOrder(selectedProduct.id, quantityBoxes);
     setStatusMsg({ text: res.message, isError: !res.success });
     setTimeout(() => setStatusMsg(null), 3000);
   };
-
-  const totalWarehouseUnits = Object.values(warehouseStock).reduce((sum, count) => sum + count, 0);
 
   return (
     <div className="absolute bottom-20 left-1/2 -translate-x-1/2 w-[95%] max-w-3xl bg-slate-900/95 border border-slate-700/80 rounded-2xl shadow-2xl p-5 text-white z-40 pointer-events-auto max-h-[85vh] flex flex-col">
@@ -52,8 +61,10 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs">
-            <span className="text-slate-400">Warehouse Storage:</span>
-            <span className="font-mono-numbers font-bold text-sky-400">{totalWarehouseUnits} Units</span>
+            <span className="text-slate-400">Warehouse Space:</span>
+            <span className={`font-mono-numbers font-bold ${warehouseUsed >= warehouseCapacity * 0.9 ? 'text-rose-400' : 'text-sky-400'}`}>
+              {warehouseUsed}/{warehouseCapacity} Units
+            </span>
           </div>
           <button
             onClick={onClose}
@@ -102,6 +113,7 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
             {products.map(prod => {
               const inStock = warehouseStock[prod.id] || 0;
               const isSelected = selectedProduct.id === prod.id;
+              const locked = prod.unlockLevel > level;
 
               return (
                 <button
@@ -114,20 +126,20 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
                     isSelected
                       ? 'bg-amber-950/40 border-amber-400/80 shadow-md ring-1 ring-amber-400/50'
                       : 'bg-slate-800/50 border-slate-700/60 hover:bg-slate-800 hover:border-slate-600'
-                  }`}
+                  } ${locked ? 'opacity-50' : ''}`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{prod.icon}</span>
+                    <span className="text-2xl">{locked ? '🔒' : prod.icon}</span>
                     <div>
                       <div className="text-xs font-bold text-slate-100">{prod.name}</div>
                       <div className="text-[10px] text-slate-400">
-                        {prod.category} · {prod.boxSize} units/carton
+                        {locked ? `Unlocks at store level ${prod.unlockLevel}` : `${prod.category} · ${prod.boxSize} units/carton`}
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="font-mono-numbers text-xs font-bold text-emerald-400">
-                      ${prod.unitCost.toFixed(2)}/unit
+                      ${(prod.unitCost * (1 - wholesaleDiscount)).toFixed(2)}/unit
                     </div>
                     <div className="text-[10px] text-slate-400 font-mono-numbers">
                       Warehouse: <strong className="text-sky-300">{inStock}</strong>
@@ -207,15 +219,21 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
             )}
 
             <button
-              disabled={cash < totalCost}
+              disabled={!canOrder}
               onClick={handleOrder}
               className={`w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer ${
-                cash >= totalCost
+                canOrder
                   ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 hover:from-amber-400 hover:to-orange-400 active:scale-95 shadow-md shadow-amber-900/30'
                   : 'bg-slate-800 text-slate-500 border border-slate-700/50 cursor-not-allowed'
               }`}
             >
-              <span>Place Wholesale Order (${totalCost.toFixed(2)})</span>
+              <span>
+                {isLocked
+                  ? `Unlocks at Level ${selectedProduct.unlockLevel}`
+                  : !fits
+                    ? 'Not enough warehouse space'
+                    : `Place Wholesale Order ($${totalCost.toFixed(2)})`}
+              </span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

@@ -1816,8 +1816,9 @@ export const GAME_DETAILS = {
       coreFeatures: [
         { title: 'Modular Isometric Store Design', desc: 'Freely arrange shelving aisles, product displays, registers, and customer entrance pathways.' },
         { title: 'Wholesale Catalog & Inventory Stocking', desc: 'Order fresh produce, bakery goods, canned goods, and electronics to keep shelves packed.' },
-        { title: 'Staff Recruitment & Payroll', desc: 'Hire friendly cashiers to eliminate checkout lines and energetic restockers to maintain full shelves.' },
+        { title: 'Staff Recruitment & Payroll', desc: 'Hire cashiers to speed up checkout lines, stock clerks to keep shelves full, and custodians to sweep up litter before it hurts your reputation.' },
         { title: 'Dynamic Customer AI & Moods', desc: 'Shoppers browse aisles, compare prices, and leave frustrated reviews if prices are set too high.' },
+        { title: 'Daily Goals & Trends', desc: 'Each day brings a goal with a cash reward and a trending department whose fans happily pay 20% more.' },
       ],
       specs: {
         category: 'Simulation / Retail Management',
@@ -1844,7 +1845,7 @@ export const GAME_DETAILS = {
       headline: 'Store Manager’s Handbook: Shelving, Pricing, Staff & Expansion',
       quickStart: [
         { step: '1', title: 'Place Your First Shelves', desc: 'Open the Build menu and place dry grocery shelving near the front entrance.' },
-        { step: '2', title: 'Order Inventory Products', desc: 'Open the Wholesale Catalog to order cereal, bread, and milk to fill your empty shelves.' },
+        { step: '2', title: 'Order Inventory Products', desc: 'Open the Wholesale Catalog to order apples, baguettes, and soda, then unlock new lines like cereal, electronics and luxury goods as your store levels up.' },
         { step: '3', title: 'Set Competitive Prices', desc: 'Adjust your markup in the Pricing panel; pricing too high drives customers away without buying.' },
         { step: '4', title: 'Hire Cashiers as Foot Traffic Grows', desc: 'Recruit a cashier so you aren’t trapped behind the register when the evening rush arrives.' },
       ],
@@ -1854,8 +1855,8 @@ export const GAME_DETAILS = {
       scoring: 'Market success is rated by daily gross revenue, store customer satisfaction rating, and market expansion level.',
       proTips: [
         'Avoid stockouts: If a shelf sits empty, shoppers leave negative store reviews that lower overall foot traffic.',
-        'Place impulse buys near checkout: Position small candy and snack fixtures right beside registers for easy extra profits.',
-        'Upgrade staff speed: Training your staff reduces cashier scan times by 40%, clearing long customer queues.',
+        'Make the store comfortable: plants, benches, neon signs and the Interior Design upgrade keep shoppers patient, and a vending machine earns passive tips.',
+        'Upgrade staff speed: each Staff Training tier makes cashiers scan 20% faster and clerks walk 20% faster, clearing long queues.',
       ],
       mistakes: [
         { mistake: 'Over-pricing products early on', fix: 'Keep initial markups around 20-30% until your store builds a loyal, 5-star customer base.' },

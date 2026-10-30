@@ -4,7 +4,8 @@ let frame = null;
 export function initGame(container, game) {
   destroyGame();
   frame = document.createElement('iframe');
-  frame.src = `/embedded/${game.id}/`;
+  // Name the file: the Vite dev server answers a bare folder URL with the site's own index page
+  frame.src = `/embedded/${game.id}/index.html`;
   frame.title = game.title;
   frame.allow = 'fullscreen; autoplay; gamepad';
   frame.setAttribute('allowfullscreen', '');

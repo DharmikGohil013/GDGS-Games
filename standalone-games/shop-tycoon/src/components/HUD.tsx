@@ -22,8 +22,18 @@ import {
   ShoppingBag
 } from 'lucide-react';
 import { sound } from '../game/audio';
+import type { DailyGoal, ProductCategory } from '../game/types';
 
 export type ActivePanel = 'build' | 'inventory' | 'pricing' | 'staff' | 'ledger' | null;
+
+const CATEGORY_LABELS: Record<ProductCategory, string> = {
+  produce: '🍎 Produce',
+  bakery: '🥖 Bakery',
+  beverages: '🥤 Drinks',
+  groceries: '🥣 Groceries',
+  electronics: '🎧 Electronics',
+  luxury: '✨ Luxury'
+};
 
 interface HUDProps {
   cash: number;
@@ -38,6 +48,10 @@ interface HUDProps {
   isMuted: boolean;
   activePanel: ActivePanel;
   customersCount: number;
+  litterCount: number;
+  dailyGoal: DailyGoal;
+  goalProgress: number | null; // null for goals only judged at closing time
+  trendingCategory: ProductCategory;
   onToggleStoreOpen: () => void;
   onSetGameSpeed: (speed: number) => void;
   onToggleMute: () => void;
@@ -58,6 +72,10 @@ export const HUD: React.FC<HUDProps> = ({
   isMuted,
   activePanel,
   customersCount,
+  litterCount,
+  dailyGoal,
+  goalProgress,
+  trendingCategory,
   onToggleStoreOpen,
   onSetGameSpeed,
   onToggleMute,
@@ -80,127 +98,162 @@ export const HUD: React.FC<HUDProps> = ({
 
   return (
     <div className="fixed inset-0 pointer-events-none select-none z-30 flex flex-col justify-between p-3 sm:p-5">
-      {/* Perimeter Top Status Bar */}
-      <div className="w-full flex items-center justify-between gap-3 flex-wrap">
-        {/* Left Status Cluster: Day, Time, Store Open Toggle */}
-        <div className="flex items-center gap-2 pointer-events-auto">
-          {/* Day & Time Clock Card */}
-          <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-xl">
-            <Clock className="w-4 h-4 text-sky-400" />
-            <div className="flex flex-col">
-              <span className="text-[10px] uppercase font-bold text-slate-400 leading-none">
-                DAY {day}
-              </span>
-              <span className="font-mono-numbers text-xs font-bold text-white tracking-wide">
-                {timeFormatted}
+      <div className="flex flex-col gap-2">
+        {/* Perimeter Top Status Bar */}
+        <div className="w-full flex items-center justify-between gap-3 flex-wrap">
+          {/* Left Status Cluster: Day, Time, Store Open Toggle */}
+          <div className="flex items-center gap-2 pointer-events-auto">
+            {/* Day & Time Clock Card */}
+            <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-xl">
+              <Clock className="w-4 h-4 text-sky-400" />
+              <div className="flex flex-col">
+                <span className="text-[10px] uppercase font-bold text-slate-400 leading-none">
+                  DAY {day}
+                </span>
+                <span className="font-mono-numbers text-xs font-bold text-white tracking-wide">
+                  {timeFormatted}
+                </span>
+              </div>
+              {/* Open / Closed Toggle Badge */}
+              <button
+                onClick={() => {
+                  sound.playClick();
+                  onToggleStoreOpen();
+                }}
+                aria-label={isStoreOpen ? "Close store doors" : "Open store doors"}
+                className={`ml-1 px-2.5 py-1 rounded-xl text-[10px] font-extrabold uppercase tracking-wider transition cursor-pointer active:scale-95 ${
+                  isStoreOpen
+                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 shadow-sm shadow-emerald-500/20'
+                    : 'bg-rose-500/20 text-rose-400 border border-rose-500/50'
+                }`}
+              >
+                {isStoreOpen ? '● OPEN' : '○ CLOSED'}
+              </button>
+            </div>
+
+            {/* Active Customers Counter */}
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-lg text-xs font-mono-numbers">
+              <span className="text-slate-400">Shoppers:</span>
+              <strong className="text-amber-400">{customersCount}</strong>
+            </div>
+          </div>
+
+          {/* Center Status Cluster: Cash Capital & Rating */}
+          <div className="flex items-center gap-3 pointer-events-auto">
+            {/* Cash Balance Display */}
+            <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900/95 border border-emerald-500/40 shadow-xl">
+              <div className="w-6 h-6 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                <DollarSign className="w-4 h-4" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[9px] uppercase font-bold text-slate-400 leading-none">
+                  STORE CAPITAL
+                </span>
+                <span className="font-mono-numbers text-base sm:text-lg font-extrabold text-emerald-400">
+                  ${cash.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+            {/* Store Level & XP Pip Bar */}
+            <div className="hidden md:flex flex-col justify-center px-3.5 py-2 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl min-w-[140px]">
+              <div className="flex justify-between items-center text-[10px] font-bold text-slate-300 mb-1">
+                <span className="text-sky-400">LEVEL {level}</span>
+                <span className="font-mono-numbers text-slate-400">{xp}/{xpNeeded} XP</span>
+              </div>
+              <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-sky-500 to-emerald-400 h-full transition-all duration-300"
+                  style={{ width: `${xpPercent}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Store Reputation Stars */}
+            <div className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl text-xs">
+              <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+              <span className="font-mono-numbers font-bold text-amber-300 text-xs">
+                {reputation.toFixed(1)}
               </span>
             </div>
-            {/* Open / Closed Toggle Badge */}
+          </div>
+
+          {/* Right Status Cluster: Speed Controls, Mute, Pause */}
+          <div className="flex items-center gap-1.5 pointer-events-auto">
+            {/* Speed toggles */}
+            <div className="flex bg-slate-900/95 p-1 rounded-2xl border border-slate-800 shadow-xl">
+              {[1, 2, 3].map(speed => (
+                <button
+                  key={speed}
+                  onClick={() => {
+                    sound.playClick();
+                    onSetGameSpeed(speed);
+                  }}
+                  className={`px-2 py-1 rounded-xl text-xs font-bold font-mono-numbers transition cursor-pointer ${
+                    gameSpeed === speed
+                      ? 'bg-sky-500 text-slate-950 shadow-sm'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {speed}x
+                </button>
+              ))}
+            </div>
+
+            {/* Audio Mute button */}
+            <button
+              onClick={onToggleMute}
+              aria-label={isMuted ? "Unmute audio" : "Mute audio"}
+              className="p-2 rounded-2xl bg-slate-900/95 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition cursor-pointer shadow-xl"
+            >
+              {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
+            </button>
+
+            {/* Pause button */}
             <button
               onClick={() => {
                 sound.playClick();
-                onToggleStoreOpen();
+                onPause();
               }}
-              aria-label={isStoreOpen ? "Close store doors" : "Open store doors"}
-              className={`ml-1 px-2.5 py-1 rounded-xl text-[10px] font-extrabold uppercase tracking-wider transition cursor-pointer active:scale-95 ${
-                isStoreOpen
-                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 shadow-sm shadow-emerald-500/20'
-                  : 'bg-rose-500/20 text-rose-400 border border-rose-500/50'
-              }`}
+              aria-label="Pause simulation"
+              className="p-2 rounded-2xl bg-slate-900/95 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition cursor-pointer shadow-xl"
             >
-              {isStoreOpen ? '● OPEN' : '○ CLOSED'}
+              <Pause className="w-4 h-4 text-sky-400" />
             </button>
           </div>
-
-          {/* Active Customers Counter */}
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-lg text-xs font-mono-numbers">
-            <span className="text-slate-400">Shoppers:</span>
-            <strong className="text-amber-400">{customersCount}</strong>
-          </div>
         </div>
 
-        {/* Center Status Cluster: Cash Capital & Rating */}
-        <div className="flex items-center gap-3 pointer-events-auto">
-          {/* Cash Balance Display */}
-          <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900/95 border border-emerald-500/40 shadow-xl">
-            <div className="w-6 h-6 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-              <DollarSign className="w-4 h-4" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[9px] uppercase font-bold text-slate-400 leading-none">
-                STORE CAPITAL
-              </span>
-              <span className="font-mono-numbers text-base sm:text-lg font-extrabold text-emerald-400">
-                ${cash.toFixed(2)}
-              </span>
-            </div>
-          </div>
-
-          {/* Store Level & XP Pip Bar */}
-          <div className="hidden md:flex flex-col justify-center px-3.5 py-2 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl min-w-[140px]">
-            <div className="flex justify-between items-center text-[10px] font-bold text-slate-300 mb-1">
-              <span className="text-sky-400">LEVEL {level}</span>
-              <span className="font-mono-numbers text-slate-400">{xp}/{xpNeeded} XP</span>
-            </div>
-            <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-              <div
-                className="bg-gradient-to-r from-sky-500 to-emerald-400 h-full transition-all duration-300"
-                style={{ width: `${xpPercent}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Store Reputation Stars */}
-          <div className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl text-xs">
-            <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-            <span className="font-mono-numbers font-bold text-amber-300 text-xs">
-              {reputation.toFixed(1)}
-            </span>
-          </div>
-        </div>
-
-        {/* Right Status Cluster: Speed Controls, Mute, Pause */}
-        <div className="flex items-center gap-1.5 pointer-events-auto">
-          {/* Speed toggles */}
-          <div className="flex bg-slate-900/95 p-1 rounded-2xl border border-slate-800 shadow-xl">
-            {[1, 2, 3].map(speed => (
-              <button
-                key={speed}
-                onClick={() => {
-                  sound.playClick();
-                  onSetGameSpeed(speed);
-                }}
-                className={`px-2 py-1 rounded-xl text-xs font-bold font-mono-numbers transition cursor-pointer ${
-                  gameSpeed === speed
-                    ? 'bg-sky-500 text-slate-950 shadow-sm'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                {speed}x
-              </button>
-            ))}
-          </div>
-
-          {/* Audio Mute button */}
-          <button
-            onClick={onToggleMute}
-            aria-label={isMuted ? "Unmute audio" : "Mute audio"}
-            className="p-2 rounded-2xl bg-slate-900/95 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition cursor-pointer shadow-xl"
+        {/* Today: goal, trend and housekeeping */}
+        <div className="flex flex-col gap-1.5 max-w-[15rem] pointer-events-none">
+          <div
+            className={`px-3 py-2 rounded-2xl border shadow-xl text-[11px] leading-snug ${
+              dailyGoal.completed
+                ? 'bg-emerald-950/90 border-emerald-500/50 text-emerald-200'
+                : 'bg-slate-900/90 border-slate-700/80 text-slate-200'
+            }`}
           >
-            {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
-          </button>
-
-          {/* Pause button */}
-          <button
-            onClick={() => {
-              sound.playClick();
-              onPause();
-            }}
-            aria-label="Pause simulation"
-            className="p-2 rounded-2xl bg-slate-900/95 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition cursor-pointer shadow-xl"
-          >
-            <Pause className="w-4 h-4 text-sky-400" />
-          </button>
+            <div className="text-[9px] font-extrabold uppercase tracking-wider text-amber-400">
+              {dailyGoal.completed ? '✓ Goal complete' : "🎯 Today's goal"}
+            </div>
+            <div className="font-semibold">{dailyGoal.description}</div>
+            {!dailyGoal.completed && (
+              <div className="font-mono-numbers text-slate-400">
+                {goalProgress !== null
+                  ? `${dailyGoal.metric === 'revenue' ? '$' + goalProgress.toFixed(0) : goalProgress} / ${dailyGoal.metric === 'revenue' ? '$' : ''}${dailyGoal.target}`
+                  : 'Judged at closing time'}
+                {' · '}+${dailyGoal.rewardCash}
+              </div>
+            )}
+          </div>
+          <div className="px-3 py-1.5 rounded-2xl bg-slate-900/90 border border-amber-500/30 shadow-xl text-[11px] text-amber-200">
+            🔥 Trending: <strong>{CATEGORY_LABELS[trendingCategory]}</strong>
+            <span className="text-slate-400"> · fair price +20%</span>
+          </div>
+          {litterCount > 0 && (
+            <div className="px-3 py-1.5 rounded-2xl bg-rose-950/90 border border-rose-500/40 shadow-xl text-[11px] text-rose-200">
+              🧹 {litterCount} mess{litterCount === 1 ? '' : 'es'} on the floor: tap to clean or hire a custodian
+            </div>
+          )}
         </div>
       </div>
 

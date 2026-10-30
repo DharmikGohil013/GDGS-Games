@@ -38,9 +38,17 @@ export const GAME_GUIDES = {
   },
   'shop-tycoon': {
     tagline: 'Build and manage your own market.',
-    description: 'Place shop fixtures, stock products, set prices, and manage staff in an isometric store simulation.',
-    controls: [{ key: 'Mouse / Tap', label: 'Build, stock, and manage your shop' }],
-    tips: ['Keep popular products stocked as your shop expands.'],
+    description: 'Place shop fixtures, stock products, set prices, and manage cashiers, stock clerks and custodians in an isometric store simulation with daily goals, trending departments and auto-save.',
+    controls: [
+      { key: 'Mouse / Tap', label: 'Build, stock, and manage your shop; tap litter to clean it' },
+      { key: 'Drag / WASD, Scroll', label: 'Pan and zoom the store' },
+      { key: 'R / Esc', label: 'Rotate a fixture / pause' },
+    ],
+    tips: [
+      'Keep popular products stocked as your shop expands; empty shelves cost reputation.',
+      'Check the trending department each morning: its fans accept prices 20% above fair.',
+      'Watch the warehouse bar and build storage racks before ordering in bulk.',
+    ],
   },
   'apex-velocity': {
     tagline: 'F1 supercar simulator with custom circuit curves studio and garage tuning.',
