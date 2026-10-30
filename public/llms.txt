@@ -2,10 +2,18 @@
 
 > Playzy is a browser games platform with free games that run in a web browser. Most games can be played without an account or installation. Infinite World requires an account for multiplayer worlds and saved progress.
 
-Playzy is built and maintained by Dharmik Gohil ([dharmikgohil.art](https://dharmikgohil.art)). The catalogue currently includes 14 playable games; each title below links to its game page.
+Playzy is built and maintained by Dharmik Gohil ([dharmikgohil.art](https://dharmikgohil.art)). The catalogue currently includes 22 playable games; each title below links to its game page.
 
 ## Playable games
 
+- [Among Us: Pixel Outpost](https://playzy.dharmikgohil.art/games/among-us-pixel-outpost/): Explore a pixel space outpost, complete crew tasks, watch for sabotage, and vote in meetings against computer-controlled crewmates.
+- [Bloom Loop: Garden Colour Flow](https://playzy.dharmikgohil.art/games/bloom-loop/): Direct bee drones around a vine loop and match colours to clear flower tiles with pollen bursts.
+- [Cash Tycoon: Fame & Fortune](https://playzy.dharmikgohil.art/games/cash-tycoon/): Open businesses, hire managers, collect profits, and expand your tower.
+- [Flappy Bird 3D](https://playzy.dharmikgohil.art/games/flappy-bird-3d/): Time each flap to guide a bird through a colourful 3D obstacle course.
+- [Pixels: Farm, Craft & Adventure](https://playzy.dharmikgohil.art/games/pixels-farm-craft/): Grow crops, gather resources, craft supplies, and complete quests in a pixel adventure.
+- [Shop Tycoon: Market Empire](https://playzy.dharmikgohil.art/games/shop-tycoon/): Place shop fixtures, stock products, set prices, and manage staff in an isometric store simulation.
+- [Apex Velocity: F1 Supercar Studio](https://playzy.dharmikgohil.art/games/apex-velocity/): Drive and tune supercars, race iconic tracks, and create custom circuits.
+- [VoxelCraft: Survival & Building](https://playzy.dharmikgohil.art/games/voxelcraft/): Explore, survive, and build in a 3D sandbox world.
 - [Gravity Switch](https://playzy.dharmikgohil.art/games/gravity-switch/): One-button arcade reflex game. Tap or press Space to invert gravity, dodge floor/ceiling spikes, and chain combos.
 - [Gravity Shift](https://playzy.dharmikgohil.art/gravity-shift.html): Arcade platform game. Jump between platforms with Space, W, or Up Arrow and avoid hazards.
 - [Hextris Stack](https://playzy.dharmikgohil.art/games/hextris/): Hexagonal Tetris-style puzzle. Rotate the central hexagon with Left/Right to match 3+ blocks of the same color.
