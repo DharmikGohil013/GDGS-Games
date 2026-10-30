@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { LEVELS } from '../game/levels.ts';
+import { CHAPTERS, LEVELS } from '../game/levels.ts';
 
 interface TitleScreenProps {
   highScores: Record<number, number>;
   starsEarned: Record<number, number>;
   coins: number;
   unlockedLevel: number;
+  giftReady: boolean;
   onSelectLevel: (levelId: number) => void;
   onOpenSettings: () => void;
   onOpenCollection: () => void;
+  onOpenShop: () => void;
 }
 
 export const TitleScreen: React.FC<TitleScreenProps> = ({
@@ -16,11 +18,14 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
   starsEarned,
   coins,
   unlockedLevel,
+  giftReady,
   onSelectLevel,
   onOpenSettings,
   onOpenCollection,
+  onOpenShop,
 }) => {
   const [showLevelSelect, setShowLevelSelect] = useState(false);
+  const totalStars = Object.values(starsEarned).reduce((sum, stars) => sum + stars, 0);
 
   return (
     <div className="relative w-full min-h-screen flex flex-col items-center justify-between p-4 sm:p-6 overflow-hidden select-none">
@@ -65,10 +70,25 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
             className="w-6 h-6 object-contain"
           />
           <span className="text-sm font-bold text-amber-200">{coins}</span>
+          <span className="text-sm font-bold text-amber-300 ml-1">★ {totalStars}/{LEVELS.length * 3}</span>
         </div>
 
-        {/* Action Buttons: Collection & Settings */}
+        {/* Action Buttons: Shop, Collection & Settings */}
         <div className="flex items-center gap-2.5">
+          <button
+            onClick={onOpenShop}
+            className="relative w-11 h-11 rounded-2xl bg-emerald-800/80 hover:bg-emerald-700/80 active:scale-95 border-2 border-emerald-500/60 shadow-lg flex items-center justify-center transition-all cursor-pointer"
+            title="Seed Shop"
+          >
+            <img
+              src="/embedded/bloom-loop/assets/aistudio/Green-and-gold_garden_shop_icon-9_36c78a40.webp"
+              alt="Shop"
+              className="w-6 h-6 object-contain"
+            />
+            {giftReady && (
+              <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-rose-500 border-2 border-white animate-pulse" />
+            )}
+          </button>
           <button
             onClick={onOpenCollection}
             className="w-11 h-11 rounded-2xl bg-emerald-800/80 hover:bg-emerald-700/80 active:scale-95 border-2 border-emerald-500/60 shadow-lg flex items-center justify-center transition-all cursor-pointer"
@@ -181,65 +201,74 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
               </button>
             </div>
 
-            {/* Level Cards Grid */}
-            <div className="overflow-y-auto py-4 grid grid-cols-2 sm:grid-cols-4 gap-3 pr-1">
-              {LEVELS.map((lvl) => {
-                const isUnlocked = lvl.id <= unlockedLevel;
-                const stars = starsEarned[lvl.id] || 0;
-                const bestScore = highScores[lvl.id] || 0;
+            {/* Level Cards, grouped by chapter */}
+            <div className="overflow-y-auto py-2 pr-1">
+              {CHAPTERS.map((chapter) => (
+                <section key={chapter.name} className="py-2">
+                  <h3 className="text-xs font-black uppercase tracking-wider text-amber-300/90 mb-2 text-left">
+                    {chapter.name} · Levels {chapter.firstLevel}-{chapter.lastLevel}
+                  </h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {LEVELS.filter(lvl => lvl.id >= chapter.firstLevel && lvl.id <= chapter.lastLevel).map((lvl) => {
+                      const isUnlocked = lvl.id <= unlockedLevel;
+                      const stars = starsEarned[lvl.id] || 0;
+                      const bestScore = highScores[lvl.id] || 0;
 
-                return (
-                  <button
-                    key={lvl.id}
-                    disabled={!isUnlocked}
-                    onClick={() => {
-                      setShowLevelSelect(false);
-                      onSelectLevel(lvl.id);
-                    }}
-                    className={`relative p-3 rounded-2xl border-2 flex flex-col items-center justify-center gap-1.5 transition-all text-center ${
-                      isUnlocked
-                        ? 'bg-gradient-to-b from-emerald-800 to-emerald-950 border-amber-400/60 hover:scale-105 active:scale-95 cursor-pointer shadow-lg'
-                        : 'bg-emerald-950/40 border-emerald-900/60 opacity-50 cursor-not-allowed'
-                    }`}
-                  >
-                    {isUnlocked ? (
-                      <>
-                        <span className="text-xs font-black text-amber-300">Level {lvl.id}</span>
-                        <span className="text-[11px] font-semibold text-emerald-100 line-clamp-1">
-                          {lvl.name}
-                        </span>
-                        {/* Stars Earned */}
-                        <div className="flex items-center gap-0.5 mt-1">
-                          {[1, 2, 3].map((starIdx) => (
-                            <span
-                              key={starIdx}
-                              className={`text-xs ${
-                                starIdx <= stars ? 'text-amber-400' : 'text-emerald-900'
-                              }`}
-                            >
-                              ★
-                            </span>
-                          ))}
-                        </div>
-                        {bestScore > 0 && (
-                          <span className="text-[9px] text-emerald-400 font-medium">
-                            {bestScore} pts
-                          </span>
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        <img
-                          src="/embedded/bloom-loop/assets/aistudio/icon_lock_811ba167.webp"
-                          alt="Locked"
-                          className="w-6 h-6 object-contain opacity-50"
-                        />
-                        <span className="text-xs font-bold text-emerald-500/60">Level {lvl.id}</span>
-                      </>
-                    )}
-                  </button>
-                );
-              })}
+                      return (
+                        <button
+                          key={lvl.id}
+                          disabled={!isUnlocked}
+                          onClick={() => {
+                            setShowLevelSelect(false);
+                            onSelectLevel(lvl.id);
+                          }}
+                          className={`relative p-3 rounded-2xl border-2 flex flex-col items-center justify-center gap-1.5 transition-all text-center ${
+                            isUnlocked
+                              ? 'bg-gradient-to-b from-emerald-800 to-emerald-950 border-amber-400/60 hover:scale-105 active:scale-95 cursor-pointer shadow-lg'
+                              : 'bg-emerald-950/40 border-emerald-900/60 opacity-50 cursor-not-allowed'
+                          }`}
+                        >
+                          {isUnlocked ? (
+                            <>
+                              <span className="text-xs font-black text-amber-300">Level {lvl.id}</span>
+                              <span className="text-[10px] leading-tight font-semibold text-emerald-100 line-clamp-2">
+                                {lvl.name}
+                              </span>
+                              {/* Stars Earned */}
+                              <div className="flex items-center gap-0.5 mt-1">
+                                {[1, 2, 3].map((starIdx) => (
+                                  <span
+                                    key={starIdx}
+                                    className={`text-xs ${
+                                      starIdx <= stars ? 'text-amber-400' : 'text-emerald-900'
+                                    }`}
+                                  >
+                                    ★
+                                  </span>
+                                ))}
+                              </div>
+                              {bestScore > 0 && (
+                                <span className="text-[9px] text-emerald-400 font-medium">
+                                  {bestScore} pts
+                                </span>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              <img
+                                src="/embedded/bloom-loop/assets/aistudio/icon_lock_811ba167.webp"
+                                alt="Locked"
+                                className="w-6 h-6 object-contain opacity-50"
+                              />
+                              <span className="text-xs font-bold text-emerald-500/60">Level {lvl.id}</span>
+                            </>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </section>
+              ))}
             </div>
           </div>
         </div>

@@ -9,10 +9,14 @@ export const GAME_GUIDES = {
     tips: ['Finish tasks while keeping track of suspicious crew behaviour.'],
   },
   'bloom-loop': {
-    tagline: 'Guide bees through a colourful garden puzzle.',
-    description: 'Direct bee drones around a vine loop and match colours to clear flower tiles with pollen bursts.',
-    controls: [{ key: 'Mouse / Tap', label: 'Choose bees and garden actions' }],
-    tips: ['Plan each bee route around the flower colours ahead.'],
+    tagline: 'Launch bees around a vine loop to bloom every flower.',
+    description: 'Bees circle a vine around the flower bed and fire pollen at the outermost flower of their own colour, so launch order decides whether the garden blooms. 24 gardens across three chapters, with a Seed Shop for boosters.',
+    controls: [{ key: 'Mouse / Tap', label: 'Launch a bee from the dock or use a booster' }],
+    tips: [
+      'Launch bees whose colour is on the outside of the garden first.',
+      'A bee that flies a whole lap without a reachable flower gets bored and leaves with its pollen.',
+      'Keep blooms landing close together to build chains and earn three stars.',
+    ],
   },
   'cash-tycoon': {
     tagline: 'Grow a business tower into a fortune.',

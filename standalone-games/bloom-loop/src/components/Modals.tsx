@@ -217,6 +217,7 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
 // 3. Pause & Settings Modal
 interface PauseSettingsModalProps {
   settings: GameSettings;
+  inGame: boolean; // false when opened from the title screen: no level to restart or leave
   onUpdateSettings: (newSettings: Partial<GameSettings>) => void;
   onResume: () => void;
   onRestart: () => void;
@@ -225,6 +226,7 @@ interface PauseSettingsModalProps {
 
 export const PauseSettingsModal: React.FC<PauseSettingsModalProps> = ({
   settings,
+  inGame,
   onUpdateSettings,
   onResume,
   onRestart,
@@ -340,25 +342,29 @@ export const PauseSettingsModal: React.FC<PauseSettingsModalProps> = ({
 
         {/* Buttons */}
         <div className="flex items-center gap-3 pt-2">
-          <button
-            onClick={onRestart}
-            className="flex-1 py-3 px-3 rounded-2xl bg-emerald-800 hover:bg-emerald-700 border-2 border-emerald-600 text-xs font-bold text-emerald-100 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow"
-          >
-            <img src="/embedded/bloom-loop/assets/aistudio/icon_restart_3949cd50.webp" alt="Restart" className="w-4 h-4 object-contain" />
-            <span>Restart</span>
-          </button>
-          <button
-            onClick={onHome}
-            className="flex-1 py-3 px-3 rounded-2xl bg-emerald-800 hover:bg-emerald-700 border-2 border-emerald-600 text-xs font-bold text-emerald-100 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow"
-          >
-            <img src="/embedded/bloom-loop/assets/aistudio/icon_home_0a3b95fa.webp" alt="Map" className="w-4 h-4 object-contain" />
-            <span>Map</span>
-          </button>
+          {inGame && (
+            <>
+              <button
+                onClick={onRestart}
+                className="flex-1 py-3 px-3 rounded-2xl bg-emerald-800 hover:bg-emerald-700 border-2 border-emerald-600 text-xs font-bold text-emerald-100 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow"
+              >
+                <img src="/embedded/bloom-loop/assets/aistudio/icon_restart_3949cd50.webp" alt="Restart" className="w-4 h-4 object-contain" />
+                <span>Restart</span>
+              </button>
+              <button
+                onClick={onHome}
+                className="flex-1 py-3 px-3 rounded-2xl bg-emerald-800 hover:bg-emerald-700 border-2 border-emerald-600 text-xs font-bold text-emerald-100 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow"
+              >
+                <img src="/embedded/bloom-loop/assets/aistudio/icon_home_0a3b95fa.webp" alt="Map" className="w-4 h-4 object-contain" />
+                <span>Map</span>
+              </button>
+            </>
+          )}
           <button
             onClick={onResume}
             className="flex-[1.5] py-3 px-4 rounded-2xl bg-amber-400 hover:bg-amber-500 border-2 border-amber-200 text-amber-950 font-black text-sm flex items-center justify-center cursor-pointer active:scale-95 shadow-md"
           >
-            RESUME
+            {inGame ? 'RESUME' : 'DONE'}
           </button>
         </div>
       </div>
@@ -420,7 +426,148 @@ export const BotanicalCollectionModal: React.FC<BotanicalCollectionModalProps> =
   );
 };
 
-// 5. Interactive Tutorial Overlay
+// 5. Seed Shop: spend garden coins on boosters, plus a once-a-day gift
+interface ShopModalProps {
+  coins: number;
+  boosters: Boosters;
+  prices: Boosters;
+  giftReady: boolean;
+  giftCoins: number;
+  onBuy: (kind: keyof Boosters) => void;
+  onClaimGift: () => void;
+  onClose: () => void;
+}
+
+const SHOP_ITEMS: { kind: keyof Boosters; name: string; detail: string; icon: string }[] = [
+  {
+    kind: 'shuffle',
+    name: 'Shuffle',
+    detail: 'Reshuffles the dock and the upcoming bees.',
+    icon: '/embedded/bloom-loop/assets/aistudio/Forest-green_and_cream_shuffle_icon-1_32aa8394.webp',
+  },
+  {
+    kind: 'pollenBurst',
+    name: 'Pollen Burst',
+    detail: 'Blooms 4 outer flowers instantly. Can rescue a lost garden.',
+    icon: '/embedded/bloom-loop/assets/aistudio/Forest-green_pollen_burst_icon-2_9756d908.webp',
+  },
+  {
+    kind: 'extraDock',
+    name: '+1 Dock',
+    detail: 'Opens a sixth dock slot for the next queued bee.',
+    icon: '/embedded/bloom-loop/assets/aistudio/Forest-green_cream_extra_dock_icon-3_ebd9cf50.webp',
+  },
+];
+
+export const ShopModal: React.FC<ShopModalProps> = ({
+  coins,
+  boosters,
+  prices,
+  giftReady,
+  giftCoins,
+  onBuy,
+  onClaimGift,
+  onClose,
+}) => {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 select-none">
+      <div className="relative w-full max-w-[440px] bg-gradient-to-b from-emerald-900 via-emerald-950 to-emerald-950 border-4 border-amber-400/80 rounded-3xl p-5 shadow-2xl flex flex-col max-h-[90vh]">
+        <div className="flex items-center justify-between pb-3 border-b border-emerald-700/50">
+          <div className="flex items-center gap-2">
+            <img
+              src="/embedded/bloom-loop/assets/aistudio/Green-and-gold_garden_shop_icon-9_36c78a40.webp"
+              alt=""
+              className="w-7 h-7 object-contain"
+            />
+            <h2 className="text-xl font-black text-amber-200">Seed Shop</h2>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 bg-amber-950/75 border border-amber-600/40 px-2.5 py-1 rounded-full">
+              <img
+                src="/embedded/bloom-loop/assets/aistudio/Green_and_honey-gold_garden_coin-8_e82d5f60.webp"
+                alt="Coins"
+                className="w-5 h-5 object-contain"
+              />
+              <span className="text-sm font-bold text-amber-200">{coins}</span>
+            </div>
+            <button
+              onClick={onClose}
+              className="w-9 h-9 rounded-xl bg-emerald-800 border border-emerald-600 flex items-center justify-center hover:bg-emerald-700 active:scale-95 cursor-pointer shadow"
+              title="Close Shop"
+            >
+              <img src="/embedded/bloom-loop/assets/aistudio/icon_close_abb4d17d.webp" alt="Close" className="w-4 h-4 object-contain" />
+            </button>
+          </div>
+        </div>
+
+        <div className="overflow-y-auto py-3 flex flex-col gap-2.5">
+          {/* Daily Gift */}
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-amber-900/30 border border-amber-500/40">
+            <img
+              src={`/embedded/bloom-loop/assets/aistudio/${giftReady ? 'Open_glowing_seed_chest-21_01e56bab' : 'Closed_Seed_Chest_with_Leaf_Clasp-20_8741abe0'}.webp`}
+              alt=""
+              className="w-14 h-14 object-contain drop-shadow"
+            />
+            <div className="flex-1 text-left">
+              <p className="text-sm font-black text-amber-200">Daily Seed Chest</p>
+              <p className="text-[11px] text-emerald-200">
+                {giftReady ? `Free ${giftCoins} coins, once every day.` : 'Opened today. Come back tomorrow!'}
+              </p>
+            </div>
+            <button
+              onClick={onClaimGift}
+              disabled={!giftReady}
+              className={`py-2 px-3 rounded-xl text-xs font-black shadow transition-all ${
+                giftReady
+                  ? 'bg-amber-400 hover:bg-amber-500 text-amber-950 cursor-pointer active:scale-95'
+                  : 'bg-emerald-950/60 text-emerald-600 cursor-not-allowed'
+              }`}
+            >
+              {giftReady ? 'CLAIM' : 'DONE'}
+            </button>
+          </div>
+
+          {SHOP_ITEMS.map(item => {
+            const affordable = coins >= prices[item.kind];
+            return (
+              <div key={item.kind} className="flex items-center gap-3 p-3 rounded-2xl bg-emerald-900/40 border border-emerald-600/40">
+                <img src={item.icon} alt="" className="w-10 h-10 object-contain" />
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-black text-amber-100">
+                    {item.name} <span className="text-[11px] font-semibold text-emerald-300">(own {boosters[item.kind]})</span>
+                  </p>
+                  <p className="text-[11px] text-emerald-200 leading-snug">{item.detail}</p>
+                </div>
+                <button
+                  onClick={() => onBuy(item.kind)}
+                  disabled={!affordable}
+                  aria-label={`Buy ${item.name} for ${prices[item.kind]} coins`}
+                  className={`py-2 px-3 rounded-xl text-xs font-black shadow flex items-center gap-1 transition-all ${
+                    affordable
+                      ? 'bg-amber-400 hover:bg-amber-500 text-amber-950 cursor-pointer active:scale-95'
+                      : 'bg-emerald-950/60 text-emerald-600 cursor-not-allowed'
+                  }`}
+                >
+                  <img
+                    src="/embedded/bloom-loop/assets/aistudio/Green_and_honey-gold_garden_coin-8_e82d5f60.webp"
+                    alt=""
+                    className="w-4 h-4 object-contain"
+                  />
+                  {prices[item.kind]}
+                </button>
+              </div>
+            );
+          })}
+          <p className="text-[11px] text-emerald-300/80 text-center">
+            Earn coins by clearing gardens: more stars, more coins.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// 6. Interactive Tutorial Overlay
 interface TutorialOverlayProps {
   onDismiss: () => void;
 }
@@ -441,8 +588,8 @@ export const TutorialOverlay: React.FC<TutorialOverlayProps> = ({ onDismiss }) =
         <h3 className="text-lg font-black text-amber-200 mt-2 mb-1">HOW TO PLAY</h3>
         <p className="text-xs text-emerald-100 leading-relaxed mb-3">
           1. Tap a bee on the bottom dock to send it onto the vine loop.<br />
-          2. As the bee cruises around, it fires pollen at outer matching flowers!<br />
-          3. Clear all flowers before running out of dock space!
+          2. As it circles, it fires pollen at the outermost flower of its own colour.<br />
+          3. A bee that flies a whole lap without a matching flower in reach gets bored and leaves with its pollen, so launch buried colours later!
         </p>
 
         <button
