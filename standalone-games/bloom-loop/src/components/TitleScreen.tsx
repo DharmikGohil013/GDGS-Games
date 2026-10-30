@@ -26,7 +26,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
     <div className="relative w-full min-h-screen flex flex-col items-center justify-between p-4 sm:p-6 overflow-hidden select-none">
       {/* Garden Background Artwork */}
       <img
-        src="/embedded/bloom-loop/assets/aistudio/home_garden_background_fbb32a87.png"
+        src="/embedded/bloom-loop/assets/aistudio/home_garden_background_fbb32a87.webp"
         alt="Garden Background"
         className="absolute inset-0 w-full h-full object-cover filter brightness-95"
       />
@@ -37,19 +37,19 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
       {/* Floating Sparkles & Soft Petals */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <img
-          src="/embedded/bloom-loop/assets/aistudio/petal_particle_99a497f6.png"
+          src="/embedded/bloom-loop/assets/aistudio/petal_particle_99a497f6.webp"
           alt="Petal"
           className="absolute top-1/4 left-8 w-6 h-6 object-contain opacity-70 animate-bounce"
           style={{ animationDuration: '4s' }}
         />
         <img
-          src="/embedded/bloom-loop/assets/aistudio/petal_particle_99a497f6.png"
+          src="/embedded/bloom-loop/assets/aistudio/petal_particle_99a497f6.webp"
           alt="Petal"
           className="absolute top-1/3 right-10 w-7 h-7 object-contain opacity-60 animate-bounce"
           style={{ animationDuration: '5.5s' }}
         />
         <img
-          src="/embedded/bloom-loop/assets/aistudio/sparkle_particle_e3f5d547.png"
+          src="/embedded/bloom-loop/assets/aistudio/sparkle_particle_e3f5d547.webp"
           alt="Sparkle"
           className="absolute bottom-1/3 left-14 w-8 h-8 object-contain opacity-75 animate-pulse"
         />
@@ -60,7 +60,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
         {/* Coins Badge */}
         <div className="flex items-center gap-2 bg-emerald-950/80 border-2 border-emerald-600/50 px-3 py-1.5 rounded-full shadow-lg">
           <img
-            src="/embedded/bloom-loop/assets/aistudio/Green_and_honey-gold_garden_coin-8_e82d5f60.png"
+            src="/embedded/bloom-loop/assets/aistudio/Green_and_honey-gold_garden_coin-8_e82d5f60.webp"
             alt="Coins"
             className="w-6 h-6 object-contain"
           />
@@ -75,7 +75,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
             title="Garden Botanical Collection"
           >
             <img
-              src="/embedded/bloom-loop/assets/aistudio/Green_and_gold_garden_collection-13_230c3510.png"
+              src="/embedded/bloom-loop/assets/aistudio/Green_and_gold_garden_collection-13_230c3510.webp"
               alt="Collection"
               className="w-6 h-6 object-contain"
             />
@@ -86,7 +86,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
             title="Settings"
           >
             <img
-              src="/embedded/bloom-loop/assets/aistudio/icon_settings_094b12ff.png"
+              src="/embedded/bloom-loop/assets/aistudio/icon_settings_094b12ff.webp"
               alt="Settings"
               className="w-6 h-6 object-contain"
             />
@@ -99,7 +99,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
         {/* Game Title Emblem */}
         <div className="relative w-64 sm:w-72 drop-shadow-2xl mb-2">
           <img
-            src="/embedded/bloom-loop/assets/aistudio/bloom_loop_emblem_acc76c33.png"
+            src="/embedded/bloom-loop/assets/aistudio/bloom_loop_emblem_acc76c33.webp"
             alt="Bloom Loop Logo"
             className="w-full object-contain filter drop-shadow-lg"
           />
@@ -113,17 +113,17 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
         <div className="relative w-44 h-44 sm:w-52 sm:h-52 flex items-center justify-center animate-gentle-bob">
           {/* Subtle spinning glow rays behind bee */}
           <img
-            src="/embedded/bloom-loop/assets/aistudio/reward_rays_f7195233.png"
+            src="/embedded/bloom-loop/assets/aistudio/reward_rays_f7195233.webp"
             alt="Glow Rays"
             className="absolute inset-0 w-full h-full object-contain opacity-40 animate-spin-slow pointer-events-none"
           />
           <img
-            src="/embedded/bloom-loop/assets/aistudio/soft_contact_shadow_5cab107b.png"
+            src="/embedded/bloom-loop/assets/aistudio/soft_contact_shadow_5cab107b.webp"
             alt="Shadow"
             className="absolute -bottom-2 w-36 h-8 opacity-60"
           />
           <img
-            src="/embedded/bloom-loop/assets/aistudio/Joyful_Bee_with_Flower_Crown-19_96543628.png"
+            src="/embedded/bloom-loop/assets/aistudio/Joyful_Bee_with_Flower_Crown-19_96543628.webp"
             alt="Joyful Bee Mascot"
             className="relative z-10 w-full h-full object-contain drop-shadow-2xl"
           />
@@ -138,7 +138,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
           className="w-full py-4 px-6 rounded-3xl bg-gradient-to-b from-amber-400 via-amber-500 to-amber-600 border-4 border-amber-200 text-amber-950 font-black text-2xl tracking-wider shadow-2xl flex items-center justify-center gap-3 clay-button active:scale-95 transition-all cursor-pointer"
         >
           <img
-            src="/embedded/bloom-loop/assets/aistudio/icon_play_9d8d0cb4.png"
+            src="/embedded/bloom-loop/assets/aistudio/icon_play_9d8d0cb4.webp"
             alt="Play"
             className="w-8 h-8 object-contain filter drop-shadow"
           />
@@ -151,7 +151,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
           className="w-full py-2.5 px-4 rounded-2xl bg-emerald-900/90 hover:bg-emerald-800/90 border-2 border-emerald-500/50 text-emerald-100 font-bold text-sm tracking-wide shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer"
         >
           <img
-            src="/embedded/bloom-loop/assets/aistudio/Cream_leaf-corner_level_card-22_9835a234.png"
+            src="/embedded/bloom-loop/assets/aistudio/Cream_leaf-corner_level_card-22_9835a234.webp"
             alt="Levels"
             className="w-5 h-5 object-contain"
           />
@@ -167,7 +167,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
             <div className="flex items-center justify-between pb-3 border-b border-emerald-700/50">
               <div className="flex items-center gap-2">
                 <img
-                  src="/embedded/bloom-loop/assets/aistudio/Forest-green_level_complete_pictogram-7_5824824f.png"
+                  src="/embedded/bloom-loop/assets/aistudio/Forest-green_level_complete_pictogram-7_5824824f.webp"
                   alt="Trophy"
                   className="w-7 h-7 object-contain"
                 />
@@ -177,7 +177,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
                 onClick={() => setShowLevelSelect(false)}
                 className="w-9 h-9 rounded-xl bg-emerald-800 border border-emerald-600 flex items-center justify-center hover:bg-emerald-700 active:scale-95 cursor-pointer shadow"
               >
-                <img src="/embedded/bloom-loop/assets/aistudio/icon_close_abb4d17d.png" alt="Close" className="w-4 h-4 object-contain" />
+                <img src="/embedded/bloom-loop/assets/aistudio/icon_close_abb4d17d.webp" alt="Close" className="w-4 h-4 object-contain" />
               </button>
             </div>
 
@@ -230,7 +230,7 @@ export const TitleScreen: React.FC<TitleScreenProps> = ({
                     ) : (
                       <>
                         <img
-                          src="/embedded/bloom-loop/assets/aistudio/icon_lock_811ba167.png"
+                          src="/embedded/bloom-loop/assets/aistudio/icon_lock_811ba167.webp"
                           alt="Locked"
                           className="w-6 h-6 object-contain opacity-50"
                         />

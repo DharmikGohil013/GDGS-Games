@@ -1,12 +1,14 @@
 import React from 'react';
-import { GameSettings, COLOR_CONFIGS } from '../game/types.ts';
+import { COLOR_CONFIGS, type Boosters, type FlowerColor, type GameSettings } from '../game/types.ts';
 
 // 1. Victory Modal
 interface VictoryModalProps {
   levelId: number;
   score: number;
+  bestCombo: number;
   stars: number;
   coinsEarned: number;
+  newBest: boolean;
   hasNextLevel: boolean;
   onNextLevel: () => void;
   onRestart: () => void;
@@ -16,8 +18,10 @@ interface VictoryModalProps {
 export const VictoryModal: React.FC<VictoryModalProps> = ({
   levelId,
   score,
+  bestCombo,
   stars,
   coinsEarned,
+  newBest,
   hasNextLevel,
   onNextLevel,
   onRestart,
@@ -29,7 +33,7 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
         {/* Background Reward Rays */}
         <div className="absolute top-6 w-60 h-60 pointer-events-none opacity-40">
           <img
-            src="/embedded/bloom-loop/assets/aistudio/reward_rays_f7195233.png"
+            src="/embedded/bloom-loop/assets/aistudio/reward_rays_f7195233.webp"
             alt="Rays"
             className="w-full h-full object-contain animate-spin-slow"
           />
@@ -38,7 +42,7 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
         {/* Golden Garden Trophy */}
         <div className="relative z-10 w-28 h-28 my-2 drop-shadow-xl animate-bounce">
           <img
-            src="/embedded/bloom-loop/assets/aistudio/Green_and_gold_garden_trophy-12_75812819.png"
+            src="/embedded/bloom-loop/assets/aistudio/Green_and_gold_garden_trophy-12_75812819.webp"
             alt="Trophy"
             className="w-full h-full object-contain"
           />
@@ -65,6 +69,12 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
           ))}
         </div>
 
+        {newBest && (
+          <span className="relative z-10 text-[11px] font-black text-amber-950 bg-amber-300 rounded-full px-3 py-0.5 shadow">
+            NEW BEST SCORE!
+          </span>
+        )}
+
         {/* Score & Coins Earned */}
         <div className="relative z-10 w-full bg-emerald-900/60 border border-emerald-600/40 rounded-2xl p-3 my-3 flex items-center justify-around">
           <div className="flex flex-col">
@@ -72,11 +82,16 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
             <span className="text-lg font-black text-amber-100">{score}</span>
           </div>
           <div className="h-8 w-px bg-emerald-700/40" />
+          <div className="flex flex-col">
+            <span className="text-[10px] text-emerald-300 uppercase font-semibold">Best Chain</span>
+            <span className="text-lg font-black text-amber-100">x{bestCombo}</span>
+          </div>
+          <div className="h-8 w-px bg-emerald-700/40" />
           <div className="flex flex-col items-center">
             <span className="text-[10px] text-emerald-300 uppercase font-semibold">Coins</span>
             <div className="flex items-center gap-1">
               <img
-                src="/embedded/bloom-loop/assets/aistudio/Green_and_honey-gold_garden_coin-8_e82d5f60.png"
+                src="/embedded/bloom-loop/assets/aistudio/Green_and_honey-gold_garden_coin-8_e82d5f60.webp"
                 alt="Coin"
                 className="w-5 h-5 object-contain"
               />
@@ -92,14 +107,14 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
             className="flex-1 py-3 px-3 rounded-2xl bg-emerald-800 hover:bg-emerald-700 border-2 border-emerald-600 shadow-md flex items-center justify-center cursor-pointer active:scale-95 transition-all"
             title="Level Select"
           >
-            <img src="/embedded/bloom-loop/assets/aistudio/icon_home_0a3b95fa.png" alt="Home" className="w-6 h-6 object-contain" />
+            <img src="/embedded/bloom-loop/assets/aistudio/icon_home_0a3b95fa.webp" alt="Home" className="w-6 h-6 object-contain" />
           </button>
           <button
             onClick={onRestart}
             className="flex-1 py-3 px-3 rounded-2xl bg-emerald-800 hover:bg-emerald-700 border-2 border-emerald-600 shadow-md flex items-center justify-center cursor-pointer active:scale-95 transition-all"
             title="Replay Level"
           >
-            <img src="/embedded/bloom-loop/assets/aistudio/icon_restart_3949cd50.png" alt="Replay" className="w-6 h-6 object-contain" />
+            <img src="/embedded/bloom-loop/assets/aistudio/icon_restart_3949cd50.webp" alt="Replay" className="w-6 h-6 object-contain" />
           </button>
           {hasNextLevel && (
             <button
@@ -107,7 +122,7 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
               className="flex-[2] py-3.5 px-4 rounded-2xl bg-gradient-to-b from-amber-400 to-amber-600 border-2 border-amber-200 text-amber-950 font-black text-base shadow-xl flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition-all clay-button"
             >
               <span>NEXT</span>
-              <img src="/embedded/bloom-loop/assets/aistudio/icon_next_40fd9586.png" alt="Next" className="w-5 h-5 object-contain" />
+              <img src="/embedded/bloom-loop/assets/aistudio/icon_next_40fd9586.webp" alt="Next" className="w-5 h-5 object-contain" />
             </button>
           )}
         </div>
@@ -119,41 +134,63 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
 // 2. Game Over Modal
 interface GameOverModalProps {
   levelId: number;
+  shortColor?: FlowerColor;
+  rescueAvailable: boolean;
+  burstsLeft: number;
+  onRescue: () => void;
   onRestart: () => void;
   onHome: () => void;
-  onBoosterHelp?: () => void;
 }
 
 export const GameOverModal: React.FC<GameOverModalProps> = ({
   levelId,
+  shortColor,
+  rescueAvailable,
+  burstsLeft,
+  onRescue,
   onRestart,
   onHome,
-  onBoosterHelp,
 }) => {
+  const colorName = shortColor ? COLOR_CONFIGS[shortColor].name : 'flower';
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 select-none">
       <div className="relative w-full max-w-[400px] bg-gradient-to-b from-emerald-950 via-slate-900 to-emerald-950 border-4 border-rose-500/80 rounded-3xl p-6 shadow-2xl flex flex-col items-center text-center">
         {/* Mascot Mildly Disappointed Bee */}
         <div className="w-28 h-28 my-2 drop-shadow-lg">
           <img
-            src="/embedded/bloom-loop/assets/aistudio/Mildly_disappointed_clay_garden_bee-18_7e759976.png"
+            src="/embedded/bloom-loop/assets/aistudio/Mildly_disappointed_clay_garden_bee-18_7e759976.webp"
             alt="Disappointed Bee"
             className="w-full h-full object-contain"
           />
         </div>
 
-        <h2 className="text-2xl font-black text-rose-300 tracking-wider">OUT OF MOVES</h2>
+        <h2 className="text-2xl font-black text-rose-300 tracking-wider">OUT OF POLLEN</h2>
         <p className="text-emerald-300 text-xs mt-1 mb-3">
-          The docks filled before all flower tiles bloomed.
+          Level {levelId}: there isn't enough {colorName} pollen left to bloom every {colorName} flower.
         </p>
 
         {/* Tip Box */}
         <div className="w-full bg-emerald-900/40 border border-emerald-700/40 rounded-2xl p-3 my-2 text-left text-xs text-emerald-200">
           <p className="font-bold text-amber-300 mb-1">Gardener's Hint:</p>
           <p>
-            Launch bees only when matching outer petals are reachable, or use the <strong>Shuffle</strong> and <strong>+1 Dock</strong> boosters to create room!
+            A bee that flies a whole lap without reaching a flower of its colour gets bored and flies home with its pollen.
+            Launch bees whose flowers are on the <strong>outside</strong> first, and save buried colours for later.
           </p>
         </div>
+
+        {rescueAvailable && (
+          <button
+            onClick={onRescue}
+            className="w-full mt-2 py-3 px-4 rounded-2xl bg-gradient-to-b from-amber-600 to-amber-800 border-2 border-amber-400 text-amber-50 font-black text-sm shadow-lg flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition-all clay-button"
+          >
+            <img
+              src="/embedded/bloom-loop/assets/aistudio/Forest-green_pollen_burst_icon-2_9756d908.webp"
+              alt=""
+              className="w-6 h-6 object-contain"
+            />
+            <span>RESCUE WITH POLLEN BURST ({burstsLeft} left)</span>
+          </button>
+        )}
 
         {/* Buttons */}
         <div className="w-full flex items-center gap-3 mt-3">
@@ -162,13 +199,13 @@ export const GameOverModal: React.FC<GameOverModalProps> = ({
             className="flex-1 py-3 px-3 rounded-2xl bg-emerald-800 hover:bg-emerald-700 border-2 border-emerald-600 shadow-md flex items-center justify-center cursor-pointer active:scale-95 transition-all"
             title="Level Select"
           >
-            <img src="/embedded/bloom-loop/assets/aistudio/icon_home_0a3b95fa.png" alt="Home" className="w-6 h-6 object-contain" />
+            <img src="/embedded/bloom-loop/assets/aistudio/icon_home_0a3b95fa.webp" alt="Home" className="w-6 h-6 object-contain" />
           </button>
           <button
             onClick={onRestart}
             className="flex-[2] py-3.5 px-4 rounded-2xl bg-gradient-to-b from-amber-400 to-amber-600 border-2 border-amber-200 text-amber-950 font-black text-base shadow-xl flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition-all clay-button"
           >
-            <img src="/embedded/bloom-loop/assets/aistudio/icon_restart_3949cd50.png" alt="Retry" className="w-5 h-5 object-contain" />
+            <img src="/embedded/bloom-loop/assets/aistudio/icon_restart_3949cd50.webp" alt="Retry" className="w-5 h-5 object-contain" />
             <span>TRY AGAIN</span>
           </button>
         </div>
@@ -203,7 +240,7 @@ export const PauseSettingsModal: React.FC<PauseSettingsModalProps> = ({
             onClick={onResume}
             className="w-9 h-9 rounded-xl bg-emerald-800 border border-emerald-600 flex items-center justify-center hover:bg-emerald-700 active:scale-95 cursor-pointer shadow"
           >
-            <img src="/embedded/bloom-loop/assets/aistudio/icon_close_abb4d17d.png" alt="Close" className="w-4 h-4 object-contain" />
+            <img src="/embedded/bloom-loop/assets/aistudio/icon_close_abb4d17d.webp" alt="Close" className="w-4 h-4 object-contain" />
           </button>
         </div>
 
@@ -212,7 +249,7 @@ export const PauseSettingsModal: React.FC<PauseSettingsModalProps> = ({
           {/* Sound FX */}
           <div className="flex items-center justify-between bg-emerald-900/50 p-3 rounded-2xl border border-emerald-700/30">
             <div className="flex items-center gap-3">
-              <img src="/embedded/bloom-loop/assets/aistudio/icon_sound_336d9462.png" alt="Sound" className="w-6 h-6 object-contain" />
+              <img src="/embedded/bloom-loop/assets/aistudio/icon_sound_336d9462.webp" alt="Sound" className="w-6 h-6 object-contain" />
               <span className="text-sm font-bold text-emerald-100">Sound Effects</span>
             </div>
             <button
@@ -232,7 +269,7 @@ export const PauseSettingsModal: React.FC<PauseSettingsModalProps> = ({
           {/* Garden Music */}
           <div className="flex items-center justify-between bg-emerald-900/50 p-3 rounded-2xl border border-emerald-700/30">
             <div className="flex items-center gap-3">
-              <img src="/embedded/bloom-loop/assets/aistudio/icon_music_fb46e5ab.png" alt="Music" className="w-6 h-6 object-contain" />
+              <img src="/embedded/bloom-loop/assets/aistudio/icon_music_fb46e5ab.webp" alt="Music" className="w-6 h-6 object-contain" />
               <span className="text-sm font-bold text-emerald-100">Garden Music</span>
             </div>
             <button
@@ -253,7 +290,7 @@ export const PauseSettingsModal: React.FC<PauseSettingsModalProps> = ({
           <div className="flex items-center justify-between bg-emerald-900/50 p-3 rounded-2xl border border-emerald-700/30">
             <div className="flex items-center gap-3">
               <img
-                src="/embedded/bloom-loop/assets/aistudio/icon_colour_assist_2696d1b7.png"
+                src="/embedded/bloom-loop/assets/aistudio/icon_colour_assist_2696d1b7.webp"
                 alt="Color Assist"
                 className="w-6 h-6 object-contain"
               />
@@ -280,7 +317,7 @@ export const PauseSettingsModal: React.FC<PauseSettingsModalProps> = ({
           <div className="flex items-center justify-between bg-emerald-900/50 p-3 rounded-2xl border border-emerald-700/30">
             <div className="flex items-center gap-3">
               <img
-                src="/embedded/bloom-loop/assets/aistudio/icon_reduced_motion_08eafc7c.png"
+                src="/embedded/bloom-loop/assets/aistudio/icon_reduced_motion_08eafc7c.webp"
                 alt="Reduced Motion"
                 className="w-6 h-6 object-contain"
               />
@@ -307,14 +344,14 @@ export const PauseSettingsModal: React.FC<PauseSettingsModalProps> = ({
             onClick={onRestart}
             className="flex-1 py-3 px-3 rounded-2xl bg-emerald-800 hover:bg-emerald-700 border-2 border-emerald-600 text-xs font-bold text-emerald-100 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow"
           >
-            <img src="/embedded/bloom-loop/assets/aistudio/icon_restart_3949cd50.png" alt="Restart" className="w-4 h-4 object-contain" />
+            <img src="/embedded/bloom-loop/assets/aistudio/icon_restart_3949cd50.webp" alt="Restart" className="w-4 h-4 object-contain" />
             <span>Restart</span>
           </button>
           <button
             onClick={onHome}
             className="flex-1 py-3 px-3 rounded-2xl bg-emerald-800 hover:bg-emerald-700 border-2 border-emerald-600 text-xs font-bold text-emerald-100 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 shadow"
           >
-            <img src="/embedded/bloom-loop/assets/aistudio/icon_home_0a3b95fa.png" alt="Map" className="w-4 h-4 object-contain" />
+            <img src="/embedded/bloom-loop/assets/aistudio/icon_home_0a3b95fa.webp" alt="Map" className="w-4 h-4 object-contain" />
             <span>Map</span>
           </button>
           <button
@@ -342,7 +379,7 @@ export const BotanicalCollectionModal: React.FC<BotanicalCollectionModalProps> =
         <div className="flex items-center justify-between pb-3 border-b border-emerald-700/50">
           <div className="flex items-center gap-2">
             <img
-              src="/embedded/bloom-loop/assets/aistudio/Green_and_gold_garden_collection-13_230c3510.png"
+              src="/embedded/bloom-loop/assets/aistudio/Green_and_gold_garden_collection-13_230c3510.webp"
               alt="Botanical Collection"
               className="w-7 h-7 object-contain"
             />
@@ -352,7 +389,7 @@ export const BotanicalCollectionModal: React.FC<BotanicalCollectionModalProps> =
             onClick={onClose}
             className="w-9 h-9 rounded-xl bg-emerald-800 border border-emerald-600 flex items-center justify-center hover:bg-emerald-700 active:scale-95 cursor-pointer shadow"
           >
-            <img src="/embedded/bloom-loop/assets/aistudio/icon_close_abb4d17d.png" alt="Close" className="w-4 h-4 object-contain" />
+            <img src="/embedded/bloom-loop/assets/aistudio/icon_close_abb4d17d.webp" alt="Close" className="w-4 h-4 object-contain" />
           </button>
         </div>
 
@@ -395,7 +432,7 @@ export const TutorialOverlay: React.FC<TutorialOverlayProps> = ({ onDismiss }) =
         {/* Tutorial Hand pointing icon */}
         <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-16 h-16 animate-bounce">
           <img
-            src="/embedded/bloom-loop/assets/aistudio/tutorial_hand_df5105ae.png"
+            src="/embedded/bloom-loop/assets/aistudio/tutorial_hand_df5105ae.webp"
             alt="Hand"
             className="w-full h-full object-contain drop-shadow-xl"
           />

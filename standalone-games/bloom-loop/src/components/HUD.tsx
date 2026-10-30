@@ -1,5 +1,5 @@
 import React from 'react';
-import { GameState } from '../game/rules.ts';
+import { type GameState, PATIENCE_LAPS } from '../game/rules.ts';
 import { COLOR_CONFIGS } from '../game/types.ts';
 
 interface TopBarProps {
@@ -29,13 +29,13 @@ export const TopBar: React.FC<TopBarProps> = ({
         className="w-10 h-10 rounded-2xl bg-emerald-800/80 hover:bg-emerald-700/80 active:scale-95 border-2 border-emerald-600/60 shadow flex items-center justify-center transition-all cursor-pointer"
         title="Return to Level Selection"
       >
-        <img src="/embedded/bloom-loop/assets/aistudio/icon_home_0a3b95fa.png" alt="Home" className="w-5 h-5 object-contain" />
+        <img src="/embedded/bloom-loop/assets/aistudio/icon_home_0a3b95fa.webp" alt="Home" className="w-5 h-5 object-contain" />
       </button>
 
       {/* Level Name / Indicator Lockup */}
       <div className="flex items-center gap-2 bg-emerald-950/85 border border-emerald-600/40 px-3.5 py-1.5 rounded-full shadow-inner">
         <img
-          src="/embedded/bloom-loop/assets/aistudio/Forest-green_current_level_icon-6_d2e8aac7.png"
+          src="/embedded/bloom-loop/assets/aistudio/Forest-green_current_level_icon-6_d2e8aac7.webp"
           alt="Current Level"
           className="w-5 h-5 object-contain"
         />
@@ -52,7 +52,7 @@ export const TopBar: React.FC<TopBarProps> = ({
       {/* Coins & Score */}
       <div className="flex items-center gap-1.5 bg-amber-950/75 border border-amber-600/40 px-2.5 py-1 rounded-full shadow">
         <img
-          src="/embedded/bloom-loop/assets/aistudio/Green_and_honey-gold_garden_coin-8_e82d5f60.png"
+          src="/embedded/bloom-loop/assets/aistudio/Green_and_honey-gold_garden_coin-8_e82d5f60.webp"
           alt="Coins"
           className="w-5 h-5 object-contain"
         />
@@ -60,6 +60,11 @@ export const TopBar: React.FC<TopBarProps> = ({
         <span className="text-[10px] text-amber-400/80 font-medium ml-1">
           pts: {gameState.score}
         </span>
+        {gameState.combo >= 3 && (
+          <span className="text-[10px] font-black text-amber-950 bg-amber-300 rounded-full px-1.5 ml-0.5">
+            x{gameState.combo}
+          </span>
+        )}
       </div>
 
       {/* Color Assist Quick Toggle */}
@@ -73,7 +78,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         title="Toggle Color-Assist Symbols"
       >
         <img
-          src="/embedded/bloom-loop/assets/aistudio/icon_colour_assist_2696d1b7.png"
+          src="/embedded/bloom-loop/assets/aistudio/icon_colour_assist_2696d1b7.webp"
           alt="Color Assist"
           className="w-5 h-5 object-contain"
         />
@@ -85,7 +90,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         className="w-10 h-10 rounded-2xl bg-emerald-800/80 hover:bg-emerald-700/80 active:scale-95 border-2 border-emerald-600/60 shadow flex items-center justify-center transition-all cursor-pointer"
         title="Pause Game"
       >
-        <img src="/embedded/bloom-loop/assets/aistudio/icon_pause_d2da116d.png" alt="Pause" className="w-5 h-5 object-contain" />
+        <img src="/embedded/bloom-loop/assets/aistudio/icon_pause_d2da116d.webp" alt="Pause" className="w-5 h-5 object-contain" />
       </button>
     </header>
   );
@@ -116,6 +121,8 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
 }) => {
   const { dockBees, maxDocks, unspawnedQueue, loopBees, maxLoopCapacity } = gameState;
   const isLoopFull = loopBees.length >= maxLoopCapacity;
+  const beeGettingBored = loopBees.some(b => b.idleProgress >= PATIENCE_LAPS * 0.5);
+  const canAddDock = boosters.extraDock > 0 && maxDocks < 6 && unspawnedQueue.length > 0;
 
   return (
     <footer className="w-full flex flex-col justify-end px-3 pb-3 select-none">
@@ -125,7 +132,11 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
           <span className="text-emerald-400 font-semibold">Vine Loop:</span>
           <span>{loopBees.length}/{maxLoopCapacity} Bees</span>
         </div>
-        {isLoopFull ? (
+        {beeGettingBored ? (
+          <span className="text-rose-300 font-semibold text-[11px] animate-pulse">
+            A bee can't reach its flowers!
+          </span>
+        ) : isLoopFull ? (
           <span className="text-amber-400 font-medium text-[11px] animate-pulse">
             Loop full! Wait for bee to finish
           </span>
@@ -141,7 +152,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
         {/* Warning banner if all docks occupied and loop full */}
         {dockBees.length >= maxDocks && isLoopFull && (
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-rose-600/90 text-white text-[10px] font-bold px-3 py-0.5 rounded-full shadow flex items-center gap-1 border border-rose-300 animate-bounce z-20">
-            <img src="/embedded/bloom-loop/assets/aistudio/Rounded_forest-green_warning_icon-4_366e2baa.png" alt="!" className="w-3.5 h-3.5 object-contain invert" />
+            <img src="/embedded/bloom-loop/assets/aistudio/Rounded_forest-green_warning_icon-4_366e2baa.webp" alt="!" className="w-3.5 h-3.5 object-contain invert" />
             <span>DOCKS FULL</span>
           </div>
         )}
@@ -157,7 +168,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
                   className="w-13 h-15 sm:w-15 sm:h-17 rounded-xl border-2 border-dashed border-emerald-600/30 bg-emerald-900/30 flex items-center justify-center relative opacity-60"
                 >
                   <img
-                    src="/embedded/bloom-loop/assets/aistudio/honeycomb_dock_empty_8bc3b152.png"
+                    src="/embedded/bloom-loop/assets/aistudio/honeycomb_dock_empty_8bc3b152.webp"
                     alt="Empty Dock"
                     className="w-7 h-7 object-contain opacity-40"
                   />
@@ -173,13 +184,14 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
                 key={bee.id}
                 onClick={() => onDispatchBee(idx)}
                 disabled={!canLaunch}
+                aria-label={`Launch ${config.name} bee with ${bee.currentAmmo} pollen`}
                 className={`group relative w-13 h-15 sm:w-15 sm:h-17 rounded-xl flex flex-col items-center justify-center transition-all cursor-pointer ${
                   canLaunch
                     ? 'active:scale-90 hover:-translate-y-1'
                     : 'opacity-50 cursor-not-allowed'
                 }`}
                 style={{
-                  backgroundImage: `url('/embedded/bloom-loop/assets/aistudio/queue_leaf_pad_b11d9743.png')`,
+                  backgroundImage: `url('/embedded/bloom-loop/assets/aistudio/queue_leaf_pad_b11d9743.webp')`,
                   backgroundSize: 'contain',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center',
@@ -187,7 +199,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
               >
                 {/* Contact shadow */}
                 <img
-                  src="/embedded/bloom-loop/assets/aistudio/soft_contact_shadow_5cab107b.png"
+                  src="/embedded/bloom-loop/assets/aistudio/soft_contact_shadow_5cab107b.webp"
                   alt="Shadow"
                   className="absolute -bottom-1 w-10 h-2 opacity-50"
                 />
@@ -196,12 +208,12 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
                 <div className="relative w-9 h-9 flex items-center justify-center">
                   {/* Flapping Wings */}
                   <img
-                    src="/embedded/bloom-loop/assets/aistudio/bee_wing_f6363491.png"
+                    src="/embedded/bloom-loop/assets/aistudio/bee_wing_f6363491.webp"
                     alt="Wing"
                     className="absolute -left-1.5 -top-1 w-4 h-4 object-contain animate-wing-left"
                   />
                   <img
-                    src="/embedded/bloom-loop/assets/aistudio/bee_wing_f6363491.png"
+                    src="/embedded/bloom-loop/assets/aistudio/bee_wing_f6363491.webp"
                     alt="Wing"
                     className="absolute -right-1.5 -top-1 w-4 h-4 object-contain animate-wing-right scale-x-[-1]"
                   />
@@ -217,7 +229,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
                   <div
                     className="absolute z-20 -bottom-1.5 -right-1 w-5 h-5 flex items-center justify-center text-[10px] font-bold text-amber-950 rounded-full shadow"
                     style={{
-                      backgroundImage: `url('/embedded/bloom-loop/assets/aistudio/ammo_badge_blank_76bd93ca.png')`,
+                      backgroundImage: `url('/embedded/bloom-loop/assets/aistudio/ammo_badge_blank_76bd93ca.webp')`,
                       backgroundSize: 'contain',
                       backgroundRepeat: 'no-repeat',
                     }}
@@ -279,7 +291,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
           title="Shuffle upcoming bee docks"
         >
           <img
-            src="/embedded/bloom-loop/assets/aistudio/Forest-green_and_cream_shuffle_icon-1_32aa8394.png"
+            src="/embedded/bloom-loop/assets/aistudio/Forest-green_and_cream_shuffle_icon-1_32aa8394.webp"
             alt="Shuffle"
             className="w-6 h-6 object-contain"
           />
@@ -301,7 +313,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
           title="Instant 4-flower Pollen Burst"
         >
           <img
-            src="/embedded/bloom-loop/assets/aistudio/Forest-green_pollen_burst_icon-2_9756d908.png"
+            src="/embedded/bloom-loop/assets/aistudio/Forest-green_pollen_burst_icon-2_9756d908.webp"
             alt="Pollen Burst"
             className="w-6 h-6 object-contain"
           />
@@ -314,16 +326,16 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
         {/* Extra Dock Booster */}
         <button
           onClick={onBoosterExtraDock}
-          disabled={boosters.extraDock <= 0 || maxDocks >= 6}
+          disabled={!canAddDock}
           className={`flex-1 py-1.5 px-2 rounded-2xl border-2 flex items-center justify-center gap-1.5 shadow-md transition-all cursor-pointer clay-button ${
-            boosters.extraDock > 0 && maxDocks < 6
+            canAddDock
               ? 'bg-gradient-to-b from-teal-700 to-teal-900 border-teal-400 text-teal-100 hover:brightness-110 active:scale-95'
               : 'bg-emerald-950/40 border-emerald-800/30 text-emerald-600/50 cursor-not-allowed'
           }`}
-          title="Unlock +1 Extra Dock"
+          title="Unlock +1 Extra Dock (brings the next queued bee in now)"
         >
           <img
-            src="/embedded/bloom-loop/assets/aistudio/Forest-green_cream_extra_dock_icon-3_ebd9cf50.png"
+            src="/embedded/bloom-loop/assets/aistudio/Forest-green_cream_extra_dock_icon-3_ebd9cf50.webp"
             alt="Extra Dock"
             className="w-6 h-6 object-contain"
           />

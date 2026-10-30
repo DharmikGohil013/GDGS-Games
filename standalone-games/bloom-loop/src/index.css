@@ -36,6 +36,44 @@
   to { transform: rotate(360deg); }
 }
 
+@keyframes bloom-pop {
+  0% { transform: scale(1.35); opacity: 0; }
+  60% { transform: scale(0.92); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes impact-ring {
+  0% { transform: scale(0.4); opacity: 0.9; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+@keyframes score-float {
+  0% { transform: translate(-50%, 0); opacity: 0; }
+  15% { transform: translate(-50%, -40%); opacity: 1; }
+  100% { transform: translate(-50%, -160%); opacity: 0; }
+}
+
+@keyframes toast-in {
+  0% { transform: translate(-50%, -8px); opacity: 0; }
+  100% { transform: translate(-50%, 0); opacity: 1; }
+}
+
+.animate-bloom-pop {
+  animation: bloom-pop 0.35s ease-out both;
+}
+
+.animate-impact-ring {
+  animation: impact-ring 0.6s ease-out forwards;
+}
+
+.animate-score-float {
+  animation: score-float 0.9s ease-out forwards;
+}
+
+.animate-toast-in {
+  animation: toast-in 0.25s ease-out both;
+}
+
 .animate-wing-left {
   animation: wing-flutter-left 0.15s ease-in-out infinite;
   transform-origin: bottom right;

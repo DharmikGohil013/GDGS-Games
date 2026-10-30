@@ -194,6 +194,55 @@ class GardenAudioEngine {
     osc.stop(now + 0.45);
   }
 
+  // Sleepy descending buzz when a bee gives up and flies home
+  public playBored() {
+    if (!this.soundEnabled) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(260, now);
+    osc.frequency.exponentialRampToValueAtTime(140, now + 0.35);
+
+    gain.gain.setValueAtTime(0.06, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.38);
+  }
+
+  public playCoin() {
+    if (!this.soundEnabled) return;
+    this.initCtx();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    [988, 1319].forEach((freq, i) => {
+      const osc = this.ctx!.createOscillator();
+      const gain = this.ctx!.createGain();
+      const time = now + i * 0.08;
+
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(freq, time);
+
+      gain.gain.setValueAtTime(0.06, time);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + 0.16);
+
+      osc.connect(gain);
+      gain.connect(this.ctx!.destination);
+
+      osc.start(time);
+      osc.stop(time + 0.16);
+    });
+  }
+
   public startGardenMusic() {
     if (this.musicInterval) return;
     this.initCtx();

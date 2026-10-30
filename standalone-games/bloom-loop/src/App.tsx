@@ -1,7 +1,18 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { GameState, createInitialGameState, dispatchBeeFromDock, stepSimulation, boosterShuffle, boosterPollenBurst, boosterExtraDock } from './game/rules.ts';
-import { LEVELS } from './game/levels.ts';
-import { GameSettings } from './game/types.ts';
+import {
+  GameState,
+  createInitialGameState,
+  dispatchBeeFromDock,
+  stepSimulation,
+  boosterShuffle,
+  boosterPollenBurst,
+  boosterExtraDock,
+  calculateStars,
+  canRescueWithBurst,
+  resumeAfterLoss,
+} from './game/rules.ts';
+import { LEVELS, chapterForLevel } from './game/levels.ts';
+import { COLOR_CONFIGS, type Boosters, type GameSettings } from './game/types.ts';
 import { audio } from './game/audio.ts';
 import { GameCanvas } from './components/GameCanvas.tsx';
 import { TopBar, BottomControls } from './components/HUD.tsx';
@@ -12,7 +23,13 @@ import {
   PauseSettingsModal,
   BotanicalCollectionModal,
   TutorialOverlay,
+  ShopModal,
 } from './components/Modals.tsx';
+
+const BOOSTER_PRICES: Boosters = { shuffle: 40, pollenBurst: 60, extraDock: 50 };
+const DAILY_GIFT_COINS = 50;
+
+const localDay = () => new Date().toLocaleDateString('en-CA');
 
 export default function App() {
   // Persistence state
@@ -26,7 +43,8 @@ export default function App() {
 
   const [unlockedLevel, setUnlockedLevel] = useState<number>(() => {
     try {
-      return parseInt(localStorage.getItem('bloom_loop_unlocked') || '1', 10);
+      const saved = parseInt(localStorage.getItem('bloom_loop_unlocked') || '1', 10);
+      return Math.min(Math.max(saved, 1), LEVELS.length);
     } catch {
       return 1;
     }
@@ -48,7 +66,7 @@ export default function App() {
     }
   });
 
-  const [boosters, setBoosters] = useState<{ shuffle: number; pollenBurst: number; extraDock: number }>(() => {
+  const [boosters, setBoosters] = useState<Boosters>(() => {
     try {
       return JSON.parse(
         localStorage.getItem('bloom_loop_boosters') || '{"shuffle": 3, "pollenBurst": 2, "extraDock": 2}'
@@ -75,14 +93,27 @@ export default function App() {
     }
   });
 
+  const [lastGiftDay, setLastGiftDay] = useState<string>(() => {
+    try {
+      return localStorage.getItem('bloom_loop_gift_day') || '';
+    } catch {
+      return '';
+    }
+  });
+
   // App screen state
   const [screen, setScreen] = useState<'title' | 'gameplay'>('title');
   const [currentLevelId, setCurrentLevelId] = useState<number>(1);
   const [gameState, setGameState] = useState<GameState>(() => createInitialGameState(LEVELS[0]));
+  const [runResult, setRunResult] = useState<{ stars: number; coins: number; newBest: boolean } | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+  const runIdRef = useRef(0);
+  const rewardedRunRef = useRef(-1);
 
   // Modal dialog states
   const [showPauseSettings, setShowPauseSettings] = useState<boolean>(false);
   const [showCollection, setShowCollection] = useState<boolean>(false);
+  const [showShop, setShowShop] = useState<boolean>(false);
   const [showTutorial, setShowTutorial] = useState<boolean>(() => {
     try {
       return localStorage.getItem('bloom_loop_seen_tutorial') !== 'true';
@@ -111,21 +142,37 @@ export default function App() {
       localStorage.setItem('bloom_loop_scores', JSON.stringify(highScores));
       localStorage.setItem('bloom_loop_boosters', JSON.stringify(boosters));
       localStorage.setItem('bloom_loop_settings', JSON.stringify(settings));
+      localStorage.setItem('bloom_loop_gift_day', lastGiftDay);
     } catch {
       // ignore
     }
-  }, [coins, unlockedLevel, starsEarned, highScores, boosters, settings]);
+  }, [coins, unlockedLevel, starsEarned, highScores, boosters, settings, lastGiftDay]);
 
   const currentLevel = LEVELS.find(l => l.id === currentLevelId) || LEVELS[0];
+  const chapter = chapterForLevel(currentLevelId);
+  const vibrate = useCallback((ms: number) => {
+    if (settings.hapticsEnabled && window.navigator?.vibrate) window.navigator.vibrate(ms);
+  }, [settings.hapticsEnabled]);
 
   // Start level
   const startLevel = useCallback((lvlId: number) => {
     audio.playTap();
     const lvl = LEVELS.find(l => l.id === lvlId) || LEVELS[0];
-    setCurrentLevelId(lvlId);
+    runIdRef.current += 1;
+    setCurrentLevelId(lvl.id);
     setGameState(createInitialGameState(lvl));
+    setRunResult(null);
+    setToast(null);
     setScreen('gameplay');
     setShowPauseSettings(false);
+  }, []);
+
+  // Leaving a level ends it, so its result modals never follow the player to the title screen
+  const goHome = useCallback(() => {
+    audio.playTap();
+    setShowPauseSettings(false);
+    setGameState(prev => ({ ...prev, status: 'idle' }));
+    setScreen('title');
   }, []);
 
   useEffect(() => {
@@ -142,34 +189,57 @@ export default function App() {
     if (gameState.loopBees.length >= gameState.maxLoopCapacity) return;
 
     audio.playBeeLaunch();
-    if (settings.hapticsEnabled && window.navigator?.vibrate) {
-      window.navigator.vibrate(15);
-    }
+    vibrate(15);
     setGameState(prev => dispatchBeeFromDock(prev, dockIndex));
-  }, [gameState.status, gameState.loopBees.length, gameState.maxLoopCapacity, settings.hapticsEnabled]);
+  }, [gameState.status, gameState.loopBees.length, gameState.maxLoopCapacity, vibrate]);
 
   // Booster handlers
   const handleBoosterShuffle = useCallback(() => {
-    if (boosters.shuffle <= 0) return;
+    if (boosters.shuffle <= 0 || gameState.status !== 'playing') return;
     audio.playBooster();
     setBoosters(prev => ({ ...prev, shuffle: prev.shuffle - 1 }));
     setGameState(prev => boosterShuffle(prev));
-  }, [boosters.shuffle]);
+  }, [boosters.shuffle, gameState.status]);
 
   const handleBoosterPollenBurst = useCallback(() => {
-    if (boosters.pollenBurst <= 0) return;
+    if (boosters.pollenBurst <= 0 || gameState.status !== 'playing') return;
     audio.playBooster();
     audio.playBloomHit(3);
     setBoosters(prev => ({ ...prev, pollenBurst: prev.pollenBurst - 1 }));
     setGameState(prev => boosterPollenBurst(prev));
-  }, [boosters.pollenBurst]);
+  }, [boosters.pollenBurst, gameState.status]);
 
   const handleBoosterExtraDock = useCallback(() => {
-    if (boosters.extraDock <= 0 || gameState.maxDocks >= 6) return;
+    if (boosters.extraDock <= 0 || gameState.maxDocks >= 6 || gameState.unspawnedQueue.length === 0) return;
     audio.playBooster();
     setBoosters(prev => ({ ...prev, extraDock: prev.extraDock - 1 }));
     setGameState(prev => boosterExtraDock(prev));
-  }, [boosters.extraDock, gameState.maxDocks]);
+  }, [boosters.extraDock, gameState.maxDocks, gameState.unspawnedQueue.length]);
+
+  // A Pollen Burst can save a lost garden when it blooms the flowers the missing pollen was for
+  const rescueAvailable = boosters.pollenBurst > 0 && canRescueWithBurst(gameState);
+  const handleRescue = useCallback(() => {
+    if (!rescueAvailable) return;
+    audio.playBooster();
+    setBoosters(prev => ({ ...prev, pollenBurst: prev.pollenBurst - 1 }));
+    setGameState(prev => boosterPollenBurst(resumeAfterLoss(prev)));
+  }, [rescueAvailable]);
+
+  const handleBuyBooster = useCallback((kind: keyof Boosters) => {
+    const price = BOOSTER_PRICES[kind];
+    if (coins < price) return;
+    audio.playCoin();
+    setCoins(prev => prev - price);
+    setBoosters(prev => ({ ...prev, [kind]: prev[kind] + 1 }));
+  }, [coins]);
+
+  const giftReady = lastGiftDay !== localDay();
+  const handleClaimGift = useCallback(() => {
+    if (!giftReady) return;
+    audio.playCoin();
+    setCoins(prev => prev + DAILY_GIFT_COINS);
+    setLastGiftDay(localDay());
+  }, [giftReady]);
 
   const toggleColorAssist = useCallback(() => {
     audio.playTap();
@@ -182,84 +252,67 @@ export default function App() {
     setSettings(prev => ({ ...prev, ...newSettings }));
   }, []);
 
-  // Simulation Game Loop
-  const lastTimeRef = useRef<number>(performance.now());
-  const prevHitCountRef = useRef<number>(0);
-  const prevProjCountRef = useRef<number>(0);
+  const tutorialVisible = screen === 'gameplay' && currentLevelId === 1 && showTutorial;
+  const isPaused = showPauseSettings || showShop || tutorialVisible;
 
+  // Simulation Game Loop: only runs while a level is actively being played
   useEffect(() => {
-    if (screen !== 'gameplay' || gameState.status !== 'playing') return;
+    if (screen !== 'gameplay' || gameState.status !== 'playing' || isPaused) return;
 
     let animFrame: number;
-    lastTimeRef.current = performance.now();
+    let lastTime = performance.now();
 
     const loop = (currentTime: number) => {
-      const dt = Math.min((currentTime - lastTimeRef.current) / 1000, 0.08);
-      lastTimeRef.current = currentTime;
-
-      setGameState(prevState => {
-        if (prevState.status !== 'playing') return prevState;
-        const nextState = stepSimulation(prevState, dt);
-
-        // Check for audio cues
-        if (nextState.recentHits.length > prevHitCountRef.current) {
-          audio.playBloomHit(nextState.combo);
-          if (settings.hapticsEnabled && window.navigator?.vibrate) {
-            window.navigator.vibrate(25);
-          }
-        }
-        prevHitCountRef.current = nextState.recentHits.length;
-
-        if (nextState.activeProjectiles.length > prevProjCountRef.current) {
-          audio.playShoot();
-        }
-        prevProjCountRef.current = nextState.activeProjectiles.length;
-
-        // Status change audio
-        if (prevState.status === 'playing' && nextState.status === 'won') {
-          audio.playVictory();
-        } else if (prevState.status === 'playing' && nextState.status === 'lost') {
-          audio.playGameOver();
-        }
-
-        return nextState;
-      });
-
+      const dt = Math.min((currentTime - lastTime) / 1000, 0.08);
+      lastTime = currentTime;
+      setGameState(prevState => stepSimulation(prevState, dt));
       animFrame = requestAnimationFrame(loop);
     };
 
     animFrame = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animFrame);
-  }, [screen, gameState.status, settings.hapticsEnabled]);
+  }, [screen, gameState.status, isPaused]);
 
-  // Handle Level Victory rewards
+  // Sound and haptic cues, once per simulation step
   useEffect(() => {
-    if (gameState.status === 'won') {
-      const rewardCoins = 60;
-      setCoins(prev => prev + rewardCoins);
-
-      // Calculate stars earned based on target thresholds
-      let stars = 1;
-      const targets = currentLevel.targetStars;
-      if (gameState.score >= targets[2]) stars = 3;
-      else if (gameState.score >= targets[1]) stars = 2;
-
-      setStarsEarned(prev => ({
-        ...prev,
-        [currentLevelId]: Math.max(prev[currentLevelId] || 0, stars),
-      }));
-
-      setHighScores(prev => ({
-        ...prev,
-        [currentLevelId]: Math.max(prev[currentLevelId] || 0, gameState.score),
-      }));
-
-      // Unlock next level if available
-      if (currentLevelId >= unlockedLevel && currentLevelId < LEVELS.length) {
-        setUnlockedLevel(currentLevelId + 1);
-      }
+    if (gameState.tick === 0) return;
+    if (gameState.lastStepShots > 0) audio.playShoot();
+    if (gameState.lastStepHits > 0) {
+      audio.playBloomHit(Math.max(1, gameState.combo));
+      vibrate(25);
     }
-  }, [gameState.status, currentLevelId, currentLevel.targetStars, gameState.score, unlockedLevel]);
+    if (gameState.lastStepBored.length > 0) {
+      audio.playBored();
+      const name = COLOR_CONFIGS[gameState.lastStepBored[0]].name;
+      setToast(`A ${name} bee got bored and flew home!`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameState.tick]);
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 2600);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
+  useEffect(() => {
+    if (gameState.status === 'won') audio.playVictory();
+    else if (gameState.status === 'lost') audio.playGameOver();
+  }, [gameState.status]);
+
+  // Level victory rewards, granted exactly once per run
+  useEffect(() => {
+    if (gameState.status !== 'won' || rewardedRunRef.current === runIdRef.current) return;
+    rewardedRunRef.current = runIdRef.current;
+
+    const stars = calculateStars(gameState);
+    const rewardCoins = 20 + stars * 20;
+    setRunResult({ stars, coins: rewardCoins, newBest: gameState.score > (highScores[currentLevelId] || 0) });
+    setCoins(prev => prev + rewardCoins);
+    setStarsEarned(prev => ({ ...prev, [currentLevelId]: Math.max(prev[currentLevelId] || 0, stars) }));
+    setHighScores(prev => ({ ...prev, [currentLevelId]: Math.max(prev[currentLevelId] || 0, gameState.score) }));
+    setUnlockedLevel(prev => Math.max(prev, Math.min(LEVELS.length, currentLevelId + 1)));
+  }, [gameState, currentLevelId, highScores]);
 
   // Dismiss tutorial
   const handleDismissTutorial = useCallback(() => {
@@ -290,6 +343,7 @@ export default function App() {
             starsEarned={starsEarned}
             coins={coins}
             unlockedLevel={unlockedLevel}
+            giftReady={giftReady}
             onSelectLevel={startLevel}
             onOpenSettings={() => {
               audio.playTap();
@@ -299,13 +353,17 @@ export default function App() {
               audio.playTap();
               setShowCollection(true);
             }}
+            onOpenShop={() => {
+              audio.playTap();
+              setShowShop(true);
+            }}
           />
         ) : (
           <div className="relative w-full min-h-screen flex flex-col justify-between p-1 sm:p-2">
-            {/* Gameplay Garden Background */}
+            {/* Chapter Garden Background */}
             <img
-              src="/embedded/bloom-loop/assets/aistudio/gameplay_garden_background_317c185d.png"
-              alt="Garden Background"
+              src={chapter.background}
+              alt=""
               className="absolute inset-0 w-full h-full object-cover filter brightness-90 pointer-events-none"
             />
             <div className="absolute inset-0 bg-black/35 pointer-events-none" />
@@ -322,15 +380,20 @@ export default function App() {
                   audio.playTap();
                   setShowPauseSettings(true);
                 }}
-                onHome={() => {
-                  audio.playTap();
-                  setScreen('title');
-                }}
+                onHome={goHome}
               />
             </div>
 
             {/* Central Planter Board & Vine Loop Canvas */}
-            <div className="relative z-10 my-auto w-full flex items-center justify-center">
+            <div className="relative z-10 my-auto w-full flex items-center justify-center px-1">
+              {toast && (
+                <div
+                  role="status"
+                  className="absolute z-50 top-0 left-1/2 px-3 py-1 rounded-full bg-rose-600/95 text-white text-xs font-bold shadow-lg border border-rose-300 whitespace-nowrap animate-toast-in"
+                >
+                  {toast}
+                </div>
+              )}
               <GameCanvas
                 gameState={gameState}
                 colorAssist={settings.colorAssist}
@@ -354,31 +417,31 @@ export default function App() {
         )}
 
         {/* Victory Modal */}
-        {gameState.status === 'won' && (
+        {screen === 'gameplay' && gameState.status === 'won' && runResult && (
           <VictoryModal
             levelId={currentLevelId}
             score={gameState.score}
-            stars={starsEarned[currentLevelId] || 3}
-            coinsEarned={60}
+            bestCombo={gameState.bestCombo}
+            stars={runResult.stars}
+            coinsEarned={runResult.coins}
+            newBest={runResult.newBest}
             hasNextLevel={currentLevelId < LEVELS.length}
             onNextLevel={() => startLevel(currentLevelId + 1)}
             onRestart={() => startLevel(currentLevelId)}
-            onHome={() => {
-              audio.playTap();
-              setScreen('title');
-            }}
+            onHome={goHome}
           />
         )}
 
         {/* Game Over Modal */}
-        {gameState.status === 'lost' && (
+        {screen === 'gameplay' && gameState.status === 'lost' && (
           <GameOverModal
             levelId={currentLevelId}
+            shortColor={gameState.shortColor}
+            rescueAvailable={rescueAvailable}
+            burstsLeft={boosters.pollenBurst}
+            onRescue={handleRescue}
             onRestart={() => startLevel(currentLevelId)}
-            onHome={() => {
-              audio.playTap();
-              setScreen('title');
-            }}
+            onHome={goHome}
           />
         )}
 
@@ -386,16 +449,30 @@ export default function App() {
         {showPauseSettings && (
           <PauseSettingsModal
             settings={settings}
+            inGame={screen === 'gameplay'}
             onUpdateSettings={handleUpdateSettings}
             onResume={() => {
               audio.playTap();
               setShowPauseSettings(false);
             }}
             onRestart={() => startLevel(currentLevelId)}
-            onHome={() => {
+            onHome={goHome}
+          />
+        )}
+
+        {/* Seed Shop */}
+        {showShop && (
+          <ShopModal
+            coins={coins}
+            boosters={boosters}
+            prices={BOOSTER_PRICES}
+            giftReady={giftReady}
+            giftCoins={DAILY_GIFT_COINS}
+            onBuy={handleBuyBooster}
+            onClaimGift={handleClaimGift}
+            onClose={() => {
               audio.playTap();
-              setShowPauseSettings(false);
-              setScreen('title');
+              setShowShop(false);
             }}
           />
         )}
@@ -411,9 +488,7 @@ export default function App() {
         )}
 
         {/* Tutorial Overlay for Level 1 */}
-        {screen === 'gameplay' && currentLevelId === 1 && showTutorial && (
-          <TutorialOverlay onDismiss={handleDismissTutorial} />
-        )}
+        {tutorialVisible && <TutorialOverlay onDismiss={handleDismissTutorial} />}
       </div>
     </div>
   );
