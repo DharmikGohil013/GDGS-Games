@@ -2,6 +2,23 @@
    PLAY PAGE + CONTENT PAGES
    ═══════════════════════════════════════════ */
 
+.home-discovery {
+  max-width: 900px;
+  padding-bottom: 48px;
+}
+
+.home-discovery p {
+  margin-top: 14px;
+  color: var(--text-dim);
+  line-height: 1.7;
+}
+
+.home-discovery a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* ─────────────── Play page shell ─────────────── */
 
 .play-page-container {

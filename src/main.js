@@ -24,6 +24,7 @@ import { createNavbar } from './components/navbar.js';
 import { createCategories } from './components/categories.js';
 import { createHero } from './components/hero.js';
 import { createGameGrid } from './components/gameGrid.js';
+import { createHomeDiscovery } from './components/homeDiscovery.js';
 import { createStatsBar } from './components/statsBar.js';
 import { createFooter } from './components/footer.js';
 
@@ -200,6 +201,7 @@ function renderHomePage() {
   wrap.appendChild(createHero());
   wrap.appendChild(createCategories());
   wrap.appendChild(createGameGrid());
+  wrap.appendChild(createHomeDiscovery());
 
   app.appendChild(wrap);
   app.appendChild(createStatsBar());

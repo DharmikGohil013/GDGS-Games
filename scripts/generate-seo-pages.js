@@ -31,7 +31,8 @@ function ensureHeadTag(html, pattern, tag) {
 function renderPage(html, seo) {
   const url = new URL(seo.url, `${baseUrl}/`).href;
   const image = new URL(seo.image || '/images/city-bg.png', `${baseUrl}/`).href;
-  let result = html.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(seo.title)}</title>`);
+  let result = html.replace(/<script id="page-jsonld" type="application\/ld\+json">[\s\S]*?<\/script>\s*/g, '');
+  result = result.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(seo.title)}</title>`);
   result = replaceMeta(result, 'name="description"', `<meta name="description" content="${escapeHtml(seo.description)}">`);
   result = replaceMeta(result, 'name="robots"', `<meta name="robots" content="${escapeHtml(seo.robots || 'max-image-preview:large')}">`);
   result = replaceMeta(result, 'property="og:title"', `<meta property="og:title" content="${escapeHtml(seo.title)}">`);
@@ -39,12 +40,12 @@ function renderPage(html, seo) {
   result = replaceMeta(result, 'property="og:url"', `<meta property="og:url" content="${url}">`);
   result = replaceMeta(result, 'property="og:image"', `<meta property="og:image" content="${image}">`);
   result = replaceMeta(result, 'property="og:image:secure_url"', `<meta property="og:image:secure_url" content="${image}">`);
-  result = replaceMeta(result, 'property="og:image:alt"', `<meta property="og:image:alt" content="${escapeHtml(`${seo.title} — Playzy`)}">`);
+  result = replaceMeta(result, 'property="og:image:alt"', `<meta property="og:image:alt" content="${escapeHtml(seo.title)}">`);
   result = replaceMeta(result, 'property="og:type"', `<meta property="og:type" content="${escapeHtml(seo.type || 'website')}">`);
   result = replaceMeta(result, 'name="twitter:title"', `<meta name="twitter:title" content="${escapeHtml(seo.title)}">`);
   result = replaceMeta(result, 'name="twitter:description"', `<meta name="twitter:description" content="${escapeHtml(seo.description)}">`);
   result = replaceMeta(result, 'name="twitter:image"', `<meta name="twitter:image" content="${image}">`);
-  result = replaceMeta(result, 'name="twitter:image:alt"', `<meta name="twitter:image:alt" content="${escapeHtml(`${seo.title} — Playzy`)}">`);
+  result = replaceMeta(result, 'name="twitter:image:alt"', `<meta name="twitter:image:alt" content="${escapeHtml(seo.title)}">`);
   result = result.replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?\s*>/i, `<link rel="canonical" href="${url}">`);
   result = result.replace(/(<link\s+rel="alternate"\s+hreflang="(?:en|x-default)"\s+href=")[^"]*("\s*\/?\s*>)/gi, `$1${url}$2`);
 
@@ -116,7 +117,7 @@ function renderStaticContent(seo) {
 
   if (seo.url === '/') {
     const links = games.filter((item) => item.isPlayable).map((item) => `<li><a href="${escapeHtml(item.url || `/games/${encodeURIComponent(item.id)}/`)}">${escapeHtml(item.title)}</a> — ${escapeHtml(getGuide(item).description)}</li>`).join('');
-    return `<section aria-label="Playable browser games"><h1>Play free browser games online</h1><p>Playzy is a free browser games site. Explore arcade, puzzle, racing, runner, platformer and multiplayer games. No app download is required.</p><h2>Games you can play</h2><ul>${links}</ul></section>`;
+    return `<section aria-label="Playable browser games"><h1>Free games online to play now</h1><p>Play free browser games on Playzy without downloading an app. Explore puzzle, racing, arcade, runner, platform and multiplayer games on your PC, laptop or phone.</p><h2>Games you can play</h2><ul>${links}</ul></section>`;
   }
 
   return `<section aria-label="${escapeHtml(seo.title)}"><h1>${escapeHtml(seo.title.split(' | ')[0].split(' — ')[0])}</h1><p>${escapeHtml(seo.description)}</p><p><a href="/">Browse free browser games</a></p></section>`;

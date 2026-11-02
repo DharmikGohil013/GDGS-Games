@@ -74,7 +74,7 @@ export function updateSEO({ title, description, url = '/', image, type = 'websit
   setMeta('meta[property="og:url"]', 'property=og:url', fullUrl);
   setMeta('meta[property="og:image"]', 'property=og:image', ogImage);
   setMeta('meta[property="og:image:secure_url"]', 'property=og:image:secure_url', ogImage);
-  setMeta('meta[property="og:image:alt"]', 'property=og:image:alt', `${title} — Playzy`);
+  setMeta('meta[property="og:image:alt"]', 'property=og:image:alt', title);
   setMeta('meta[property="og:type"]', 'property=og:type', type);
   setMeta('meta[property="og:site_name"]', 'property=og:site_name', 'Playzy');
 
@@ -82,7 +82,7 @@ export function updateSEO({ title, description, url = '/', image, type = 'websit
   setMeta('meta[name="twitter:title"]', 'name=twitter:title', title);
   setMeta('meta[name="twitter:description"]', 'name=twitter:description', description);
   setMeta('meta[name="twitter:image"]', 'name=twitter:image', ogImage);
-  setMeta('meta[name="twitter:image:alt"]', 'name=twitter:image:alt', `${title} — Playzy`);
+  setMeta('meta[name="twitter:image:alt"]', 'name=twitter:image:alt', title);
   setMeta('meta[name="twitter:card"]', 'name=twitter:card', 'summary_large_image');
 
   // Canonical
@@ -118,14 +118,14 @@ export function updateSEO({ title, description, url = '/', image, type = 'websit
 
 export const PAGE_SEO = {
   home: {
-    title: 'Play Free Browser Games Online — Playzy',
-    description: 'Play free browser games on Playzy across arcade, puzzle, racing, runner, platform and multiplayer genres. No download or installation is required.',
+    title: 'Free Games Online to Play Now — No Download | Playzy',
+    description: 'Play free games online on Playzy. Explore browser puzzle, racing, arcade, runner and multiplayer games on PC or phone. Start playing without a download.',
     url: '/',
     jsonLd: {
       '@context': 'https://schema.org',
       '@type': 'CollectionPage',
-      name: 'Playzy — Free Browser Games',
-      description: 'Browse and play free browser games instantly. No download or installation required.',
+      name: 'Playzy — Free Games Online',
+      description: 'Play free browser games online, including puzzle, racing, arcade, runner and multiplayer games. No download required.',
       url: 'https://playzy.dharmikgohil.art/',
       breadcrumb: {
         '@type': 'BreadcrumbList',
