@@ -30,6 +30,7 @@ export function createFooter() {
           <div class="footer-nav-group">
             <h2>Explore</h2>
             <a href="/">All games</a>
+            <a href="/pc-games/">PC games</a>
             <a href="/games/infinite-world/">Infinite World</a>
           </div>
           <div class="footer-nav-group">

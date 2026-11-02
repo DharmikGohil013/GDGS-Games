@@ -120,6 +120,12 @@ function renderStaticContent(seo) {
     return `<section aria-label="Playable browser games"><h1>Free games online to play now</h1><p>Play free browser games on Playzy without downloading an app. Explore puzzle, racing, arcade, runner, platform and multiplayer games on your PC, laptop or phone.</p><h2>Games you can play</h2><ul>${links}</ul></section>`;
   }
 
+  if (seo.url === '/pc-games/') {
+    const ids = new Set(['apex-velocity', 'turbo-drift', 'voxelcraft', 'infinite-world', 'hextris', 'block-merge', 'neon-snake', 'infinite-runner']);
+    const links = games.filter((item) => ids.has(item.id) && item.isPlayable).map((item) => `<li><a href="/games/${escapeHtml(item.id)}/">${escapeHtml(item.title)}</a> — ${escapeHtml(getGuide(item).description)}</li>`).join('');
+    return `<section aria-label="Free PC browser games"><h1>Free PC games to play online</h1><p>Explore free games for PC and laptop browsers on Playzy. Play racing, puzzle, arcade and building games online without downloading or installing a game.</p><h2>PC browser games</h2><ul>${links}</ul><p><a href="/">Browse all free games</a></p></section>`;
+  }
+
   return `<section aria-label="${escapeHtml(seo.title)}"><h1>${escapeHtml(seo.title.split(' | ')[0].split(' — ')[0])}</h1><p>${escapeHtml(seo.description)}</p><p><a href="/">Browse free browser games</a></p></section>`;
 }
 
@@ -133,7 +139,7 @@ for (const game of games.filter((g) => g.isPlayable)) {
 
 const pages = [
   PAGE_SEO.home,
-  ...['about', 'terms', 'privacy', 'contact'].map((key) => PAGE_SEO[key]),
+  ...['pcGames', 'about', 'terms', 'privacy', 'contact'].map((key) => PAGE_SEO[key]),
   ...games.filter((game) => game.isPlayable && !game.url).map(buildGameSEO),
   ...gameSubpages,
 ];

@@ -134,6 +134,26 @@ export const PAGE_SEO = {
     }
   },
 
+  pcGames: {
+    title: 'Free PC Games Online — Play in Your Browser | Playzy',
+    description: 'Play free PC games online on Playzy. Explore racing, puzzle, arcade and building games in your browser, with no Windows download or installation.',
+    url: '/pc-games/',
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'Free PC Games Online',
+      description: 'Free browser games to play on PC and laptop without downloading or installing a game.',
+      url: 'https://playzy.dharmikgohil.art/pc-games/',
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://playzy.dharmikgohil.art/' },
+          { '@type': 'ListItem', position: 2, name: 'PC Games', item: 'https://playzy.dharmikgohil.art/pc-games/' }
+        ]
+      }
+    }
+  },
+
   about: {
     title: 'About Playzy — Free Browser Games Platform | No Download Gaming',
     description: 'Learn about Playzy, a browser gaming platform built by Dharmik Gohil. Browse free arcade, puzzle, racing and other browser games.',

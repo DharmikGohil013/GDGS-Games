@@ -25,6 +25,7 @@ import { createCategories } from './components/categories.js';
 import { createHero } from './components/hero.js';
 import { createGameGrid } from './components/gameGrid.js';
 import { createHomeDiscovery } from './components/homeDiscovery.js';
+import { createPcGamesPage } from './components/pcGamesPage.js';
 import { createStatsBar } from './components/statsBar.js';
 import { createFooter } from './components/footer.js';
 
@@ -122,7 +123,11 @@ function renderPage() {
 
   app.appendChild(createNavbar());
 
-  if (route === 'about') {
+  if (route === 'pc-games') {
+    updateSEO(PAGE_SEO.pcGames);
+    currentPage = 'sub';
+    app.appendChild(createPcGamesPage());
+  } else if (route === 'about') {
     updateSEO(PAGE_SEO.about);
     renderSubPage(createAboutPage(), PAGE_SEO.about.title);
   } else if (route === 'terms') {

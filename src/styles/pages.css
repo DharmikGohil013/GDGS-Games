@@ -19,6 +19,15 @@
   text-underline-offset: 3px;
 }
 
+.pc-games-page { padding-top: 48px; padding-bottom: 64px; }
+.pc-games-intro { max-width: 780px; margin-bottom: 42px; }
+.pc-games-eyebrow { color: var(--accent); font-size: 12px; font-weight: 800; letter-spacing: .12em; }
+.pc-games-intro h1 { margin: 12px 0 18px; }
+.pc-games-intro > p:last-child, .pc-games-info p { color: var(--text-dim); line-height: 1.7; }
+.pc-games-info { max-width: 820px; margin-top: 50px; }
+.pc-games-info p { margin-top: 14px; }
+.pc-games-info a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+
 /* ─────────────── Play page shell ─────────────── */
 
 .play-page-container {
