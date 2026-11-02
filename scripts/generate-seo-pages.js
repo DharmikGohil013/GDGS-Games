@@ -32,6 +32,7 @@ function renderPage(html, seo) {
   const url = new URL(seo.url, `${baseUrl}/`).href;
   const image = new URL(seo.image || '/images/city-bg.png', `${baseUrl}/`).href;
   let result = html.replace(/<script id="page-jsonld" type="application\/ld\+json">[\s\S]*?<\/script>\s*/g, '');
+  if (seo.url !== '/') result = result.replace(/\s*<meta name="keywords" content="[^"]*">/i, '');
   result = result.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(seo.title)}</title>`);
   result = replaceMeta(result, 'name="description"', `<meta name="description" content="${escapeHtml(seo.description)}">`);
   result = replaceMeta(result, 'name="robots"', `<meta name="robots" content="${escapeHtml(seo.robots || 'max-image-preview:large')}">`);
