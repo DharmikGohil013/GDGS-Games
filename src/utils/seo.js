@@ -1,6 +1,7 @@
 // ─── SEO Utility — Dynamic Meta & Structured Data Updates ───
 
 import { getGuide } from '../data/gameGuides.js';
+import { trackEvent } from './analytics.js';
 
 const BASE_URL = 'https://playzy.dharmikgohil.art';
 
@@ -105,13 +106,8 @@ export function updateSEO({ title, description, url = '/', image, type = 'websit
     document.head.appendChild(script);
   }
 
-  // Google Analytics SPA Pageview Tracking
-  if (typeof window.gtag === 'function') {
-    window.gtag('config', 'G-TEKBBJ6WTP', {
-      page_path: path,
-      page_title: title
-    });
-  }
+  // Keep campaign query parameters for acquisition reporting; canonical stays clean.
+  trackEvent('page_view', { page_location: window.location.href.split('#')[0], page_title: title });
 }
 
 // ── Page SEO Presets ─────────────────────────────────────────

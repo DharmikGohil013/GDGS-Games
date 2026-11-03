@@ -1,5 +1,7 @@
 // ─── Contact Page ───
 
+import { trackEvent } from '../utils/analytics.js';
+
 export function createContactPage() {
   const page = document.createElement('div');
   page.className = 'page-content';
@@ -61,7 +63,7 @@ export function createContactPage() {
 
         <div class="contact-form-card">
           <h2>Send us a message</h2>
-          <p class="contact-form-sub">Fill out the form below and we'll get back to you as soon as possible.</p>
+          <p class="contact-form-sub">Fill out the form to open a draft in your email app. You'll need to press Send there.</p>
           <form class="contact-form" id="contact-form">
             <div class="form-group">
               <label for="contact-name">Full Name</label>
@@ -91,19 +93,10 @@ export function createContactPage() {
               <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor">
                 <path d="M2.5 2.5L18 10L2.5 17.5V11.25L13 10L2.5 8.75V2.5Z"/>
               </svg>
-              Send Message
+              Open Email Draft
             </button>
           </form>
-          <div class="contact-success" id="contact-success" style="display:none">
-            <div class="success-icon">
-              <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M8 12l3 3 5-5"/>
-              </svg>
-            </div>
-            <h3>Message sent!</h3>
-            <p>Thank you for reaching out. We'll get back to you soon.</p>
-          </div>
+          <p id="contact-status" role="status" style="display:none">Your email app should open a draft. Press Send there to deliver it. If no app opens, email us at <a href="mailto:dharmikgohil.work@gmail.com">dharmikgohil.work@gmail.com</a>.</p>
         </div>
 
       </div>
@@ -123,14 +116,20 @@ export function createContactPage() {
 
   // Form submission handler
   const form = page.querySelector('#contact-form');
-  const success = page.querySelector('#contact-success');
-
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    form.style.display = 'none';
-    page.querySelector('.contact-form-sub').style.display = 'none';
-    page.querySelector('.contact-form-card h2').style.display = 'none';
-    success.style.display = 'flex';
+    const name = form.querySelector('#contact-name').value.trim();
+    const email = form.querySelector('#contact-email').value.trim();
+    const topic = form.querySelector('#contact-subject');
+    const message = form.querySelector('#contact-message').value.trim();
+    if (!name || !email || !topic.value || !message) return;
+
+    const subject = `Playzy: ${topic.selectedOptions[0].textContent}`;
+    const body = `Name: ${name}\nEmail: ${email}\n\n${message}`;
+    const draftUrl = `mailto:dharmikgohil.work@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    page.querySelector('#contact-status').style.display = 'block';
+    trackEvent('contact_email_intent', { contact_topic: topic.value });
+    window.location.href = draftUrl;
   });
 
   return page;

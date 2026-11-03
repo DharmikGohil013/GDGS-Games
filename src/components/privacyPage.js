@@ -33,7 +33,7 @@ export function createPrivacyPage() {
         <h3>2.2 Information You Provide</h3>
         <p>Playzy is designed to be used without creating an account. The one exception is <a href="/games/infinite-world/">Infinite World</a>, our multiplayer city builder, which has optional accounts — see the <a href="/games/infinite-world/privacy/">Infinite World Privacy Policy</a>. If you contact us or interact with certain features, you may voluntarily provide:</p>
         <ul>
-          <li>Name and email address (through the contact form only).</li>
+          <li>Name and email address you choose to send through your email app when contacting us.</li>
           <li>Feedback, bug reports, or suggestions.</li>
           <li>Any other information you choose to provide.</li>
         </ul>

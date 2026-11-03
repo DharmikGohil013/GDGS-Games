@@ -9,6 +9,7 @@ import { getGameStats, getMissions, getCoins, getLevelInfo } from '../core/progr
 import { isSoundOn, toggleSound, sfx } from '../core/audio.js';
 import { openProfileDrawer } from './profileDrawer.js';
 import { onUnmount } from '../core/lifecycle.js';
+import { trackEvent } from '../utils/analytics.js';
 
 // Lazy-load game modules so the homepage never pays for Phaser or Three.
 const gameModules = {
@@ -301,6 +302,7 @@ export function createPlayPage(gameId) {
       activeGameModule = module;
       module.initGame(viewport, game);
       module.setSoundEnabled?.(isSoundOn());
+      trackEvent('select_content', { content_type: 'game', item_id: game.id });
     } catch (err) {
       console.error('Failed to load game module:', err);
       if (loadingEl) loadingEl.style.display = 'none';

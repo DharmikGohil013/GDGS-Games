@@ -640,10 +640,13 @@
 
 .contact-submit-btn { justify-content: center; width: 100%; }
 
-.contact-success { padding: 34px 20px; text-align: center; }
-.success-icon { font-size: 44px; margin-bottom: 14px; }
-.contact-success h3 { font-size: 21px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
-.contact-success p { font-size: 14px; color: var(--text-dim); }
+#contact-status {
+  margin-top: 16px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+#contact-status a { color: var(--accent); text-decoration: underline; }
 
 .contact-note {
   display: flex;

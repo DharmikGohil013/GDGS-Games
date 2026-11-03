@@ -2,6 +2,8 @@
 // Every game funnels its run results through submitRun(); everything the site
 // shows (nav chip, profile drawer, mission panel) reads from this one store.
 
+import { trackEvent } from '../utils/analytics.js';
+
 const KEY = 'playzy:profile:v1';
 const listeners = new Set();
 
@@ -431,6 +433,12 @@ export function submitRun(gameId, run = {}) {
   const achievementsUnlocked = checkAchievements();
 
   save();
+
+  trackEvent('post_score', { score, game_id: gameId });
+  if (levels > 0) trackEvent('level_up', { level: p.level, game_id: gameId });
+  achievementsUnlocked.forEach(({ id }) => {
+    trackEvent('unlock_achievement', { achievement_id: id, game_id: gameId });
+  });
 
   return {
     score,
