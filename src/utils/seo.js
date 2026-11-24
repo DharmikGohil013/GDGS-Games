@@ -281,6 +281,16 @@ export function buildGameSEO(game) {
   };
 }
 
+// Per-game Terms/Privacy pages are only a few sentences long. Indexing dozens of
+// near-empty pages looks like low-value content to AdSense and search engines, so
+// they stay reachable for players but are kept out of the index and the sitemap.
+// TODO(human): decide which subpages count as "thin". The baseline below covers the
+// per-game terms/privacy pages; refine it if some games (e.g. ones with accounts,
+// like infinite-world) deserve to stay indexable, or use a content-length rule.
+export function isThinSubpage(game, subpageType) {
+  return subpageType === 'terms' || subpageType === 'privacy';
+}
+
 export function buildGameSubpageSEO(game, subpageType) {
   const gameName = game.title || game.id.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
   const category = (game.category || 'arcade').charAt(0).toUpperCase() + (game.category || 'arcade').slice(1);
@@ -331,7 +341,7 @@ export function buildGameSubpageSEO(game, subpageType) {
     title: pageTitle,
     description: pageDesc,
     url: subpagePath,
-    robots: 'max-image-preview:large',
+    robots: isThinSubpage(game, subpageType) ? 'noindex, follow' : 'max-image-preview:large',
     image: game.image || null,
     type: 'website',
     jsonLd: {

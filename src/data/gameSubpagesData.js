@@ -33,6 +33,90 @@ export function getGameScreenshots(game) {
 }
 
 export const GAME_DETAILS = {
+  'lantern-night': {
+    whatIs: {
+      headline: 'A Korean Folktale Adventure Drawn Entirely in Text',
+      summary: 'Lantern Night: An ASCII Folktale is a short story adventure where every frame is made of text characters. On Daeboreum, the first full moon of the lunar year, the moon rises dark: the mischievous dokkaebi have borrowed its light. You play Dal, carrying Grandmother’s blue-and-red lantern through a village, a whispering bamboo grove, a mountain pass of wishing cairns and the hollow of the dokkaebi chief, gathering moon-flames and choosing how to treat the goblins you meet.',
+      coreFeatures: [
+        { title: 'A 3D World Rendered as ASCII', desc: 'A real 3D scene is converted to characters every frame. Brightness picks the glyph density, and edges become | / - \\ strokes that trace each silhouette.' },
+        { title: 'Lantern Light & Oil', desc: 'Only your lantern lights the dark. Oil drains as you walk, dokkaebi-fires drink it, and lantern posts refill it and become checkpoints.' },
+        { title: 'Choices With Consequences', desc: 'Share a flame with a lonely goblin, sing for a bridge guardian or wrestle him, and decide what to say to the chief. Your kindness and the flames you carry home shape the ending.' },
+        { title: 'Ssireum Wrestling', desc: 'A timing minigame based on traditional Korean wrestling: throw Bawi twice to win an extra moon-flame.' },
+      ],
+      specs: {
+        category: 'Story Adventure / 3D',
+        engine: 'Three.js WebGL with a custom ASCII shader',
+        input: 'Keyboard, Mouse & Touch',
+        platform: 'Desktop & Mobile Web',
+        audio: 'Generated Chimes, Walnut Cracks & Dialogue Blips',
+        saveState: 'Chapter checkpoint saved in your browser',
+      },
+      whyPlay: [
+        'A complete story you can finish in about fifteen minutes, with four different endings.',
+        'An unusual look: lantern light falls off through . : - = + * # % @ as you walk.',
+        'Folklore woven into play, from Daeboreum nut-cracking to jangseung guardians and seonangdang wish trees.',
+      ],
+    },
+    about: {
+      headline: 'The Story and How the Lantern Works',
+      lore: 'In Dalgol village the first full moon of the year should be greeted with lanterns, bonfires and cracked nuts. This year the moon rose hollow. Grandmother Ok blames the dokkaebi, the horned tricksters of Korean folklore, and sends Dal up the mountain with her lantern and a pouch of walnuts.',
+      mechanics: 'Each chapter scatters moon-flames along a winding path. Collect enough to open the red hongsalmun gate at the end; extra flames brighten the moon overhead. Blue dokkaebi-fires chase the lantern and drain its oil on contact. Cracking a walnut releases a shockwave that scares nearby fires away. If the oil runs out, you return to the last lantern post you lit.',
+      tech: 'The scene is built with Three.js from simple shapes and drawn into a small off-screen image with one texel pair per character cell. A full-screen shader then measures brightness and edge direction in each cell and picks a glyph from a font atlas drawn at the exact cell size.',
+      developmentNotes: 'Lantern Night is an original story inspired by Korean folklore. The dokkaebi here are mischievous rather than evil, true to the traditional tales where they reward kindness and tease the greedy.',
+    },
+    tutorial: {
+      headline: 'Lantern Keeper’s Guide: Oil, Walnuts & Endings',
+      quickStart: [
+        { step: '1', title: 'Follow the Compass', desc: 'The HUD shows an arrow and distance to the nearest moon-flame, or to the red gate once it is open.' },
+        { step: '2', title: 'Light Lantern Posts', desc: 'Walk up to a post to light it. It refills your oil, adds two walnuts and becomes your checkpoint.' },
+        { step: '3', title: 'Crack Walnuts', desc: 'When blue fires close in, press Space to crack a walnut and scatter them for a few seconds.' },
+        { step: '4', title: 'Choose Your Words', desc: 'At each gate you meet a dokkaebi. Your choices, and how many flames you carry, decide the ending.' },
+      ],
+      controls: [
+        { key: 'WASD / Arrow keys', action: 'Walk', device: 'Keyboard', tip: 'Movement is relative to the screen: up walks deeper into the night' },
+        { key: 'Space / E', action: 'Crack a walnut', device: 'Keyboard', tip: 'You can carry up to five walnuts' },
+        { key: 'Enter / 1 / 2', action: 'Advance dialogue and choose', device: 'Keyboard', tip: 'Press Enter to finish a line instantly' },
+        { key: 'P / Esc', action: 'Pause', device: 'Keyboard', tip: 'Restart a chapter from the pause menu' },
+        { key: 'Drag / Tap', action: 'Walk and crack walnuts', device: 'Touch', tip: 'Drag anywhere on the scene to walk' },
+      ],
+      scoring: 'Your score adds 150 per moon-flame, 250 per kind choice, 20 per walnut left over, up to 400 for never losing the lantern, and a bonus for the ending you reach.',
+      proTips: [
+        'Low oil makes the lantern flicker and shrink its light. Head for a lit post before it runs dry.',
+        'Fires that are stunned turn grey and flee. Walk past them while they are scared.',
+        'In ssireum, wait for the marker to sit inside the ### zone; each round gets faster and narrower.',
+      ],
+      mistakes: [
+        { mistake: 'Rushing to the gate with the minimum number of flames', fix: 'The gate opens early, but a dim moon leads to a sadder ending. Explore while your oil allows.' },
+      ],
+    },
+    support: {
+      headline: 'Lantern Night FAQs & Help',
+      faqs: [
+        { q: 'Does my progress save?', a: 'Yes. The start of each chapter is saved in your browser, and the title screen offers Continue.' },
+        { q: 'How many endings are there?', a: 'Four. They depend on how many moon-flames you bring home and how kind you were to the dokkaebi.' },
+        { q: 'What happens if my oil runs out?', a: 'The dark swallows your lantern and you wake at the last lantern post you lit, keeping your flames.' },
+      ],
+      troubleshooting: [
+        { issue: 'Black screen or no game', fix: 'Lantern Night needs WebGL. Turn on hardware acceleration in your browser settings and reload.' },
+        { issue: 'No sound', fix: 'Click or tap the game once so the browser allows audio, and check the sound toggle in the page header.' },
+      ],
+    },
+    terms: {
+      headline: 'Terms & Conditions — Lantern Night',
+      sections: [
+        { title: '1. Service Scope', content: 'Lantern Night is provided free for personal play in the browser on Playzy.' },
+        { title: '2. Original Work', content: 'The story, characters and art of Lantern Night are original to Playzy and draw on traditional Korean folklore.' },
+      ],
+    },
+    privacy: {
+      headline: 'Privacy Policy — Lantern Night',
+      sections: [
+        { title: '1. No Personal Data', content: 'Lantern Night does not ask for or collect personal information.' },
+        { title: '2. Local Saves', content: 'Your chapter checkpoint, score and coins are stored only in your browser’s local storage.' },
+      ],
+    },
+  },
+
   'apex-velocity': {
     whatIs: {
       headline: 'The Ultimate Web-Based F1 Supercar Driving Simulator & Circuit Builder',

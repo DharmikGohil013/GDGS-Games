@@ -13,6 +13,7 @@ import { trackEvent } from '../utils/analytics.js';
 
 // Lazy-load game modules so the homepage never pays for Phaser or Three.
 const gameModules = {
+  'lantern-night': () => import('../games/lantern-night.js'),
   'among-us-pixel-outpost': () => import('../games/standalone.js'),
   'bloom-loop': () => import('../games/standalone.js'),
   'cash-tycoon': () => import('../games/standalone.js'),

@@ -2,6 +2,21 @@
 // Used by the play page. Any id missing here falls back to generic text.
 
 export const GAME_GUIDES = {
+  'lantern-night': {
+    tagline: 'Carry the moon’s stolen light home through a world drawn in text.',
+    description: 'A short story adventure rendered entirely in ASCII characters. On the first full moon of the year the moon rises dark, so Dal takes Grandmother’s lantern up the mountain to gather moon-flames from the mischievous dokkaebi. Four chapters, choices that change the ending, and a ssireum wrestling bout.',
+    controls: [
+      { key: 'WASD / Arrows', label: 'Walk with the lantern' },
+      { key: 'Space', label: 'Crack a walnut to scare dokkaebi-fires away' },
+      { key: 'Enter / 1 / 2', label: 'Advance dialogue and pick choices' },
+      { key: 'Touch', label: 'Drag to walk, tap CRACK NUT' },
+    ],
+    tips: [
+      'Light every lantern post: it refills your oil, gives two walnuts and becomes your checkpoint.',
+      'You only need some of the flames to open each red gate, but every extra flame brightens the moon.',
+      'Kind choices and a full moon lead to different endings, so try a second tale.',
+    ],
+  },
   'among-us-pixel-outpost': {
     tagline: 'Solve a pixel space mystery with AI crewmates.',
     description: 'Explore a pixel space outpost, complete crew tasks, watch for sabotage, and vote in meetings against computer-controlled crewmates.',

@@ -8,14 +8,14 @@ export function createPrivacyPage() {
     <div class="page-hero">
       <span class="page-badge">Legal</span>
       <h1 class="page-title">Privacy Policy</h1>
-      <p class="page-subtitle">Last updated: July 30, 2026</p>
+      <p class="page-subtitle">Last updated: November 24, 2026</p>
     </div>
 
     <div class="page-section legal-content">
 
       <div class="legal-block">
         <h2>1. Introduction</h2>
-        <p>Playzy ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit and use our gaming platform at playzy.com ("the Platform"). Please read this policy carefully.</p>
+        <p>Playzy ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit and use our gaming platform at playzy.dharmikgohil.art ("the Platform"). Please read this policy carefully.</p>
         <p>By using the Platform, you consent to the practices described in this Privacy Policy. If you do not agree with this policy, please do not use the Platform.</p>
       </div>
 
@@ -62,11 +62,30 @@ export function createPrivacyPage() {
         <p>You can manage cookie preferences through your browser settings. Please note that disabling certain cookies may impact Platform functionality.</p>
       </div>
 
+      <div class="legal-block" id="advertising">
+        <h2>4a. Advertising and Google AdSense</h2>
+        <p>Playzy is free to play and is supported by advertising. We use Google AdSense, a service provided by Google LLC, to show ads on parts of the Platform.</p>
+        <ul>
+          <li>Third-party vendors, including Google, use cookies to serve ads based on a user's prior visits to this website or other websites.</li>
+          <li>Google's use of advertising cookies enables it and its partners to serve ads to you based on your visit to Playzy and/or other sites on the Internet.</li>
+          <li>Depending on your location, ads may be personalised or non-personalised. Where the law requires it, personalised ads are only shown after you give consent.</li>
+          <li>You can opt out of personalised advertising by visiting <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>. You can also opt out of some third-party vendors' use of cookies for personalised advertising at <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer">aboutads.info</a>.</li>
+          <li>To learn how Google uses data from sites that use its services, see <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">How Google uses information from sites or apps that use our services</a>.</li>
+        </ul>
+        <p>We never ask you to click on ads. We do not control the ads shown by Google or the cookies set by its advertisers.</p>
+      </div>
+
+      <div class="legal-block" id="analytics">
+        <h2>4b. Analytics</h2>
+        <p>We use Google Analytics to measure which pages and games are used, so we can improve the Platform. Google Analytics collects information such as pages viewed, device type and approximate location. You can prevent this by using your browser's privacy controls or the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">Google Analytics opt-out add-on</a>.</p>
+      </div>
+
       <div class="legal-block">
         <h2>5. Data Sharing and Disclosure</h2>
         <p>We do not sell, trade, or rent your personal information to third parties. We may share information in the following limited circumstances:</p>
         <ul>
           <li><strong>Service Providers:</strong> With trusted third-party service providers who assist in operating the Platform (e.g., hosting, analytics), bound by confidentiality agreements.</li>
+          <li><strong>Advertising Partners:</strong> Google and its advertising partners receive cookie and device information when ads are shown, as described in section 4a.</li>
           <li><strong>Legal Requirements:</strong> When required by law, regulation, legal process, or governmental request.</li>
           <li><strong>Protection of Rights:</strong> To protect the rights, property, or safety of Playzy, our users, or the public.</li>
           <li><strong>Business Transfers:</strong> In connection with a merger, acquisition, or sale of assets, where user information may be among the transferred assets.</li>
