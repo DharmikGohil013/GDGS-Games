@@ -2,10 +2,11 @@
 
 > Playzy is a browser games platform with free games that run in a web browser. Most games can be played without an account or installation. Infinite World requires an account for multiplayer worlds and saved progress.
 
-Playzy is built and maintained by Dharmik Gohil ([dharmikgohil.art](https://dharmikgohil.art)). The catalogue currently includes 22 playable games; each title below links to its game page.
+Playzy is built and maintained by Dharmik Gohil ([dharmikgohil.art](https://dharmikgohil.art)). The catalogue currently includes 23 playable games; each title below links to its game page.
 
 ## Playable games
 
+- [Lantern Night: An ASCII Folktale](https://playzy.dharmikgohil.art/games/lantern-night/): A short Korean folktale adventure drawn entirely in text characters. Carry a lantern up the mountain to gather the moon's stolen light from the dokkaebi, with choices that change the ending.
 - [Among Us: Pixel Outpost](https://playzy.dharmikgohil.art/games/among-us-pixel-outpost/): Explore a pixel space outpost, complete crew tasks, watch for sabotage, and vote in meetings against computer-controlled crewmates.
 - [Bloom Loop: Garden Colour Flow](https://playzy.dharmikgohil.art/games/bloom-loop/): Direct bee drones around a vine loop and match colours to clear flower tiles with pollen bursts.
 - [Cash Tycoon: Fame & Fortune](https://playzy.dharmikgohil.art/games/cash-tycoon/): Open businesses, hire managers, collect profits, and expand your tower.

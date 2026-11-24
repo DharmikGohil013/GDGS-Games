@@ -20,10 +20,10 @@ const MAX_OIL = 100;
 const PLAYER_RADIUS = 0.38;
 
 const THEMES = {
-  village: { ground: '#1d2a1b', speck: '#2f3d28', path: '#8a785a', pathSpeck: '#a8946e', half: 11, fogFar: 62, ambient: 1.1 },
-  bamboo: { ground: '#162414', speck: '#2b4224', path: '#6c6a4c', pathSpeck: '#8a8762', half: 10, fogFar: 54, ambient: 0.95 },
-  cairn: { ground: '#24272a', speck: '#3a3e43', path: '#7a766c', pathSpeck: '#9a958a', half: 10, fogFar: 58, ambient: 0.95 },
-  hollow: { ground: '#191420', speck: '#2c2338', path: '#574a60', pathSpeck: '#75657f', half: 10, fogFar: 50, ambient: 0.8 },
+  village: { ground: '#1d2a1b', speck: '#2f3d28', path: '#8a785a', pathSpeck: '#a8946e', half: 11, fogFar: 62, ambient: 2.6 },
+  bamboo: { ground: '#162414', speck: '#2b4224', path: '#6c6a4c', pathSpeck: '#8a8762', half: 10, fogFar: 54, ambient: 2.3 },
+  cairn: { ground: '#24272a', speck: '#3a3e43', path: '#7a766c', pathSpeck: '#9a958a', half: 10, fogFar: 58, ambient: 2.3 },
+  hollow: { ground: '#191420', speck: '#2c2338', path: '#574a60', pathSpeck: '#75657f', half: 10, fogFar: 50, ambient: 1.9 },
 };
 
 const ASCII_VERT = /* glsl */`
@@ -75,8 +75,15 @@ void main() {
   float gy = (tl + 2.0 * tc + tr) - (bl + 2.0 * bc + br);
   float g = length(vec2(gx, gy));
 
+  // A point (a star, a spark) has at most one similarly bright neighbour, even
+  // when it straddles two cells; a line or a silhouette edge always has two.
+  float lim = L * 0.6;
+  float bright = step(lim, tl) + step(lim, tc) + step(lim, tr) + step(lim, ml)
+               + step(lim, mr) + step(lim, bl) + step(lim, bc) + step(lim, br);
+  bool isPoint = bright < 1.5;
+
   float idx = floor(clamp(L * 1.08, 0.0, 0.999) * 10.0);
-  if (g > 0.85 && L > 0.14) {
+  if (g > 0.85 && L > 0.14 && !isPoint) {
     // The edge runs perpendicular to the gradient; quantise it to four line glyphs.
     float a = mod(atan(gy, gx) + 0.3927, 3.14159265);
     float q = floor(a / 0.7854);
@@ -351,11 +358,15 @@ function createLanternNight(container) {
 
   const ambient = new THREE.AmbientLight(0x7083b8, 1);
   const moonLight = new THREE.DirectionalLight(0xb4c2ff, 0.2);
-  scene.add(ambient, moonLight, moonLight.target);
-  const lanternLight = new THREE.PointLight(0xffb469, 40, 17, 2);
+  // A soft fill from behind the camera so the faces we look at are never pure black;
+  // without it Dal, who walks away from the camera, reads as an empty outline.
+  const fillLight = new THREE.DirectionalLight(0x9aa8d8, 1.6);
+  scene.add(ambient, moonLight, moonLight.target, fillLight, fillLight.target);
+  // Gentle decay keeps the lantern from blowing out everything within arm's reach.
+  const lanternLight = new THREE.PointLight(0xffb469, 14, 18, 1.15);
   scene.add(lanternLight);
   const pool = Array.from({ length: 4 }, () => {
-    const light = new THREE.PointLight(0xffd27a, 0, 8, 2);
+    const light = new THREE.PointLight(0xffd27a, 0, 8, 1.5);
     scene.add(light);
     return light;
   });
@@ -590,8 +601,8 @@ function createLanternNight(container) {
     const group = new THREE.Group();
     const body = new THREE.Group();
     group.add(body);
-    body.add(mesh(GEO.taper, lam(0x34478a), 0, 0.6, 0, 0.95, 1.2, 0.95));
-    body.add(mesh(GEO.cyl, lam(0xece3cc), 0, 1.3, 0, 0.66, 0.44, 0.6));
+    body.add(mesh(GEO.taper, lam(0x4d63c4), 0, 0.6, 0, 0.95, 1.2, 0.95));
+    body.add(mesh(GEO.cyl, lam(0xf4ecd6), 0, 1.3, 0, 0.66, 0.44, 0.6));
     body.add(mesh(GEO.box, lam(0xc8372e), 0.1, 1.22, -0.31, 0.09, 0.34, 0.04));
     body.add(mesh(GEO.sphere, lam(0xf0c9a2), 0, 1.74, 0, 0.46, 0.48, 0.46));
     body.add(mesh(GEO.sphere, lam(0x1c1815), 0, 1.81, 0.05, 0.5, 0.42, 0.5));
@@ -1515,7 +1526,8 @@ function createLanternNight(container) {
     moonLevel = damp(moonLevel, moonTarget, 1.6, dt);
     const m = Math.pow(moonLevel, 1.15);
     moonMat.color.setRGB(lerp(0.03, 1, m), lerp(0.03, 0.95, m), lerp(0.045, 0.82, m));
-    moonLight.intensity = 0.08 + 0.9 * moonLevel;
+    // The world grows easier to read as the moon recovers its light.
+    moonLight.intensity = 0.3 + 2.4 * moonLevel;
   }
 
   function updateLights() {
@@ -1524,13 +1536,13 @@ function createLanternNight(container) {
     const fuel = clamp(oil / 40, 0, 1);
     let flicker = 1 + Math.sin(time * 13) * 0.03 + Math.sin(time * 29.7) * 0.02;
     if (oil < 25 && state === 'play') flicker *= 0.75 + 0.25 * Math.abs(Math.sin(time * 23 + Math.sin(time * 7)));
-    lanternLight.intensity = (state === 'title' || state === 'ending' ? 40 : 40 * (0.3 + 0.7 * fuel)) * flicker;
-    lanternLight.distance = 10 + 7 * (state === 'play' ? fuel : 1);
+    lanternLight.intensity = (state === 'title' || state === 'ending' ? 14 : 14 * (0.3 + 0.7 * fuel)) * flicker;
+    lanternLight.distance = 11 + 7 * (state === 'play' ? fuel : 1);
 
     const candidates = [];
-    for (const f of flames) if (!f.taken) candidates.push({ x: f.x, y: f.group.position.y, z: f.z, c: 0xffcf7a, i: 14, r: 7 });
-    for (const p of posts) if (p.lit) candidates.push({ x: p.lx, y: 2.3, z: p.z, c: 0xffc58a, i: 18, r: 9 });
-    for (const w of wisps) candidates.push({ x: w.x, y: w.group.position.y, z: w.z, c: 0x4aa8ff, i: w.stun > 0 ? 2 : 7, r: 5 });
+    for (const f of flames) if (!f.taken) candidates.push({ x: f.x, y: f.group.position.y, z: f.z, c: 0xffcf7a, i: 7, r: 7 });
+    for (const p of posts) if (p.lit) candidates.push({ x: p.lx, y: 2.3, z: p.z, c: 0xffc58a, i: 9, r: 9 });
+    for (const w of wisps) candidates.push({ x: w.x, y: w.group.position.y, z: w.z, c: 0x4aa8ff, i: w.stun > 0 ? 1 : 4, r: 5 });
     for (const c of candidates) c.d = (c.x - player.x) ** 2 + (c.z - player.z) ** 2;
     candidates.sort((a, b) => a.d - b.d);
     pool.forEach((light, i) => {
@@ -1550,7 +1562,7 @@ function createLanternNight(container) {
       const a = Math.sin(time * 0.12) * 0.5;
       const cx = player.x;
       const cz = player.z - 3;
-      outPos.set(cx + Math.sin(a) * 13, 5.2 + Math.sin(time * 0.21) * 0.6, cz + Math.cos(a) * 13);
+      outPos.set(cx + Math.sin(a) * 10, 4.4 + Math.sin(time * 0.21) * 0.5, cz + Math.cos(a) * 10);
       outLook.set(cx, 2.4, cz - 8);
       return;
     }
@@ -1563,8 +1575,9 @@ function createLanternNight(container) {
       fz = (fz + p.z) / 2;
       k = 0.72;
     }
-    outPos.set(fx, 7 * k + 0.6, fz + 12.5 * k);
-    outLook.set(fx, 1.2, fz - 9 * k);
+    // Close enough that Dal and the dokkaebi span a dozen character cells.
+    outPos.set(fx, 5.4 * k + 0.6, fz + 9 * k);
+    outLook.set(fx, 1.3, fz - 7 * k);
   }
 
   function updateCamera(dt) {
@@ -1581,6 +1594,8 @@ function createLanternNight(container) {
     sky.position.set(camera.position.x, 0, camera.position.z);
     moonLight.position.set(camera.position.x - 30, 50, camera.position.z - 60);
     moonLight.target.position.set(camera.position.x, 0, camera.position.z - 10);
+    fillLight.position.set(camera.position.x + 2, camera.position.y + 3, camera.position.z + 4);
+    fillLight.target.position.copy(camLook);
   }
 
   function snapCamera() {
