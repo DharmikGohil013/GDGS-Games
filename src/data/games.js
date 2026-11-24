@@ -9,7 +9,7 @@ const capturedGames = new Set([
 ]);
 
 export const games = [
-    { id: 'lantern-night', title: 'Lantern Night: An ASCII Folktale', category: '3d', isPlayable: true, isNew: true, metaNote: 'Story adventure drawn in text', color: 'gold', iconType: 'star', engine: 'three', image: '/images/lantern-night-gameplay.jpg' },
+    { id: 'lantern-night', title: 'Lantern Night: An ASCII Folktale', category: '3d', isPlayable: true, isNew: true, metaNote: 'Story adventure drawn in text', color: 'gold', iconType: 'star', engine: 'three', image: '/images/lantern-night-gameplay.webp' },
     { id: 'among-us-pixel-outpost', title: 'Among Us: Pixel Outpost', category: 'strategy', isPlayable: true, isNew: true, metaNote: 'Pixel mystery with AI crewmates', color: 'coral', iconType: 'star', engine: 'html5', image: '/images/among-us-pixel-outpost-gameplay.webp' },
     { id: 'bloom-loop', title: 'Bloom Loop: Garden Colour Flow', category: 'puzzle', isPlayable: true, isNew: true, metaNote: 'Garden colour puzzle', color: 'green', iconType: 'puzzle', engine: 'html5', image: '/images/bloom-loop-gameplay.webp' },
     { id: 'cash-tycoon', title: 'Cash Tycoon: Fame & Fortune', category: 'simulation', isPlayable: true, isNew: true, metaNote: 'Build a business tower', color: 'gold', iconType: 'stack', engine: 'html5', image: '/images/cash-tycoon-gameplay.webp' },
