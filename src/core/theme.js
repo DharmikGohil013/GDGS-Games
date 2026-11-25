@@ -16,7 +16,8 @@ export function getThemePreference() {
 export function getResolvedTheme() {
   const pref = getThemePreference();
   if (pref !== 'system') return pref;
-  return window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  // Comic pop: the newsprint "paper" look is the default; night is opt-in.
+  return 'light';
 }
 
 export function setTheme(pref) {
@@ -33,14 +34,13 @@ export function toggleTheme() {
 }
 
 export function applyTheme() {
-  const pref = getThemePreference();
-  const root = document.documentElement;
-  if (pref === 'system') root.removeAttribute('data-theme');
-  else root.setAttribute('data-theme', pref);
-
+  // Always set the attribute so the comic skin never falls back to the
+  // OS media-query block in variables.css.
   const resolved = getResolvedTheme();
+  document.documentElement.setAttribute('data-theme', resolved);
+
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', resolved === 'dark' ? '#08090F' : '#F3F5FB');
+  if (meta) meta.setAttribute('content', resolved === 'dark' ? '#1C2045' : '#FFFBEF');
 
   listeners.forEach((fn) => fn(resolved));
   return resolved;

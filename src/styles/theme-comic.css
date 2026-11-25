@@ -1,0 +1,352 @@
+/* ═══════════════════════════════════════════════════════════
+   COMIC POP SKIN
+   Loaded last. Light = "paper" (newsprint + halftone, the default),
+   dark = "night" (midnight-blue panels, same ink outlines).
+   Everything leans on hard ink borders + offset shadows, no blur.
+   ═══════════════════════════════════════════════════════════ */
+
+:root,
+:root[data-theme='light'] {
+  /* Brand primaries */
+  --pop-red: #E63946;
+  --pop-red-dark: #B5202D;
+  --pop-yellow: #FFD60A;
+  --pop-blue: #1D4ED8;
+  --pop-blue-dark: #153A9E;
+  --ink: #111111;
+  --halftone: rgba(230, 57, 70, 0.13);
+
+  --accent: var(--pop-red);
+  --accent-2: var(--pop-yellow);
+  --accent-grad: linear-gradient(135deg, var(--pop-red), var(--pop-red));
+  --hot-grad: linear-gradient(135deg, var(--pop-yellow), var(--pop-yellow));
+
+  --bg: #FFFBEF;
+  --bg-2: #FFF4D6;
+  --bg-elev: #FFFFFF;
+  --surface: #FFFFFF;
+  --surface-2: #FFF4D6;
+  --surface-solid: #FFFFFF;
+  --border: var(--ink);
+  --border-strong: var(--ink);
+
+  --text: #111111;
+  --text-dim: #33333F;
+  --text-mute: #5E5E6E;
+  --on-accent: #FFFFFF;
+
+  --shadow-sm: 3px 3px 0 var(--ink);
+  --shadow-md: 5px 5px 0 var(--ink);
+  --shadow-lg: 8px 8px 0 var(--ink);
+  --shadow-hover: 7px 7px 0 var(--ink);
+  --glow: 4px 4px 0 var(--ink);
+  --glow-soft: 3px 3px 0 var(--ink);
+  --ring: rgba(29, 78, 216, 0.6);
+  --scrim: rgba(17, 17, 17, 0.6);
+  --aurora-1: transparent;
+  --aurora-2: transparent;
+  --aurora-3: transparent;
+  --grid-line: transparent;
+  --skeleton-a: #FFF4D6;
+  --skeleton-b: #FFE9A8;
+
+  --radius-xl: 6px;
+  --radius-lg: 6px;
+  --radius-md: 4px;
+  --radius-sm: 3px;
+
+  --font-display: 'Bangers', 'Impact', system-ui, sans-serif;
+  --font-body: 'Space Grotesk', system-ui, sans-serif;
+
+  --ink-w: 3px;
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --ink: #05060F;
+  --halftone: rgba(255, 214, 10, 0.07);
+
+  --bg: #1C2045;
+  --bg-2: #181B3B;
+  --bg-elev: #262B5C;
+  --surface: #262B5C;
+  --surface-2: #2F3570;
+  --surface-solid: #262B5C;
+
+  --text: #FFF6DD;
+  --text-dim: #D3CDE8;
+  --text-mute: #9E9AC0;
+
+  --skeleton-a: #262B5C;
+  --skeleton-b: #343A78;
+  --scrim: rgba(5, 6, 15, 0.72);
+  color-scheme: dark;
+}
+
+/* ── Page canvas: halftone dots instead of the aurora blobs ── */
+body::before {
+  background-image: radial-gradient(var(--halftone) 1.4px, transparent 1.6px);
+  background-size: 10px 10px;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  line-height: 1.02;
+}
+
+/* Comic display type: Bangers only ships one weight, so never fake-bold it. */
+.logo,
+.hero-title,
+.section-head h2,
+.btn-primary,
+.load-more-btn {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+.u-gradient-text { background: none; color: var(--accent); }
+
+/* ── Nav ── */
+.nav-outer {
+  background: var(--bg-elev);
+  border-bottom: var(--ink-w) solid var(--ink);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.logo {
+  font-size: 30px;
+  color: var(--pop-blue);
+  text-shadow: 2px 2px 0 var(--ink);
+}
+:root[data-theme='dark'] .logo { color: var(--pop-yellow); }
+
+.search-bar,
+.nav-chip,
+.icon-btn,
+.cat-btn,
+.cat-more {
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  background: var(--surface);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.search-bar.focused {
+  box-shadow: 3px 3px 0 var(--pop-blue);
+  border-color: var(--ink);
+}
+.icon-btn:hover,
+.nav-chip:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ink); }
+
+/* ── Category pills ── */
+.cat-btn { color: var(--text); font-family: var(--font-body); font-weight: 700; }
+.cat-btn:hover { background: var(--pop-yellow); color: #111; transform: none; }
+.cat-btn.active {
+  background: var(--pop-blue);
+  color: #fff;
+  border-color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+/* ── Hero: one big comic panel ── */
+.hero {
+  background: var(--pop-yellow);
+  border: var(--ink-w) solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 8px 8px 0 var(--ink);
+  color: #111;
+}
+.hero::before {
+  opacity: 1;
+  background-image: radial-gradient(rgba(230, 57, 70, 0.22) 1.6px, transparent 1.8px);
+  background-size: 9px 9px;
+}
+/* Every slide must render the same height. Headlines are always two short
+   phrases split by <br>, so size the type to the copy column's width
+   (container query units) and keep each phrase on one line. The title and
+   sub then reserve a fixed number of lines, so a 1-line sub or a shorter
+   headline never shrinks the panel. */
+.hero-copy { container-type: inline-size; min-width: 0; }
+.hero-title {
+  color: #111;
+  max-width: none;
+  font-size: clamp(30px, 7.4cqi, 72px);
+  letter-spacing: 0.03em;
+  line-height: 0.98;
+  white-space: nowrap;
+  min-height: 1.96em;
+}
+.hero-sub {
+  color: #2A2A33;
+  line-height: 1.6;
+  min-height: 3.2em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.hero-eyebrow {
+  color: #fff;
+  background: var(--pop-red);
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  transform: rotate(-3deg);
+  box-shadow: 2px 2px 0 var(--ink);
+  font-size: 11px;
+}
+.hero-art {
+  border: var(--ink-w) solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 6px 6px 0 var(--ink);
+  transform: rotate(1.2deg);
+}
+.hero-art:hover { transform: rotate(0deg) translate(-2px, -2px); box-shadow: 9px 9px 0 var(--ink); }
+.hero-art::before { background: none; }
+.hero-art::after {
+  content: 'POW! PLAY';
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.06em;
+  color: #111;
+  background: var(--pop-yellow);
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  box-shadow: 3px 3px 0 var(--ink);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transform: rotate(-4deg);
+}
+.hero-nav-btn { border: 2px solid var(--ink); border-radius: 4px; background: #fff; color: #111; box-shadow: 2px 2px 0 var(--ink); }
+.hero-dot { background: rgba(17, 17, 17, 0.3); }
+.hero-dot.active { background: var(--ink); }
+
+/* ── Buttons ── */
+.btn-primary,
+.load-more-btn {
+  font-size: 20px;
+  padding: 9px 22px;
+  color: #fff;
+  background: var(--pop-red);
+  border: var(--ink-w) solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.btn-primary:hover,
+.load-more-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--ink);
+  filter: none;
+}
+.btn-primary:active,
+.load-more-btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--ink); }
+
+/* ── Section headings: caption box ── */
+.section-head h2 {
+  display: inline-block;
+  font-size: clamp(24px, 3vw, 32px);
+  padding: 2px 12px 0;
+  color: #111;
+  background: var(--pop-yellow);
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  transform: skew(-6deg);
+}
+
+/* ── Game cards: comic panels ── */
+.game-card,
+.card-grid--discovery .game-card {
+  border: var(--ink-w) solid var(--ink);
+  border-radius: 6px;
+  background: var(--surface);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+.card-art::after,
+.card-grid--discovery .card-art::after { background: none; }
+.card-art { border-bottom: var(--ink-w) solid var(--ink); }
+.card-title { font-family: var(--font-body); font-weight: 700; }
+.card-tag { border: 1.5px solid var(--ink); border-radius: 3px; }
+
+/* Discovery grid lays the title over the screenshot. Instead of a dark
+   scrim, the text sits in a comic caption strip along the bottom. */
+.card-grid--discovery .card-body {
+  background: var(--surface);
+  border-top: var(--ink-w) solid var(--ink);
+  padding-top: 10px;
+  padding-bottom: 12px;
+}
+.card-grid--discovery .card-tag {
+  border: 0;
+  color: var(--pop-red) !important;
+  text-shadow: none;
+}
+.card-grid--discovery .card-title {
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(18px, 1.5vw, 22px);
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+  text-shadow: none;
+}
+.card-grid--discovery .card-description { color: var(--text-dim); text-shadow: none; }
+.card-launch {
+  border-radius: 4px;
+  color: #fff;
+  background: var(--pop-red);
+  border: 2px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+  z-index: 4;
+}
+
+.card-grid--discovery .card-badge {
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  box-shadow: 2px 2px 0 var(--ink);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.card-grid--discovery .card-badge-play { background: #fff; color: #111; border-color: var(--ink); }
+.card-grid--discovery .card-badge-hot { background: var(--pop-red); }
+.card-grid--discovery .card-badge-new { background: var(--pop-yellow); color: #111; }
+
+/* Hero image chrome: swap glass for flat ink */
+.hero-art .tag {
+  color: #111;
+  background: #fff;
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.hero-play-overlay span {
+  border-radius: 6px;
+  background: var(--pop-red);
+  border: var(--ink-w) solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.hero-art:hover .hero-play-overlay span { background: var(--pop-red-dark); }
+
+/* TODO(human): hover + focus "tilt" rule for .game-card and
+   .card-grid--discovery .game-card:is(:hover, :focus-visible). */
+
+/* ── Footer ── */
+.site-footer {
+  background: var(--bg-elev);
+  border-top: var(--ink-w) solid var(--ink);
+}
+
+/* ── Drawer / modals ── */
+.drawer {
+  border-left: var(--ink-w) solid var(--ink);
+  box-shadow: -6px 0 0 var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-art,
+  .hero-eyebrow,
+  .section-head h2 { transform: none !important; }
+}

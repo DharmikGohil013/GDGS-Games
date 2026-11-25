@@ -1,11 +1,12 @@
 // ─── Lantern Night: An ASCII Folktale ───
 // A short story adventure drawn entirely in text characters. The world is a
 // real three.js scene, rendered into a small off-screen target (a 2x3 grid of
-// light samples per character cell, each supersampled 2x2). A cell pass then
-// picks one glyph per cell: flat patches of light use a density ramp, and cells
-// whose light has a shape (an edge, a tip, a corner) take the glyph whose ink
-// best matches that shape. A final pass draws the glyphs. Story text and endings
-// live in lantern-night-story.js so they can be edited without touching the engine.
+// light samples per character cell, each supersampled 2x2), plus its depth and a
+// second pass of surface directions. A cell pass then picks one glyph per cell:
+// outlines where one thing stands in front of another or two faces meet, a
+// density ramp for flat light, and for light with a shape (an edge, a tip) the
+// glyph whose ink best matches it. A final pass draws the glyphs. Story text and
+// endings live in lantern-night-story.js so they can be edited without touching the engine.
 
 import * as THREE from 'three';
 import { reportRun } from '../core/runReport.js';
@@ -16,11 +17,19 @@ const GAME_ID = 'lantern-night';
 const SAVE_KEY = 'playzy:lantern-night:save';
 // Every glyph the renderer may draw. Its ink is measured from the real font at
 // start-up, so shape matching follows whatever monospace face the player has.
-const GLYPHS = ' .\'`,:;-_~=+*^"!|/\\()[]<>ilrvxoLJT7YbdpqP#%&8@';
-// The subset used to fill flat patches of light, re-sorted by measured ink.
-const RAMP = ' .,:;-~=+*x#%&8@';
+// Letters are left out on purpose: they match shapes well but read as stray words.
+const GLYPHS = ' .\'`,:;-_~=+*^"!|/\\()[]{}<>ox#%@';
+// The subset used to fill flat patches of light, re-sorted by measured ink. No
+// - ~ = here: packed side by side they join into stripes that read as lines;
+// " and ! fill the ink gap between ; and + without doing that.
+const RAMP = ' .,:;"!+*%@#';
+// Glyphs the cell pass picks by rule rather than by matching: outlines and stars.
+const RULE_GLYPHS = { G_VBAR: '|', G_SLASH: '/', G_BSLASH: '\\', G_DASH: '-', G_UNDER: '_', G_STAR: '*', G_PLUS: '+', G_DOT: '.' };
 // Each cell is sampled as 2 columns x 3 rows of light; each sample averages 2x2 scene texels.
 const SUPERSAMPLE = 2;
+// Cell height over width. Courier's glyphs are about 0.6em wide, so 1.4 lets
+// the font fill both directions and keeps the gaps between characters small.
+const CELL_ASPECT = 1.4;
 const MAX_NUTS = 5;
 const MAX_OIL = 100;
 const PLAYER_RADIUS = 0.38;
@@ -39,24 +48,51 @@ void main() {
   gl_Position = vec4(position.xy, 0.0, 1.0);
 }`;
 
-// Pass 1, run once per character cell: read the cell's 2x3 light samples and
-// pick its glyph. Writes the cell colour to rgb and the glyph index to alpha.
+// Pass 1, run once per character cell: read the cell's 2x3 light, depth and
+// surface-direction samples and pick its glyph. Writes the cell colour to rgb, the glyph index to alpha.
 const CELL_FRAG = /* glsl */`
 uniform sampler2D tScene;
+uniform sampler2D tDepth;
+uniform sampler2D tNormal;
 uniform vec2 uGrid;
+uniform vec2 uClip;
 uniform vec3 uInkL[NG];
 uniform vec3 uInkR[NG];
 uniform float uRamp[NR];
 uniform float uDensity;
 uniform float uSharp;
 
+vec2 sampleUv(vec2 cell, float i, float j) {
+  return (cell * vec2(2.0, 3.0) + vec2(i, j) + 0.5) / (uGrid * vec2(2.0, 3.0));
+}
 vec3 sampleAt(vec2 cell, float i, float j) {
   // Sample (i, j) sits on the corner of its 2x2 texel block, so linear filtering averages all four.
-  vec2 uv = (cell * vec2(2.0, 3.0) + vec2(i, j) + 0.5) / (uGrid * vec2(2.0, 3.0));
-  return max(texture2D(tScene, uv).rgb, 0.0);
+  return max(texture2D(tScene, sampleUv(cell, i, j)).rgb, 0.0);
+}
+float distAt(vec2 cell, float i, float j) {
+  // Depth can't be filtered, so step a quarter-sample into one texel of the block.
+  float d = texture2D(tDepth, sampleUv(cell, i, j) + 0.25 / (uGrid * vec2(2.0, 3.0))).r;
+  return uClip.x * uClip.y / (uClip.y - d * (uClip.y - uClip.x));
+}
+vec3 normalAt(vec2 cell, float i, float j) {
+  return texture2D(tNormal, sampleUv(cell, i, j)).rgb * 2.0 - 1.0;
 }
 float luma(vec3 c) {
   return dot(pow(c, vec3(0.4545)), vec3(0.299, 0.587, 0.114));
+}
+
+// The line glyph for an edge running between the marked (1) and unmarked (0)
+// samples of a cell, left column ml and right column mr, bottom row first.
+float edgeGlyph(vec3 ml, vec3 mr) {
+  // Columns are half a cell width apart, rows ROW_STEP cell widths apart.
+  float gx = (dot(mr, vec3(1.0)) - dot(ml, vec3(1.0))) / 3.0 / 0.5;
+  float gy = ((ml.z + mr.z) - (ml.x + mr.x)) / 4.0 / ROW_STEP;
+  // The edge runs across the gradient; quantise it to four directions.
+  float a = mod(atan(gy, gx) + 0.3927, 3.14159265);
+  float q = floor(a / 0.7854);
+  float rowsMarked = (ml.x + mr.x + ml.y + mr.y + ml.z + mr.z) / 2.0;
+  bool low = gy < 0.0 ? rowsMarked < 1.5 : rowsMarked > 1.5;
+  return q < 0.5 ? float(G_VBAR) : (q < 1.5 ? float(G_BSLASH) : (q < 2.5 ? (low ? float(G_UNDER) : float(G_DASH)) : float(G_SLASH)));
 }
 
 void main() {
@@ -71,10 +107,57 @@ void main() {
   float lo = min(min(min(sl.x, sl.y), sl.z), min(min(sr.x, sr.y), sr.z));
   float L = (sl.x + sl.y + sl.z + sr.x + sr.y + sr.z) / 6.0;
 
+  // Distance to the camera at each sample, same layout as the light.
+  vec3 zl = vec3(distAt(cell, 0.0, 0.0), distAt(cell, 0.0, 1.0), distAt(cell, 0.0, 2.0));
+  vec3 zr = vec3(distAt(cell, 1.0, 0.0), distAt(cell, 1.0, 1.0), distAt(cell, 1.0, 2.0));
+  float zNear = min(min(min(zl.x, zl.y), zl.z), min(min(zr.x, zr.y), zr.z));
+  float zFar = max(max(max(zl.x, zl.y), zl.z), max(max(zr.x, zr.y), zr.z));
+  // Ground seen at a grazing angle also gets deeper fast, so far away it takes a
+  // bigger jump to count; past the fog, outlines would only add clutter.
+  bool silhouette = zNear < 40.0 && zFar > zNear * (1.08 + zNear * 0.006);
+
+  // Surface direction at each sample. Two that differ a lot (over ~57 degrees)
+  // mean a corner between faces: a wall meeting the ground, a roof ridge.
+  vec3 n[6];
+  n[0] = normalAt(cell, 0.0, 0.0); n[1] = normalAt(cell, 0.0, 1.0); n[2] = normalAt(cell, 0.0, 2.0);
+  n[3] = normalAt(cell, 1.0, 0.0); n[4] = normalAt(cell, 1.0, 1.0); n[5] = normalAt(cell, 1.0, 2.0);
+  float worst = 1.0;
+  vec3 faceA = n[0];
+  vec3 faceB = n[0];
+  for (int i = 0; i < 6; i++) {
+    for (int j = i + 1; j < 6; j++) {
+      float d = dot(n[i], n[j]);
+      if (d < worst) { worst = d; faceA = n[i]; faceB = n[j]; }
+    }
+  }
+  bool crease = zNear < 40.0 && worst < 0.55;
+
   float idx = 0.0;
-  if (hi - lo < 0.07 || hi - lo < hi * 0.32) {
-    // Flat light: step through the ink-sorted density ramp.
-    int r = int(floor(clamp(L * uDensity, 0.0, 0.999) * float(NR)));
+  if (silhouette) {
+    // Something stands in front of something else here: outline it, so even a
+    // dark shape on dark ground keeps its edge. Mask = the nearer samples.
+    float split = sqrt(zNear * zFar);
+    vec3 ml = step(zl, vec3(split));
+    vec3 mr = step(zr, vec3(split));
+    idx = edgeGlyph(ml, mr);
+    vec3 nearLin = (a0 * ml.x + a1 * ml.y + a2 * ml.z + b0 * mr.x + b1 * mr.y + b2 * mr.z) / max(dot(ml + mr, vec3(1.0)), 1.0);
+    col = pow(nearLin, vec3(0.4545));
+  } else if (crease) {
+    // A corner between two faces: draw the fold line, so boxes,
+    // roofs and rocks read as solid 3D shapes. Mask = samples on face A's side.
+    vec3 ml = vec3(step(dot(n[0], faceB), dot(n[0], faceA)), step(dot(n[1], faceB), dot(n[1], faceA)), step(dot(n[2], faceB), dot(n[2], faceA)));
+    vec3 mr = vec3(step(dot(n[3], faceB), dot(n[3], faceA)), step(dot(n[4], faceB), dot(n[4], faceA)), step(dot(n[5], faceB), dot(n[5], faceA)));
+    idx = edgeGlyph(ml, mr);
+  } else if (hi > 0.15 && lo < 0.05 && hi - lo > 0.12
+      && dot(step(vec3(hi * 0.5), sl), vec3(1.0)) + dot(step(vec3(hi * 0.5), sr), vec3(1.0)) < 1.5) {
+    // A lone speck of light on black: a star, a spark. Draw it as one.
+    idx = hi > 0.38 ? float(G_STAR) : (hi > 0.24 ? float(G_PLUS) : float(G_DOT));
+    // The speck filled one texel of its sample's 2x2 block; undo that dilution.
+    col = pow(min((a0 + a1 + a2 + b0 + b1 + b2) * 3.0, vec3(1.0)), vec3(0.4545));
+  } else if (hi - lo < 0.08 || hi - lo < hi * 0.4) {
+    // Flat light: step through the ink-sorted density ramp. Dim light is lifted a
+    // little so unlit ground keeps a texture that shows its perspective.
+    int r = int(floor(clamp(pow(L, 0.85) * uDensity, 0.0, 0.999) * float(NR)));
     for (int k = 0; k < NR; k++) if (k == r) idx = uRamp[k];
   } else {
     // Shaped light: push the dimmer samples down so the shape stands out, then
@@ -334,6 +417,8 @@ function clearSave() {
 
 /* ─────────────────────────── glyphs ─────────────────────────── */
 
+const GLYPH_FONT = '"Courier New", Courier, monospace';
+
 // Draws every glyph centred in its own cw x ch cell. The on-screen atlas and the
 // ink measurement both use this, so the measured shapes match the drawn ones.
 function drawGlyphStrip(cw, ch) {
@@ -343,28 +428,48 @@ function drawGlyphStrip(cw, ch) {
   const g = c.getContext('2d', { willReadFrequently: true });
   g.fillStyle = '#000';
   g.fillRect(0, 0, c.width, c.height);
+  // Fit the font to the cell rather than the cell to the font: each glyph almost
+  // as wide as its cell, so neighbours nearly touch, and a full-height glyph plus
+  // the underscore just filling its height. Tall strokes like | may lose a pixel.
+  g.font = `bold 100px ${GLYPH_FONT}`;
+  const advance = g.measureText('M').width / 100;
+  const box = g.measureText('#@_');
+  const top = (box.actualBoundingBoxAscent ?? 64) / 100;
+  const bottom = (box.actualBoundingBoxDescent ?? 22) / 100;
+  const size = Math.max(6, Math.floor(Math.min((cw * 0.98) / advance, ch / (top + bottom))));
+  const baseline = Math.round((ch - (top + bottom) * size) / 2 + top * size);
+  g.font = `bold ${size}px ${GLYPH_FONT}`;
   g.fillStyle = '#fff';
   g.textAlign = 'center';
-  g.textBaseline = 'middle';
-  g.font = `bold ${Math.max(6, Math.floor(ch * 0.8))}px "Courier New", Courier, monospace`;
-  for (let i = 0; i < GLYPHS.length; i++) g.fillText(GLYPHS[i], cw * i + cw / 2, ch * 0.54);
+  g.textBaseline = 'alphabetic';
+  for (let i = 0; i < GLYPHS.length; i++) {
+    // Clip to the glyph's own slot so a wide glyph can't bleed into its neighbour.
+    g.save();
+    g.beginPath();
+    g.rect(cw * i, 0, cw, ch);
+    g.clip();
+    g.fillText(GLYPHS[i], cw * i + cw / 2, baseline);
+    g.restore();
+  }
   return c;
 }
 
 // Width of one character cell in device pixels, for a stage cssWidth CSS pixels
 // wide on a screen with this device pixel ratio. Smaller cells mean more
 // characters across the screen and finer detail; too small and the glyphs
-// themselves blur into dots. The cell is always 1.7x as tall as it is wide.
+// themselves blur into dots. The cell is CELL_ASPECT times as tall as it is wide.
 function cellWidth(cssWidth, dpr) {
-  const cssCell = clamp(cssWidth / 215, 5, 8);
-  return Math.max(6, Math.round(cssCell * dpr));
+  // About 270 columns across a laptop; a phone bottoms out at 4 CSS px a cell
+  // (~95 columns). Under 5 device pixels a glyph is no longer readable.
+  const cssCell = clamp(cssWidth / 270, 4, 7);
+  return Math.max(5, Math.round(cssCell * dpr));
 }
 
 // How much ink each glyph puts in each of a cell's six sample regions (2 columns
 // x 3 rows, bottom row first), measured on a large cell so thin strokes count.
 function measureGlyphInk() {
   const cw = 30;
-  const ch = 51;
+  const ch = Math.round(30 * CELL_ASPECT / 3) * 3;
   const c = drawGlyphStrip(cw, ch);
   const px = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
   const area = (cw / 2) * (ch / 3);
@@ -455,15 +560,24 @@ function createLanternNight(container) {
   });
 
   // The scene, at 2x3 samples per character cell (times the supersample factor).
-  const rt = new THREE.WebGLRenderTarget(4, 4, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, depthBuffer: true });
+  // Its depth is kept as a texture so the cell pass can find where one object stands in front of another.
+  const rt = new THREE.WebGLRenderTarget(4, 4, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, depthTexture: new THREE.DepthTexture(4, 4) });
+  // The same view drawn as surface directions, one texel per light sample, so the
+  // cell pass can find corners between faces. Flat shading keeps each face one direction.
+  const rtNormal = new THREE.WebGLRenderTarget(4, 4, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter });
+  const normalMat = new THREE.MeshNormalMaterial({ flatShading: true });
   // One texel per character cell: its colour, and the glyph chosen for it.
   const rtCells = new THREE.WebGLRenderTarget(4, 4, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, depthBuffer: false });
   const ink = measureGlyphInk();
   const grid = new THREE.Vector2(100, 40);
+  const ruleGlyphs = Object.fromEntries(Object.entries(RULE_GLYPHS).map(([k, chr]) => [k, GLYPHS.indexOf(chr)]));
   const cellMat = new THREE.ShaderMaterial({
-    defines: { NG: GLYPHS.length, NR: RAMP.length },
+    defines: { NG: GLYPHS.length, NR: RAMP.length, ROW_STEP: (CELL_ASPECT / 3).toFixed(4), ...ruleGlyphs },
     uniforms: {
       tScene: { value: rt.texture },
+      tDepth: { value: rt.depthTexture },
+      tNormal: { value: rtNormal.texture },
+      uClip: { value: new THREE.Vector2(camera.near, camera.far) },
       uGrid: { value: grid },
       uInkL: { value: ink.left },
       uInkR: { value: ink.right },
@@ -543,9 +657,11 @@ function createLanternNight(container) {
   }
   const starGeo = new THREE.BufferGeometry();
   starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
-  // One light sample wide, so each star lands inside a single character cell and stays a point.
-  const starMat = new THREE.PointsMaterial({ color: 0xc9d4ff, size: SUPERSAMPLE, sizeAttenuation: false, fog: false });
-  sky.add(new THREE.Points(starGeo, starMat));
+  // One texel wide, so each star lands inside a single character cell and stays a point.
+  // Stars write no depth: they are specks of light, not shapes to outline.
+  const starMat = new THREE.PointsMaterial({ color: 0xc9d4ff, size: 1, sizeAttenuation: false, fog: false, depthWrite: false });
+  const stars = new THREE.Points(starGeo, starMat);
+  sky.add(stars);
 
   /* ── Dal, the lantern-keeper's grandchild ── */
   const dal = buildDal();
@@ -676,16 +792,19 @@ function createLanternNight(container) {
     renderer.setSize(w, h, false);
     renderer.getDrawingBufferSize(bufSize);
     const cw = cellWidth(w, dpr);
-    const ch = Math.round(cw * 1.7);
+    const ch = Math.round(cw * CELL_ASPECT);
     const cols = Math.max(20, Math.floor(bufSize.x / cw));
     const rows = Math.max(12, Math.floor(bufSize.y / ch));
     U.uCell.value.set(cw, ch);
     grid.set(cols, rows);
     U.uOffset.value.set(Math.floor((bufSize.x - cols * cw) / 2), Math.floor((bufSize.y - rows * ch) / 2));
     rt.setSize(cols * 2 * SUPERSAMPLE, rows * 3 * SUPERSAMPLE);
+    rtNormal.setSize(cols * 2, rows * 3);
     rtCells.setSize(cols, rows);
     camera.aspect = (cols * cw) / (rows * ch);
     camera.updateProjectionMatrix();
+    // three.js scales point size by the pixel ratio; undo that so a star is exactly one texel.
+    starMat.size = 1 / dpr;
     glyphTex?.dispose();
     glyphTex = makeGlyphAtlas(cw, ch);
     U.tGlyphs.value = glyphTex;
@@ -700,14 +819,17 @@ function createLanternNight(container) {
     // A faint self-glow keeps the hero readable against the dark ground.
     const robe = new THREE.MeshLambertMaterial({ color: 0x5b74e0, emissive: 0x18245a, flatShading: true });
     const jacket = new THREE.MeshLambertMaterial({ color: 0xf4ecd6, emissive: 0x2c2820, flatShading: true });
+    // Black hair seen from behind would draw as an empty hole; a dim sheen gives it texture.
+    const hair = new THREE.MeshLambertMaterial({ color: 0x2a2420, emissive: 0x1e1c26, flatShading: true });
     mats.set('dal-robe', robe);
     mats.set('dal-jacket', jacket);
+    mats.set('dal-hair', hair);
     body.add(mesh(GEO.taper, robe, 0, 0.6, 0, 0.95, 1.2, 0.95));
     body.add(mesh(GEO.cyl, jacket, 0, 1.3, 0, 0.66, 0.44, 0.6));
     body.add(mesh(GEO.box, lam(0xc8372e), 0.1, 1.22, -0.31, 0.09, 0.34, 0.04));
     body.add(mesh(GEO.sphere, lam(0xf0c9a2), 0, 1.74, 0, 0.46, 0.48, 0.46));
-    body.add(mesh(GEO.sphere, lam(0x1c1815), 0, 1.81, 0.05, 0.5, 0.42, 0.5));
-    body.add(mesh(GEO.cyl, lam(0x1c1815), 0, 1.42, 0.24, 0.12, 0.62, 0.12));
+    body.add(mesh(GEO.sphere, hair, 0, 1.81, 0.05, 0.5, 0.42, 0.5));
+    body.add(mesh(GEO.cyl, hair, 0, 1.42, 0.24, 0.12, 0.62, 0.12));
     body.add(mesh(GEO.box, lam(0xc8372e), 0, 1.1, 0.25, 0.16, 0.12, 0.05));
     body.add(mesh(GEO.cyl, jacket, 0.3, 1.25, -0.15, 0.14, 0.5, 0.14, -0.9));
     body.add(mesh(GEO.cyl, lam(0x5a3b22), 0.36, 1.55, -0.55, 0.05, 1.1, 0.05, -1.05));
@@ -2264,6 +2386,13 @@ function createLanternNight(container) {
     updateHud();
     renderer.setRenderTarget(rt);
     renderer.render(scene, camera);
+    // Stars are specks of light, not surfaces; leave them out of the directions pass.
+    scene.overrideMaterial = normalMat;
+    stars.visible = false;
+    renderer.setRenderTarget(rtNormal);
+    renderer.render(scene, camera);
+    scene.overrideMaterial = null;
+    stars.visible = true;
     quad.material = cellMat;
     renderer.setRenderTarget(rtCells);
     renderer.render(quadScene, quadCam);
@@ -2293,7 +2422,10 @@ function createLanternNight(container) {
     cellMat.dispose();
     quad.geometry.dispose();
     glyphTex?.dispose();
+    rt.depthTexture.dispose();
     rt.dispose();
+    rtNormal.dispose();
+    normalMat.dispose();
     rtCells.dispose();
     renderer.dispose();
     renderer.forceContextLoss?.();
@@ -2303,7 +2435,6 @@ function createLanternNight(container) {
   resize();
   showTitle();
   raf = requestAnimationFrame(frame);
-  window.__lnDebug = { renderer, rt, rtCells, cellMat, U, grid, scene, camera }; // DEBUG-REMOVE
 
   return { destroy };
 }

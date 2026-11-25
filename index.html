@@ -90,7 +90,7 @@
   <link rel="dns-prefetch" href="https://fonts.gstatic.com">
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Bungee&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- ═══════════════════════════════════════════
        STRUCTURED DATA — JSON-LD
@@ -142,11 +142,10 @@
     (function () {
       try {
         var t = localStorage.getItem('playzy:theme');
-        if (t === 'dark' || t === 'light') {
-          document.documentElement.setAttribute('data-theme', t);
-          var m = document.querySelector('meta[name="theme-color"]');
-          if (m) m.setAttribute('content', t === 'dark' ? '#08090F' : '#F3F5FB');
-        }
+        if (t !== 'dark' && t !== 'light') t = 'light';
+        document.documentElement.setAttribute('data-theme', t);
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.setAttribute('content', t === 'dark' ? '#1C2045' : '#FFFBEF');
       } catch (e) {}
     })();
   </script>

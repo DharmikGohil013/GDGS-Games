@@ -8,6 +8,7 @@ import './styles/animations.css';
 import './styles/pages.css';
 import './styles/game-ui.css';
 import './styles/game-subpages.css';
+import './styles/theme-comic.css';
 
 import gsap from 'gsap';
 
