@@ -171,7 +171,9 @@ h1, h2, h3, h4 {
 .hero-title {
   color: #111;
   max-width: none;
-  font-size: clamp(30px, 7.4cqi, 72px);
+  /* Longest phrase ("Conquer the heights.") measures 8.13em in Bangers,
+     so 11.6cqi keeps it on one line with ~5% to spare. */
+  font-size: clamp(28px, 11.6cqi, 76px);
   letter-spacing: 0.03em;
   line-height: 0.98;
   white-space: nowrap;
@@ -186,7 +188,21 @@ h1, h2, h3, h4 {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+/* Play button + arrows + dots need ~380px. Near that width the row used to
+   wrap on some slides and not others (a 56px jump). Decide by column width
+   only: one row when it clearly fits, always stacked when it doesn't. */
+.hero-copy > div {
+  flex-wrap: nowrap !important;
+  row-gap: 14px;
+}
+@container (max-width: 440px) {
+  .hero-copy > div {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+}
 .hero-eyebrow {
+  white-space: nowrap;
   color: #fff;
   background: var(--pop-red);
   border: 2px solid var(--ink);
